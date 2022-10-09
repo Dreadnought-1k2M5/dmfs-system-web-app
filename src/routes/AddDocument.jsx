@@ -12,15 +12,22 @@ function AddDocument({userInstance}) {
     event.preventDefault();
 
     let fileName, CID;
+    const fr = new FileReader();
 
-    const res_CID = await client.put(fileInput.current.files);
+    fr.readAsArrayBuffer(fileInput.current.files[0]);
+
+    fr.addEventListener('load', async ()=>{
+      console.log(fr.result);
+    });
+
+/*     const res_CID = await client.put(fileInput.current.files);
     
     fileName = fileInput.current.files[0].name;
     CID = res_CID;
 
     userInstance.get('fileObjectList').get(`${CID}`).put({filenameProperty: fileName, CID_prop: CID});
     userInstance.get('fileNamesObject').set(`${CID}`); // set of names - each node is an object with a file name and corresponding CID
-    alert("FILE ADDED");
+    alert("FILE ADDED"); */
   }
 
   return (

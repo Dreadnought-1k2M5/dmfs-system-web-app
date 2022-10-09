@@ -1,0 +1,144 @@
+
+.App{
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+/*     background-color: rgb(30, 30, 30);
+ */    color: #f6f6f6;
+    height: 100vh;
+    background-image: url('../../background.png'); 
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 1400px) {  
+    .App{
+        grid-template-columns: 1fr 4.5fr;
+    }
+
+}
+@media only screen and (max-width: 1300px) {  
+    .App{
+        grid-template-columns: 1fr 4fr;
+    }
+    .username-logout-box{
+        background-color: red;
+/*         width: 21% !important; */
+    }
+
+}
+
+@media only screen and (max-width: 1185px) {  
+    .title-subtitle-box > h1{
+        font-size: 22px !important;
+    }
+    .title-subtitle-box > p{
+        font-size: 9px  !important;
+    }
+}
+@media only screen and (max-width: 1032px){
+    .username-logout-box{
+        background-color: green;
+/*         width: 23% !important; */
+        color: white;
+    }
+    .title-subtitle-box > h1{
+        font-size: 20px !important;
+    }
+    .title-subtitle-box > p{
+        font-size: 7px !important;
+    }
+}
+
+.sidebar{
+    height: 100%;
+    background-color: rgba(39, 39, 39, 0.6);
+    backdrop-filter: blur(5px);
+    color: rgb(255, 255, 255);
+    width: 100%;
+/*     animation-name: initialAnimation;
+    animation-duration: 1s; */
+}
+
+/* @keyframes initialAnimation {
+    0%{
+        width: 0%;
+    }
+    100%{
+        width: 100%;
+    }
+} */
+
+.top-nav-bar{
+    background-color: rgb(25, 25, 25);
+    display: flex;
+    justify-content: space-between;
+    padding: 7px;
+    height: 4%;
+}
+
+.username-logout-box{
+    display: flex;
+    flex-grow: 0.4;/*     width: 100%; */
+    color: white;
+    justify-content: space-between;
+
+}
+.search-box{
+    flex-grow: 5;
+    height: 100%;
+}
+.search-box > div{
+    width: 50%;
+    height: 100%;
+    margin: auto;
+}
+.search-box > div > input[type="text"]{
+    height: 10px;
+    width: 70%;
+}
+
+.title-subtitle-box{
+    padding: 10px;
+    background-color: rgb(25, 25, 25);
+    backdrop-filter: blur(5px);
+}
+.title-subtitle-box > h1{
+    font-size: 25px;
+}
+.title-subtitle-box > p{
+    font-size: 12px;
+    color: rgb(111, 209, 255);
+    width: 90%;
+}
+
+.navlink-component{
+    text-decoration: none;
+    font-size: 14px;
+    padding: 10px;
+    display: block;
+    margin: 10px 0px;
+    color: rgb(246, 246, 246);
+}
+.navlink-component:hover{
+    background-color: rgba(255, 255, 255, 0.221);
+}
+.navlink-component-active{
+    text-decoration: none;
+    font-size: 14px;
+    padding: 10px;
+    display: block;
+    margin: 10px 0px;
+    color: rgb(36, 36, 36);
+    background-color: rgb(111, 209, 255);
+}
+.navlink-tabs{
+    margin-top: 50px;
+}
+
+.outlet-container{
+    background-color: rgba(39, 39, 39, 0.9);
+    backdrop-filter: blur(5px);
+    height: 93vh;
+    overflow-y: scroll;
+}

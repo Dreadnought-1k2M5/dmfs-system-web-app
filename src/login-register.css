@@ -1,0 +1,113 @@
+*{
+    margin: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.page-container{
+    height: 100vh;
+    display: flex;
+    place-items: center;
+    color: rgb(237, 249, 255);
+    background-image: url('./background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+}
+.login-register-form-container{
+    width: 25%;
+    margin: auto;
+    background-image: linear-gradient(140deg, #85d0fc48, #5bd3ff53);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 70%;
+    box-shadow: 5px 10px 30px #000000b3;
+    
+}
+
+.login-register-form-container >.form-div> .title-box{
+    text-align: center;
+}
+
+.login-register-form-container >.form-div> .title-box > h1{
+    font-size: 30px;
+}
+.login-register-form-container >.form-div> .title-box > p{
+    font-size: 12px;
+    width: 80%;
+    margin: auto;
+}
+
+.login-register-form-container >.form-div{
+    display: flex;
+    flex-direction: column;
+/*     background-color: red; */
+    height: 80%;
+    width: 80%;
+    justify-content: space-around;
+}
+.login-register-form-container >.form-div> .label-textbox-container{
+    display: flex;
+    flex-direction: column;
+    height: 40%;
+    justify-content: space-around;
+/*     background-color:violet;
+ */}
+
+input[type="text"], input[type="password"], input[type="email"]{
+    background-color: rgb(237, 237, 237);
+    padding:7px;
+    border: none;
+    width: 100%;
+    font-size: 17px;
+    border-radius: 6px;
+}
+
+.login-register-form-submit-container{
+/*     display: flex; */
+/*     background-color: red; */
+}
+
+input[type="button"]{
+    padding: 10px 30px;
+    font-size: 20px;
+    background-image: linear-gradient(90deg, rgb(44, 237, 255), rgb(139, 153, 255));
+    border: 2px solid rgb(255, 255, 255);
+    border-radius: 25px;
+    cursor: pointer;
+    display: block;
+    margin: auto;
+
+}
+
+input[type="button"]:active{
+    transform: translateY(2px);
+}
+
+.sign-up-link{
+    color: rgb(255, 255, 255);
+}
+
+
+/*Register css classes*/
+.login-register-form-container >.form-div> .title-box-register{
+    text-align: left !important;
+}
+.login-register-form-container > .form-div > .title-box-register > h1 {
+    font-size: 26px;
+}
+.login-register-form-container > .form-div > .title-box-register > p {
+    font-size: 13px;
+    width: 80%;
+}
+.label-textbox-container-register{
+    display: flex;
+    flex-direction: column;
+    height: 60%;
+    justify-content: space-around;
+/*     background-color: red; */
+}

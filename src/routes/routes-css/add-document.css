@@ -1,0 +1,46 @@
+.top-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: rgb(30, 30, 30);
+}
+
+.upload-container{
+    background-image: linear-gradient(1200deg, rgb(172, 233, 255), rgb(255, 171, 247));
+    width: 35%;
+    height: 55%;
+    border-radius: 20px;
+}
+
+.title-container{
+    background-color: rgb(111, 209, 255);
+    border-radius: 20px 20px 0px 0px;
+    padding: 15px;
+}
+
+.flex-upload-container{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    height: 70%;
+    margin: 0px 20px;
+}
+/* .flex-upload-container > .flex-item1{
+    background-color: rgb(255, 253, 212);
+} */
+
+.flex-upload-container > .flex-item-last{
+    display: flex;
+    justify-content: center;
+}
+.upload-btn-class::file-selector-button{
+    padding: 6px 17px;
+    border-radius: 14px;
+    font-size: 15px;
+}
+
+.submit-btn{
+    padding: 10px 17px;
+    border-radius: 14px;
+}

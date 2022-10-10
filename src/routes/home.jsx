@@ -8,9 +8,9 @@ function Home({userInstance}) {
   let [fileList, setFileList] = useState([]);
   useEffect(()=>{
     userInstance.get('userProfile').on((data)=>setEmail(data.emailProp));
-    userInstance.get('fileNamesObject').map().on((key)=>{
+    userInstance.get('fileNamesObject').map().once((key)=>{
       console.log(`${key}`);
-      userInstance.get('fileObjectList').get(`${key}`).on(dataObj => setFileList(oldList => [...oldList, {filename: dataObj.filenameProperty, cid: dataObj.CID_prop}]));
+      userInstance.get('fileObjectList').get(`${key}`).once(dataObj => setFileList(oldList => [...oldList, {filename: dataObj.filenameProperty, cid: dataObj.CID_prop}]));
     });
 
 /*     userInstance.get('document0.docx').on(dataObj=>{
@@ -65,7 +65,7 @@ function Home({userInstance}) {
                   let cid_temp = elem.cid;
                   let localFilename;
               
-                  await userInstance.get('fileObjectList').get(`${cid_temp}`).on(data => {
+                  await userInstance.get('fileObjectList').get(`${cid_temp}`).once(data => {
                     localFilename = data.filenameProperty;
                   });
               

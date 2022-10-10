@@ -8,16 +8,38 @@ function AddDocument({userInstance}) {
 
   let fileInput = React.createRef();
 
+  async function generateKeyFunction(){
+    return crypto.subtle.generateKey({ 'name': 'AES-CBC', 'length': 256 }, false, ['encrypt', 'decrypt']);
+  }
+
   async function HandleSubmit(event){
     event.preventDefault();
 
     let fileName, CID;
     const fr = new FileReader();
 
+    const getBlobType = fileInput.current.files[0].type;
+    console.log(getBlobType);
+    
     fr.readAsArrayBuffer(fileInput.current.files[0]);
 
-    fr.addEventListener('load', async ()=>{
-      console.log(fr.result);
+    fr.addEventListener('load', async (e)=>{
+      let data = e.target.result, iv = crypto.getRandomValues(new Uint8Array(16));
+      const key = await generateKeyFunction();
+      console.log(data);
+      console.log(iv);
+
+      crypto.subtle.encrypt({ 'name': 'AES-CBC', iv }, key, data)
+      .then(encrypted => {
+          console.log(encrypted);
+          alert('The encrypted data is ' + encrypted.byteLength + ' bytes long'); // encrypted is an ArrayBuffer
+          const blob = new Blob([encrypted]) // convert encrypted arraybuffer to blob.
+          console.log(blob);
+      })
+      .catch(console.error);
+
+
+/*       console.log(fr.result); */
     });
 
 /*     const res_CID = await client.put(fileInput.current.files);

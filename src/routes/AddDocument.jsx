@@ -9,7 +9,7 @@ function AddDocument({userInstance}) {
   let fileInput = React.createRef();
 
   async function generateKeyFunction(){
-    return crypto.subtle.generateKey({ 'name': 'AES-CBC', 'length': 256 }, false, ['encrypt', 'decrypt']);
+    return crypto.subtle.generateKey({ 'name': 'AES-CBC', 'length': 256 }, true, ['encrypt', 'decrypt']);
   }
 
   async function HandleSubmit(event){
@@ -18,26 +18,54 @@ function AddDocument({userInstance}) {
     let fileName, CID;
     const fr = new FileReader();
 
-    const getBlobType = fileInput.current.files[0].type;
+    const getBlobType = fileInput.current.files[0].type; // get the blob type to pass it later at the Blob() constructor
     console.log(getBlobType);
     
     fr.readAsArrayBuffer(fileInput.current.files[0]);
 
     fr.addEventListener('load', async (e)=>{
-      let data = e.target.result, iv = crypto.getRandomValues(new Uint8Array(16));
+      let data = e.target.result; // e.target.result is similar to fr.result
+      let iv = crypto.getRandomValues(new Uint8Array(16));
       const key = await generateKeyFunction();
       console.log(data);
       console.log(iv);
+      
 
       crypto.subtle.encrypt({ 'name': 'AES-CBC', iv }, key, data)
       .then(encrypted => {
-          console.log(encrypted);
+          console.log(encrypted); // encrypted is an ArrayBuffer
           alert('The encrypted data is ' + encrypted.byteLength + ' bytes long'); // encrypted is an ArrayBuffer
-          const blob = new Blob([encrypted]) // convert encrypted arraybuffer to blob.
+          const blob = new Blob([encrypted], {type: getBlobType} ) // convert encrypted arraybuffer to blob.
+          console.log("ENCRYPTED:");
           console.log(blob);
+          
+          data = encrypted; // change value of data to encrypted for decrypting - this is for testing purposes only
+          //Download blob
+/*           const aElement = document.createElement('a');
+          aElement.setAttribute('download', `${fileInput.current.files[0].name}`);
+          const href = URL.createObjectURL(blob);
+          aElement.href = href;
+          aElement.setAttribute('target', '_blank');
+          aElement.click();
+          URL.revokeObjectURL(href); */
+          //-------------
+
+
+          //Decrypt
+          crypto.subtle.decrypt({ 'name': 'AES-CBC', iv }, key, data).then(decrypted => {
+            //Convert ArrayBuffer to Blob and Download
+            const blob = new Blob([decrypted], {type: getBlobType} ) // convert decrypted arraybuffer to blob.
+            const aElement = document.createElement('a');
+            aElement.setAttribute('download', `${fileInput.current.files[0].name}`);
+            const href = URL.createObjectURL(blob);
+            aElement.href = href;
+            aElement.setAttribute('target', '_blank');
+            aElement.click();
+            URL.revokeObjectURL(href);
+            //-------------
+        }).catch(console.error);
       })
       .catch(console.error);
-
 
 /*       console.log(fr.result); */
     });

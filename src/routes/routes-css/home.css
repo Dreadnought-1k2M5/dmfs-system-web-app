@@ -2,6 +2,23 @@
     padding: 20px;
 }
 
+.top-toolbar{
+    background-color: rgba(255, 255, 255, 0.086);
+    height: 35px;
+    padding: 0px 10px 0px 10px;
+}
+.toolbar-btn{
+    height: 100%;
+    background-color: rgba(178, 177, 177, 0);
+    border: none;
+    cursor: pointer;
+    color: white;
+}
+.toolbar-btn:hover{
+    background-color: rgba(178, 177, 177, 0.116);
+
+}
+
 .table-container{
     width: 100%;
     background-color: rgba(255, 255, 255, 0.086);
@@ -28,4 +45,6 @@
     background-color: rgba(111, 209, 255, 0.685);
     border: 1px solid white;
     border-radius: 7px;
+    cursor: pointer;
 }
+

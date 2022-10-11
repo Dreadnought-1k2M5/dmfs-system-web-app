@@ -6,7 +6,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import Login from './login';
 import Main from './routes/main';
 import Home from './routes/home';
-import AddDocument from './routes/AddDocument';
+import UploadFile from './routes/UploadFile';
 
 /* import App from './App'; */
 import GUN from 'gun';
@@ -30,7 +30,7 @@ root.render(
             <Route path="/register" element={<Register userInstance={user} userSession={userSessionObj}/>} />
             <Route path='/main' element={<Main userInstance={user} userSession={userSessionObj}/>}>
               <Route index element={<Home userInstance={user}/>} />
-              <Route path='Add-Document' element={<AddDocument userInstance={user}/>} />
+              <Route path='upload' element={<UploadFile userInstance={user}/>} />
             </Route>
         </Routes>
       </div>

@@ -6,7 +6,7 @@
     height: 100vh;
     display: flex;
     place-items: center;
-    color: rgb(237, 249, 255);
+    color: rgb(35, 36, 37);
     background-image: url('./background.png');
     background-size: cover;
     background-repeat: no-repeat;
@@ -16,8 +16,8 @@
 .login-register-form-container{
     width: 25%;
     margin: auto;
-    background-image: linear-gradient(140deg, #85d0fc48, #5bd3ff53);
-    backdrop-filter: blur(10px);
+    background-image: linear-gradient(140deg, #a477586e, #ffc85b75);
+    backdrop-filter: blur(23px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -73,9 +73,9 @@ input[type="text"], input[type="password"], input[type="email"]{
 }
 
 input[type="button"]{
-    padding: 10px 30px;
+    padding: 6px 26px;
     font-size: 20px;
-    background-image: linear-gradient(90deg, rgb(44, 237, 255), rgb(139, 153, 255));
+    background-image: linear-gradient(90deg, rgba(44, 237, 255, 0.397), rgba(139, 153, 255, 0.485));
     border: 2px solid rgb(255, 255, 255);
     border-radius: 25px;
     cursor: pointer;

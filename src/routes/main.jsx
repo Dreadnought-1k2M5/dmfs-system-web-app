@@ -31,9 +31,7 @@ function Main({userInstance, userSession}) {
           <p>Decentralized Document Management and File-Sharing System</p>
         </div>
         <div className="navlink-tabs">
-          <NavLink onClick={()=>setHomeActive(true)} className={()=> homeActive ? "navlink-component-active" : "navlink-component" } to="/main"> Home</NavLink>
-          <NavLink onClick={()=> setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="Add-Document"> Add Document</NavLink>
-          <NavLink onClick={()=> setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="Teams"> Favorite</NavLink>
+          <NavLink onClick={()=> setHomeActive(true)} className={()=> homeActive ? "navlink-component-active" : "navlink-component" } to="/main"> Home</NavLink>          <NavLink onClick={()=> setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="Teams"> Favorite</NavLink>
           <NavLink onClick={()=> setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="Teams"> Protected Documents</NavLink>
           <NavLink onClick={()=> setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="Teams"> Teams</NavLink>
           <NavLink onClick={()=> setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="Teams"> Connect To your Local Node</NavLink>

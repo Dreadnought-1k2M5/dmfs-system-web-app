@@ -1,5 +1,10 @@
+/* .home-parent-container{
+
+} */
 .home-container{
     padding: 20px;
+    overflow-y: scroll;
+    height: 82vh;
 }
 
 .top-toolbar{
@@ -13,6 +18,7 @@
     border: none;
     cursor: pointer;
     color: white;
+    font-size: 17px;
 }
 .toolbar-btn:hover{
     background-color: rgba(178, 177, 177, 0.116);
@@ -20,13 +26,14 @@
 }
 
 .table-container{
-    width: 100%;
+    width: 90%;
     background-color: rgba(255, 255, 255, 0.086);
     text-align: center;
     padding: 5px;
     border-radius: 5px;
     border: 0.5px solid white;
     border-collapse: collapse;
+    margin: auto;
 }
 
 .table-row-container {

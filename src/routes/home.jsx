@@ -1,22 +1,32 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 
+import UploadFile from "./UploadFile";
+
 import "./routes-css/home.css"
 
 function Home({userInstance}) {
   let [email, setEmail] = useState('');
-  let [fileList, setFileList] = useState([]);
-  useEffect(()=>{
-    userInstance.get('userProfile').on((data)=>setEmail(data.emailProp));
-    userInstance.get('fileNamesObject').map().once((key)=>{
-      console.log(`${key}`);
-      userInstance.get('fileObjectList').get(`${key}`).once(dataObj => setFileList(oldList => [...oldList, {filename: dataObj.filenameProperty, cid: dataObj.CID_prop}]));
-    });
+  let [fileListState, setFileListState] = useState([]);
+  let [isModalViewed, setIsModalViewed] = useState(false);
 
-/*     userInstance.get('document0.docx').on(dataObj=>{
-      console.log(dataObj.CID_prop);
-    }); */
+  function showModal(){
+    setIsModalViewed(true);
+  }
+  function hideModal(){
+    setIsModalViewed(false);
+  }
+
+  useEffect(()=>{
+    userInstance.get('userProfile').once((data)=>setEmail(data.emailProp));
   }, []);
+
+  useEffect(()=>{
+    userInstance.get('fileObjectList').map().once((key)=>{
+      console.log(key);
+      setFileListState(oldList => [...oldList, {filename: key.filenameProperty, cid: key.CID_prop}]);
+    });
+  },[])
 
 /*   async function DownloadHandle(cid){
     let cid_temp = cid;
@@ -41,9 +51,10 @@ function Home({userInstance}) {
     })
   } */
   return (
-    <div>
+    <div className="home-parent-container">
       <div className="top-toolbar">
-        <button className="toolbar-btn">Upload</button>
+        <button className="toolbar-btn" onClick={showModal}>Upload</button>
+        <UploadFile userInstance={userInstance} handleClose={hideModal} show={isModalViewed}/>
       </div>
       <div className="home-container">
             <br></br>
@@ -60,17 +71,13 @@ function Home({userInstance}) {
                   </tr>
                 </thead>
                 <tbody>
-                    {fileList.map(elem =>
+                    {fileListState.map(elem =>
                     <tr>
                       <td>{elem.filename}</td>
                       <td>{elem.cid}</td>
                       <td><button className="download-btn" onClick={async ()=>{
                         let cid_temp = elem.cid;
-                        let localFilename;
-                    
-                        await userInstance.get('fileObjectList').get(`${cid_temp}`).once(data => {
-                          localFilename = data.filenameProperty;
-                        });
+                        let localFilename = elem.filename;
                     
                         fetch(`https://${cid_temp}.ipfs.w3s.link/ipfs/${cid_temp}/${localFilename}`).then(res => {
                           let result = res.blob();
@@ -90,7 +97,8 @@ function Home({userInstance}) {
                   )}
                 </tbody>
               </table>
-          </div>
+              
+      </div>
     </div>
     
   );

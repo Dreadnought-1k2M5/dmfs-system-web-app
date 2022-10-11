@@ -1,10 +1,10 @@
 import React from "react";
-import './routes-css/add-document.css';
+import './routes-css/upload-file.css';
 import { Web3Storage } from 'web3.storage';
 
 const client = new Web3Storage({token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDdlQzY1QkMwZTU4NEFCNEFFQjdhZjMyNjdEMjI5MTZDOTQ1NUJBNkQiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjM0NTgzMzEwMTUsIm5hbWUiOiJjcDItbWluZXJ2YS1kbS1mc3MifQ.b4RKubGBnqq_x37Dm8xkocGvs05evwyS0x1U6_4CS5E'});
 
-function AddDocument({userInstance}) {
+function UploadFile({userInstance, handleClose, show}) {
 
   let fileInput = React.createRef();
 
@@ -15,11 +15,14 @@ function AddDocument({userInstance}) {
   async function HandleSubmit(event){
     event.preventDefault();
 
-    let fileName, CID;
+    let fileName, lastModdifiedVar, CID, fileFormat, exportedKey;
     const fr = new FileReader();
 
-    const getBlobType = fileInput.current.files[0].type; // get the blob type to pass it later at the Blob() constructor
-    console.log(getBlobType);
+    const getFileType = fileInput.current.files[0].type; // get the blob type to pass it later at the Blob() constructor
+    fileName = fileInput.current.files[0].name;
+    lastModdifiedVar = fileInput.current.files[0].lastModdified;
+
+    console.log(fileInput.current.files[0]);
     
     fr.readAsArrayBuffer(fileInput.current.files[0]);
 
@@ -30,16 +33,29 @@ function AddDocument({userInstance}) {
       console.log(data);
       console.log(iv);
       
-
       crypto.subtle.encrypt({ 'name': 'AES-CBC', iv }, key, data)
-      .then(encrypted => {
+      .then(async encrypted => {
           console.log(encrypted); // encrypted is an ArrayBuffer
           alert('The encrypted data is ' + encrypted.byteLength + ' bytes long'); // encrypted is an ArrayBuffer
-          const blob = new Blob([encrypted], {type: getBlobType} ) // convert encrypted arraybuffer to blob.
+          fileFormat = new File([encrypted], fileName, {type: getFileType, lastModified: lastModdifiedVar} ) // convert encrypted arraybuffer to blob.
           console.log("ENCRYPTED:");
-          console.log(blob);
+          console.log(fileFormat);
+          const fileInArray = [fileFormat]
+          exportedKey = crypto.subtle.exportKey("jwk", key);
+          console.log(exportedKey);
+
           
-          data = encrypted; // change value of data to encrypted for decrypting - this is for testing purposes only
+          const res_CID = await client.put(fileInArray);
+          
+          CID = res_CID;
+
+          await userInstance.get('fileObjectList').set(`${fileName}`).put({filenameProperty: fileName, CID_prop: CID, isEncrypted: (exportedKey ? true : false)}); // set of names - each node is an object with a file name and corresponding CID
+
+          alert("FILE ADDED");
+          window.location.reload();
+
+          //data = encrypted; // change value of data to encrypted for decrypting - this is for testing purposes only
+
           //Download blob
 /*           const aElement = document.createElement('a');
           aElement.setAttribute('download', `${fileInput.current.files[0].name}`);
@@ -52,7 +68,7 @@ function AddDocument({userInstance}) {
 
 
           //Decrypt
-          crypto.subtle.decrypt({ 'name': 'AES-CBC', iv }, key, data).then(decrypted => {
+/*        crypto.subtle.decrypt({ 'name': 'AES-CBC', iv }, key, data).then(decrypted => {
             //Convert ArrayBuffer to Blob and Download
             const blob = new Blob([decrypted], {type: getBlobType} ) // convert decrypted arraybuffer to blob.
             const aElement = document.createElement('a');
@@ -61,30 +77,32 @@ function AddDocument({userInstance}) {
             aElement.href = href;
             aElement.setAttribute('target', '_blank');
             aElement.click();
-            URL.revokeObjectURL(href);
+          }).catch(console.error);URL.revokeObjectURL(href);
+             */
             //-------------
-        }).catch(console.error);
-      })
-      .catch(console.error);
 
-/*       console.log(fr.result); */
+      }).catch(console.error);
     });
 
-/*     const res_CID = await client.put(fileInput.current.files);
+
+    //WARNING: The following code may execute first before the crypto.subtle.encrypt() "promise" process ends.
+
+/*     const res_CID = await client.put(blobFormat);
     
     fileName = fileInput.current.files[0].name;
     CID = res_CID;
 
-    userInstance.get('fileObjectList').get(`${CID}`).put({filenameProperty: fileName, CID_prop: CID});
-    userInstance.get('fileNamesObject').set(`${CID}`); // set of names - each node is an object with a file name and corresponding CID
+    userInstance.get('fileObjectList').set(`${CID}`).put({filenameProperty: fileName, CID_prop: CID, isEncrypted: (exportedKey ? true : false)}); // set of names - each node is an object with a file name and corresponding CID
     alert("FILE ADDED"); */
   }
 
+  const toggleClassname = show ? "modal modal-container" : "modal display-none";
   return (
-    <div className="top-container">
+    <div className={toggleClassname}>
       <div className="upload-container">
         <div className="title-container">
           <h3>Upload Document</h3>
+          <button onClick={handleClose}>X</button>
         </div>
         <form className="flex-upload-container" >
           <div className="flex-item1">
@@ -109,4 +127,4 @@ function AddDocument({userInstance}) {
   );
 }
 
-export default AddDocument;
+export default UploadFile;

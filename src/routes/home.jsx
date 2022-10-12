@@ -1,9 +1,18 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 
 import UploadFile from "./UploadFile";
 
 import "./routes-css/home.css"
+
+const initialState = {
+  listFiles: []
+}
+
+function reducer(state, item){
+  return {
+    listFiles: [item, ...state.listFiles]
+  }
+}
 
 function Home({userInstance}) {
   let [email, setEmail] = useState('');
@@ -26,6 +35,7 @@ function Home({userInstance}) {
       console.log(key);
       setFileListState(oldList => [...oldList, {filename: key.filenameProperty, cid: key.CID_prop}]);
     });
+
   },[])
 
 /*   async function DownloadHandle(cid){
@@ -71,6 +81,7 @@ function Home({userInstance}) {
                   </tr>
                 </thead>
                 <tbody>
+                 {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                     {fileListState.map(elem =>
                     <tr>
                       <td>{elem.filename}</td>

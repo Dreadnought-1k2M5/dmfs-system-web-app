@@ -10,9 +10,8 @@
 .top-toolbar{
     background-color: rgba(255, 255, 255, 0.086);
     height: 35px;
-    padding: 0px 0px 0px 40px; /* the 40px is for the left padding of "Create New Team" Button at team-rooms.jsx */
+    /* padding: 0px 0px 0px 40px; */ /* the 40px is for the left padding of "Create New Team" Button at team-rooms.jsx */
     display: flex;
-    justify-content: space-between;
 }
 .toolbar-btn-create-room{
     height: 100%;
@@ -21,6 +20,7 @@
     cursor: pointer;
     color: white;
     font-size: 17px;
+    margin-left: 25px;
 }
 .toolbar-btn-create-room:hover{
     background-color: rgba(178, 177, 177, 0.116);
@@ -37,3 +37,4 @@
     flex-direction: column-reverse;
     padding: 7px;
 }
+

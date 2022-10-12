@@ -16,7 +16,7 @@ import Register from './register';
 require('gun/sea');
 require('gun/lib/open.js');
 
-const gundb = GUN({peers: ['http://localhost:6100/gun']});
+const gundb = GUN({peers: ['http://localhost:6100/gun', 'https://small-rice-3744.on.fleek.co/#/']});
 const user = gundb.user().recall({sessionStorage: true});
 
 let userSessionObj = {

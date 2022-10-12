@@ -1,6 +1,8 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 import './routes-css/main.css'
+import search from '../search-icon.png'
+
 
 import { useState } from "react";
 
@@ -42,14 +44,14 @@ function Main({userInstance, userSession}) {
         <div className="top-nav-bar">
           <div className="search-box">
             <div>
-              <span>Search files: </span>
-              <input type="text" />
+              <input type="text" placeholder='Search Files'/>
+              <img src= {search} alt="" className='search-icon'/>
             </div>
             {/* Search */}
           </div>
           <div className="username-logout-box">
             <h3>Hello {username}</h3>
-            <button className="logout-btn" onClick={handleLogout}>Log out</button>
+            <button className="logout-btn" onClick={handleLogout}>Log Out</button>
           </div>
         </div>
         <div className="outlet-container">

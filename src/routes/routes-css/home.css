@@ -56,19 +56,20 @@
 
  .files {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     flex-wrap: wrap;
-    height: 160px;
+    height: 180px;
     width: 130px;
-    margin: 2%;
+    margin: 1%;
     cursor: pointer;
     align-items: center;
-    justify-content: space-around;
+    justify-content: center;
     transition: background-color 0.3s;
+    border-radius: 10px;
  }
 
  .files:hover {
-    background-color: rgba(158, 158, 158, 0.792);
+    background-color: rgba(158, 158, 158, 0.434);
  }
 
  .icon {
@@ -78,16 +79,17 @@
 
 .fileIcon {
     display: flex;
-    
+    justify-content: center;
+    align-items: center;
     flex: 2;
+    margin-top: 15px;
 }
 
 
  .filename {
     display: flex;
     word-wrap: break-word;
-    margin-left: 10px;
-    margin-right: 10px;
+    margin: 20px 10px 20px 10px;
     height: 100%;
     width: 100%;
     flex: 1;

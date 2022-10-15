@@ -4,6 +4,16 @@ import UploadFile from "./UploadFile";
 
 import "./routes-css/home.css"
 
+const initialState = {
+  listFiles: []
+}
+
+function reducer(state, item){
+  return {
+    listFiles: [item, ...state.listFiles]
+  }
+}
+
 function Home({userInstance}) {
   let [email, setEmail] = useState('');
   let [fileListState, setFileListState] = useState([]);
@@ -31,11 +41,9 @@ function Home({userInstance}) {
 /*   async function DownloadHandle(cid){
     let cid_temp = cid;
     let localFilename;
-
     await userInstance.get('fileObjectList').get(`${cid}`).on(data => {
       localFilename = data.filenameProperty;
     });
-
     fetch(`https://${cid_temp}.ipfs.w3s.link/ipfs/${cid_temp}/${localFilename}`).then(res => {
       let result = res.blob();
       console.log(result);
@@ -63,21 +71,12 @@ function Home({userInstance}) {
             </h3>
             <p>NOTE: Metadata of each file is transmitted across GUN peers, so you may see duplicates of the same file listed below.</p>
             <br></br>
-              <table className="table-container">
-                <thead className="table-row-container">
-                  <tr>
-                    <th>Name</th>
-                    <th>Content Identifier (CID)</th>
-                  </tr>
-                </thead>
-                <tbody>
+                
                  {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                     {fileListState.map(elem =>
                     <tr>
                       <td>{elem.filename}</td>
                       <td>{elem.cid}</td>
-                      {console.log("TD FIRST RENDER")}
-                      {console.log(typeof elem.filename)}
                       <td><button className="download-btn" onClick={async ()=>{
                         let cid_temp = elem.cid;
                         let localFilename = elem.filename;

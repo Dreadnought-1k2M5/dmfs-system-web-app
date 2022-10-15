@@ -64,7 +64,6 @@
     cursor: pointer;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s;
     border-radius: 10px;
  }
 

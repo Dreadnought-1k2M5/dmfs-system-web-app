@@ -4,16 +4,6 @@ import UploadFile from "./UploadFile";
 
 import "./routes-css/home.css"
 
-const initialState = {
-  listFiles: []
-}
-
-function reducer(state, item){
-  return {
-    listFiles: [item, ...state.listFiles]
-  }
-}
-
 function Home({userInstance}) {
   let [email, setEmail] = useState('');
   let [fileListState, setFileListState] = useState([]);
@@ -86,6 +76,8 @@ function Home({userInstance}) {
                     <tr>
                       <td>{elem.filename}</td>
                       <td>{elem.cid}</td>
+                      {console.log("TD FIRST RENDER")}
+                      {console.log(typeof elem.filename)}
                       <td><button className="download-btn" onClick={async ()=>{
                         let cid_temp = elem.cid;
                         let localFilename = elem.filename;

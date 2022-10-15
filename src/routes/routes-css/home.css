@@ -4,7 +4,7 @@
 .home-container{
     padding: 20px;
     overflow-y: scroll;
-    height: 82vh;
+    height: 82vh;   
 }
 
 .top-toolbar{
@@ -25,33 +25,75 @@
 
 }
 
-.table-container{
-    width: 90%;
-    background-color: rgba(255, 255, 255, 0.086);
-    text-align: center;
-    padding: 5px;
-    border-radius: 5px;
-    border: 0.5px solid white;
-    border-collapse: collapse;
-    margin: auto;
-}
-
-.table-row-container {
-    border: 1px solid white;
-}
-
-.table-row-container > tr > th{
-    padding: 10px;
-}
-
-.table-container td{
-    padding: 10px;
-}
 .download-btn{
-    padding: 5px 20px;
+    
     background-color: rgba(111, 209, 255, 0.685);
     border: 1px solid white;
     border-radius: 7px;
     cursor: pointer;
+    width: 80%;
+    height: 18%;
 }
+
+/* .flexbox-file {
+    margin: 10px;
+    height: 220px;
+    width: 220px;
+    background-color: rgba(255, 255, 255, 0.259);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 7px;  
+}
+ */
+
+ .file-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+ }
+
+ .files {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: 180px;
+    width: 130px;
+    margin: 1%;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+    border-radius: 10px;
+ }
+
+ .files:hover {
+    background-color: rgba(158, 158, 158, 0.434);
+ }
+
+ .icon {
+    width: 80px;
+    height: 80px;
+ }
+
+.fileIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 2;
+    margin-top: 15px;
+}
+
+
+ .filename {
+    display: flex;
+    word-wrap: break-word;
+    margin: 20px 10px 20px 10px;
+    height: 100%;
+    width: 100%;
+    flex: 1;
+ }
+
+
 

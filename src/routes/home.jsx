@@ -44,25 +44,6 @@ function Home({userInstance}) {
 
   },[])
 
-    
-  function fileIcon(props){
-
-      console.log("Function is Used!");
-      console.log(props.split('.').pop() == "docx");
-      if(props.split('.').pop() === "docx"){
-        return (<>
-          <img src={word} alt="wind icon" className="icon"/>           
-        </>);
-      }
-      else if(props.split('.').pop() == "pdf"){
-        return <>
-          <img src={pdf} alt="wind icon" className="icon"/>           
-        </>;
-      };
-  };
-      
-
-
 /*   async function DownloadHandle(cid){
     let cid_temp = cid;
     let localFilename;
@@ -100,13 +81,20 @@ function Home({userInstance}) {
                  {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                   <div className="file-container">
                    {fileListState.map(elem =>                 
-                        <div className="files">                                               
-                            {fileIcon(elem.filename)}
-                            {console.log(elem.filename)}
-                            {elem.filename}       
+                        <div className="files">   
+
+                            <div className="fileIcon">
+                                <img src={ (elem.filename.split('.').pop() === "docx") ? word : (elem.filename.split('.').pop() === "pdf") ? pdf : file } className='icon'/>
+                            </div>
+                            
+                            <div className="filename">
+                               <p>{elem.filename}</p>    
+                            </div>
+                                 
+                                
                             {/* {elem.cid} */}
                             
-                            <button className="download-btn" onClick={async ()=>{
+                            {/* <button className="download-btn" onClick={async ()=>{
                             let cid_temp = elem.cid;
                             let localFilename = elem.filename;
                             console.log();
@@ -123,7 +111,7 @@ function Home({userInstance}) {
                               aElement.click();
                               URL.revokeObjectURL(href);
                             })
-                          }}>Download</button>
+                          }}>Download</button> */}
                         </div>               
                     )}    
                   </div>           

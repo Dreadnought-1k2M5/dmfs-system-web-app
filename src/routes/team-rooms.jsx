@@ -29,30 +29,6 @@ function TeamRoomComponent({userInstance}){
                     <h2>Title Room</h2>
                     <p>X Members</p>
                 </div>
-                <div className="room-box">
-                    <h2>Title Room</h2>
-                    <p>X Members</p>
-                </div>
-                <div className="room-box">
-                    <h2>Title Room</h2>
-                    <p>X Members</p>
-                </div>
-                <div className="room-box">
-                    <h2>Title Room</h2>
-                    <p>X Members</p>
-                </div>
-                <div className="room-box">
-                    <h2>Title Room</h2>
-                    <p>X Members</p>
-                </div>
-                <div className="room-box">
-                    <h2>Title Room</h2>
-                    <p>X Members</p>
-                </div>
-                <div className="room-box">
-                    <h2>Title Room</h2>
-                    <p>X Members</p>
-                </div>
             </div>
         </div>
     );

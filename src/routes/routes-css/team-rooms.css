@@ -1,10 +1,11 @@
 .rooms-flex-container{
     display: flex;
     flex-direction: row;
-    width: 80%;
+    width: 90%;
     height: 70vh;
-/*     background-color: red; */
-    margin: auto;
+/*     background-color: red;
+ */    margin: auto;
+    margin-top: 20px;
     flex-wrap: wrap;
 }
 .top-toolbar{

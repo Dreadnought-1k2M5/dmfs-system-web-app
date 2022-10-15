@@ -173,7 +173,7 @@
 }
 
 .outlet-container{
-    background-color: rgba(39, 39, 39, 0.9);
+    background-color: rgba(19, 19, 19, 0.957);
     backdrop-filter: blur(5px);
     height: 100vh;
 /*     overflow-y: scroll; */ /* This adds a scrollbar on the right container applicable for all components */

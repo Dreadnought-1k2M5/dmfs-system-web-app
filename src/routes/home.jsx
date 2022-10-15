@@ -4,15 +4,13 @@ import UploadFile from "./UploadFile";
 
 import "./routes-css/home.css"
 
-const initialState = {
-  listFiles: []
-}
+import "./routes-css/home.css"
 
-function reducer(state, item){
-  return {
-    listFiles: [item, ...state.listFiles]
-  }
-}
+import word from '../ms-word.png'
+
+import pdf from '../pdf.png'
+
+import file from '../file.png'
 
 function Home({userInstance}) {
   let [email, setEmail] = useState('');
@@ -73,33 +71,42 @@ function Home({userInstance}) {
             <br></br>
                 
                  {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
-                    {fileListState.map(elem =>
-                    <tr>
-                      <td>{elem.filename}</td>
-                      <td>{elem.cid}</td>
-                      <td><button className="download-btn" onClick={async ()=>{
-                        let cid_temp = elem.cid;
-                        let localFilename = elem.filename;
-                    
-                        fetch(`https://${cid_temp}.ipfs.w3s.link/ipfs/${cid_temp}/${localFilename}`).then(res => {
-                          let result = res.blob();
-                          console.log(result);
-                          return result;
-                        }).then(res => {
-                          const aElement = document.createElement('a');
-                          aElement.setAttribute('download', `${localFilename}`);
-                          const href = URL.createObjectURL(res);
-                          aElement.href = href;
-                          aElement.setAttribute('target', '_blank');
-                          aElement.click();
-                          URL.revokeObjectURL(href);
-                        })
-                      }}>Download File</button></td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-              
+                  <div className="file-container">
+                   {fileListState.map(elem =>                 
+                        <div className="files">   
+
+                            <div className="fileIcon">
+                                <img src={ (elem.filename.split('.').pop() === "docx") ? word : (elem.filename.split('.').pop() === "pdf") ? pdf : file } className='icon'/>
+                            </div>
+                            
+                            <div className="filename">
+                               <p>{elem.filename}</p>    
+                            </div>
+                                 
+                                
+                            {/* {elem.cid} */}
+                            
+                            {/* <button className="download-btn" onClick={async ()=>{
+                            let cid_temp = elem.cid;
+                            let localFilename = elem.filename;
+                            console.log();
+                            fetch(`https://${cid_temp}.ipfs.w3s.link/ipfs/${cid_temp}/${localFilename}`).then(res => {
+                              let result = res.blob();
+                              console.log(result);
+                              return result;
+                            }).then(res => {
+                              const aElement = document.createElement('a');
+                              aElement.setAttribute('download', `${localFilename}`);
+                              const href = URL.createObjectURL(res);
+                              aElement.href = href;
+                              aElement.setAttribute('target', '_blank');
+                              aElement.click();
+                              URL.revokeObjectURL(href);
+                            })
+                          }}>Download</button> */}
+                        </div>               
+                    )}    
+                  </div>           
       </div>
     </div>
     

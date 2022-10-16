@@ -15,6 +15,7 @@ import GUN from 'gun';
 import Register from './register';
 require('gun/sea');
 require('gun/lib/open.js');
+require('gun/lib/unset') // Manually require gun.unset() to remove item(s) on gun
 
 const gundb = GUN({peers: ['http://localhost:6100/gun', 'https://boiling-spire-00043.herokuapp.com/gun', window.location.origin + '/gun']});
 const user = gundb.user().recall({sessionStorage: true});
@@ -34,7 +35,7 @@ root.render(
             <Route path='/main' element={<Main userInstance={user} userSession={userSessionObj}/>}>
               <Route index element={<Home userInstance={user}/>} />
               <Route path='upload' element={<UploadFile userInstance={user}/>} />
-              <Route path='Teams' element={<TeamRoomComponent userInstance={user} />} />
+              <Route path='Teams' element={<TeamRoomComponent gunInstance={gundb} userInstance={user} />} />
             </Route>
         </Routes>
       </div>

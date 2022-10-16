@@ -5,7 +5,7 @@ import CreateRoom from "./modal-components/CreateRoom";
 
 import './routes-css/team-rooms.css';
 
-function TeamRoomComponent({userInstance}){
+function TeamRoomComponent({gunInstance, userInstance}){
     let [isModalViewed, setIsModalViewed] = useState(false);
     function showModal(){
         setIsModalViewed(true);
@@ -22,7 +22,7 @@ function TeamRoomComponent({userInstance}){
             <div className="top-toolbar">
                 <button className="toolbar-btn-create-room" onClick={showModal}>Create New Team</button>
                 <button className="toolbar-btn-create-room" >Join Team</button>
-                <CreateRoom handleClose={hideModal} show={isModalViewed} />
+                <CreateRoom gunInstance={gunInstance} handleClose={hideModal} show={isModalViewed} />
             </div>
             <div className="rooms-flex-container">
                 <div className="room-box" onClick={event}>

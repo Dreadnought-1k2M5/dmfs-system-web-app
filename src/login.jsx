@@ -49,7 +49,7 @@ export default function Login({userInstance, userSession}){
                             </label>
                         </div>
                         <div className="login-register-form-submit-container">
-                            <input type="button" value="Sign In" onClick={handleSubmit} />
+                            <input type="button" className="login-register-css" value="Sign In" onClick={handleSubmit} />
                         </div>
                     </div>
                     <div className="login-register-form-submit-container-link-container">

@@ -12,6 +12,10 @@ import pdf from '../pdf.png'
 
 import file from '../file.png'
 
+import ContextMenu from "./ContextMenu";
+
+
+
 function Home({userInstance}) {
   let [email, setEmail] = useState('');
   let [fileListState, setFileListState] = useState([]);
@@ -36,6 +40,8 @@ function Home({userInstance}) {
 
   },[])
 
+  
+
 /*   async function DownloadHandle(cid){
     let cid_temp = cid;
     let localFilename;
@@ -56,13 +62,35 @@ function Home({userInstance}) {
       URL.revokeObjectURL(href);
     })
   } */
+
+   const [isContextMenu, setContextMenu] = useState(false);
+
+   const rightClick = (e) => {  
+     e.preventDefault();
+     console.log('Right clicked');
+     setContextMenu(true); 
+   }
+
+   function clickAny(e){
+    if(isContextMenu && e.type === 'click'){
+      setContextMenu(false);
+    }
+   }
+    function scrollWhileRC(e) {
+     if(isContextMenu){
+       setContextMenu(false);
+     }
+    }
+
+   
+
   return (
-    <div className="home-parent-container">
+    <div className="home-parent-container" onClick={clickAny}  >
       <div className="top-toolbar">
         <button className="toolbar-btn" onClick={showModal}>Upload</button>
         <UploadFile userInstance={userInstance} handleClose={hideModal} show={isModalViewed}/>
       </div>
-      <div className="home-container">
+      <div className="home-container" onScroll={scrollWhileRC}>
             <br></br>
             <h3>
               My Documents:
@@ -73,8 +101,10 @@ function Home({userInstance}) {
                  {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                   <div className="file-container">
                    {fileListState.map(elem =>                 
-                        <div className="files">   
+                        <div className="files" onContextMenu={rightClick} >   
 
+                            {isContextMenu && <ContextMenu/>}
+                            
                             <div className="fileIcon">
                                 <img src={ (elem.filename.split('.').pop() === "docx") ? word : (elem.filename.split('.').pop() === "pdf") ? pdf : file } className='icon'/>
                             </div>

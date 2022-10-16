@@ -60,7 +60,6 @@
     width: 130px;
     margin: 1%;
     cursor: pointer;
-
     border-radius: 10px;
  }
 
@@ -91,5 +90,47 @@
     flex: 1;
  }
 
+.ContextMenu {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    width: 130px;
+    height: 170px;
+    opacity: 1.0;
+    align-items: center;
+    background-color: rgba(158, 158, 158, 0.311);
+    backdrop-filter: blur(5px);
+    border-radius: 10px; 
+    
+}
 
+.CopyCID ,
+.Download{
+    flex: 1;
+    padding: 23.3%;
+    
+}
+.CopyCID {
+    border-top-right-radius: 10px ;
+    border-top-left-radius: 10px ;
+}
+.Download {
+    border-bottom-right-radius: 10px ;
+    border-bottom-left-radius: 10px ;
+}
+
+.CopyCID:hover {
+
+   background-color: rgb(236, 133, 133);
+   backdrop-filter: blur(5px);
+   
+   }
+
+.Download:hover {
+
+    background-color: rgb(103, 217, 99);
+    backdrop-filter: blur(5px);
+    
+    }
 

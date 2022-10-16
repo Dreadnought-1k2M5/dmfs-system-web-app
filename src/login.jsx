@@ -25,6 +25,7 @@ export default function Login({userInstance, userSession}){
                 return 0;
             }else{
                 /* document.location.reload(); */
+                console.log(at.get);
                 setIsLoggedin(true); // change state to trigger useEffect to navigate to main
                 userSession.isLoggedIn = true; // set to true so that when it renders the main.jsx, it doesn't redirect back to login.jsx
             }

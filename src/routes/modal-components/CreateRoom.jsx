@@ -16,9 +16,18 @@ function CreateRoom({gunInstance, handleClose, show}){
         let uuid_group = uuidv4().concat("-timestamp-" + Date.now().toString());
         setGroupUUID(uuid_group);
     }
-    function handleCreateRoom(){
-/*         alert(groupName + "\n" + "UUID-Date: " + groupUUID);
-        gunInstance.get(groupUUID).get("roomName").put({}) */
+    async function handleCreateRoom(){
+        let chatroomName = "CHATROOM-".concat(groupUUID);
+        let member = "members-".concat(groupUUID);
+        let filesCID = "files-metadata-".concat(groupUUID);
+        let listEncryptedShare = "list-encrypted-share".concat(groupUUID);
+
+        await gunInstance.get(groupUUID).get("room-name").put(groupName);
+        await gunInstance.get(groupUUID).get("uuid-date").put(groupUUID);
+
+        await gunInstance.get(groupUUID).get(chatroomName); // use SEA to encrypt content/message
+        await gunInstance.get(groupUUID).get(filesCID) //gun.get(setnode).set(filename).put{filenameProperty: fileName, CID_prop: CID, isEncrypted: (exportedKey ? true : false), jsonKey: exportedKey}
+        await gunInstance.get(groupUUID).get(listEncryptedShare); //(gun.get.set.put || gun.get ) {forUser: “querty1”, share: enc}
     }
 
     return(

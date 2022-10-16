@@ -49,7 +49,7 @@ function UploadFile({userInstance, handleClose, show}) {
           
           CID = res_CID;
 
-          await userInstance.get('fileObjectList').set(`${fileName}`).put({filenameProperty: fileName, CID_prop: CID, isEncrypted: (exportedKey ? true : false)}); // set of names - each node is an object with a file name and corresponding CID
+          await userInstance.get('fileObjectList').set(`${fileName}`).put({filenameProperty: fileName, CID_prop: CID, isEncrypted: (exportedKey ? true : false), jsonKey: exportedKey}); // set of names - each node is an object with a file name and corresponding CID
 
           alert("FILE ADDED");
           window.location.reload();

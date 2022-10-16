@@ -7,6 +7,13 @@ import './routes-css/team-rooms.css';
 
 function TeamRoomComponent({gunInstance, userInstance}){
     let [isModalViewed, setIsModalViewed] = useState(false);
+
+    let [roomList, setRoomList] = useState([]);
+
+    useEffect(()=>{
+        setRoomList()
+    }, []);
+
     function showModal(){
         setIsModalViewed(true);
     }
@@ -17,6 +24,8 @@ function TeamRoomComponent({gunInstance, userInstance}){
     function event(){
         alert("CLICKED");
     }
+
+    
     return (
         <div>
             <div className="top-toolbar">
@@ -30,6 +39,8 @@ function TeamRoomComponent({gunInstance, userInstance}){
                     <p>X Members</p>
                 </div>
             </div>
+
+
         </div>
     );
 }

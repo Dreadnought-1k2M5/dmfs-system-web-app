@@ -20,13 +20,12 @@
     color: white;
     font-size: 17px;
 }
-.toolbar-btn:hover{
+.toolbar-home-btn:hover{
     background-color: rgba(178, 177, 177, 0.116);
 
 }
 
 .download-btn{
-    
     background-color: rgba(111, 209, 255, 0.685);
     border: 1px solid white;
     border-radius: 7px;

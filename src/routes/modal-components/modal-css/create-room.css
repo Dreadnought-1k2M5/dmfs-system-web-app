@@ -24,8 +24,10 @@
 }
 
 .display-none{
+
     display: none;
 }
+
 @keyframes create-room-container-animation{
     /* space from bottom */
 /*     25% {bottom: 75px;     background-color: rgba(255, 255, 255, 0);}
@@ -33,11 +35,14 @@
     75% {bottom: 25px;     background-color: rgba(255, 255, 255, 0.186);}
     100% {bottom: 0px;     background-color: rgba(255, 255, 255, 0.329);} */
 
-    from { bottom: 40px; background-color: rgba(255, 255, 255, 0); }
-    to { bottom: 0px; background-color: rgba(255, 255, 255, 0.329);}
+    from { bottom: 40px;     background-color: rgba(111, 209, 255, 0.264); }
+    to { bottom: 0px;     background-color: rgba(111, 209, 255, 0.878);
+    }
 }
+
+
 .create-room-container{
-    background-color: rgba(255, 255, 255, 0.329);
+    background-color: rgba(111, 209, 255, 0.878);
     width: 35%;
     height: 28%;
     border-radius: 20px;
@@ -47,6 +52,8 @@
     animation-name: create-room-container-animation;
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
+    color: rgb(41, 41, 41);
+
 }
 
 .group-name-span{
@@ -68,6 +75,7 @@
 }
 .create-room-container > .create-room-form > .flex-item0{
     padding-bottom: 25px;
+    flex-shrink: 1;
 }
 .create-room-container > .create-room-form > .flex-item0 > input[type="text"]{
     width: 60%;
@@ -77,20 +85,30 @@
 .create-room-container > .create-room-form > .flex-item1{
     align-self: center;
     justify-self: end;
+    padding: 10px;
+    flex-shrink: 2;
 }
-.create-room-container > .create-room-form > .flex-item1 > input[type="submit"]{
-    padding: 7px 17px;
-    border-radius: 10px;
-    cursor: pointer;
-}
+
 
 .create-room-button{
     padding: 4px 22px;
     font-size: 15px;
     border-radius: 8px;
+    cursor: pointer;
+    color: rgb(41, 41, 41);
+    text-decoration: none;
+    display: block;
+    background-color: rgb(218, 218, 218);
 }
 .UUID-label-css{
     margin-top: 20px;
+    font-size: 13px;
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+}
+.UUID-label-css > p{
+    width: 108px;
 }
 .UUID-label-css > b{
     color: rgb(134, 255, 54);

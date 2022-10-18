@@ -1,45 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useReducer } from "react";
 import { useEffect } from "react";
 
 import CreateRoom from "./modal-components/CreateRoom";
 
+import ListRoomsComponent from "./team-rooms-sub-components/list-rooms";
+
 import './routes-css/team-rooms.css';
 
-function TeamRoomComponent({gunInstance, userInstance}){
+
+/* function reducerHandler(currentState, newRoom){
+    return { rooms: [...currentState.rooms, newRoom ] }
+} */
+
+function TeamRoomComponent({roomUUIDObj, gunInstance, userInstance}){
     let [isModalViewed, setIsModalViewed] = useState(false);
 
-    let [roomList, setRoomList] = useState([]);
+    //let [roomList, dispatch] = useReducer(reducerHandler, {rooms: []});
 
-    useEffect(()=>{
-        setRoomList()
-    }, []);
-
+/*     useEffect(()=>{
+        userInstance.get('my_team_rooms').map().once((key)=>{
+            dispatch({roomName: key.nameOfRoom, roomUUID: key.uuidOfRoom});        })
+    }, []); */
     function showModal(){
         setIsModalViewed(true);
     }
     function hideModal(){
         setIsModalViewed(false);
     }
-    
-    function event(){
-        alert("CLICKED");
+    function hideModalAfterCreatedRoom(){
+        setIsModalViewed(false);
     }
-
     
     return (
         <div>
             <div className="top-toolbar">
                 <button className="toolbar-btn-create-room" onClick={showModal}>Create New Team</button>
                 <button className="toolbar-btn-create-room" >Join Team</button>
-                <CreateRoom gunInstance={gunInstance} handleClose={hideModal} show={isModalViewed} />
-            </div>
-            <div className="rooms-flex-container">
-                <div className="room-box" onClick={event}>
-                    <h2>Title Room</h2>
-                    <p>X Members</p>
-                </div>
+                <CreateRoom roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideModal} handleCloseAfterRoomCreated={hideModalAfterCreatedRoom} show={isModalViewed} />
             </div>
 
+            <ListRoomsComponent roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} />
 
         </div>
     );

@@ -12,6 +12,9 @@ import pdf from '../pdf.png'
 
 import file from '../file.png'
 
+import Menu from './Menu.jsx'
+
+
 function Home({userInstance}) {
   let [email, setEmail] = useState('');
   let [fileListState, setFileListState] = useState([]);
@@ -36,6 +39,8 @@ function Home({userInstance}) {
 
   },[])
 
+  
+
 /*   async function DownloadHandle(cid){
     let cid_temp = cid;
     let localFilename;
@@ -56,13 +61,32 @@ function Home({userInstance}) {
       URL.revokeObjectURL(href);
     })
   } */
+
+  const [isMenu, setMenu] = useState(()=>false)
+  const [isActive, setActive] = useState({
+    activeIndex: 0
+  })
+  const showMenu = (event, index) => {
+    event.preventDefault();
+    setActive({...isActive, activeIndex: index});
+    console.log(index)   
+    setMenu(true);
+  }
+  const hideMenu = () => {
+    setMenu(false);
+  }
+
+  
+  
+  
+
   return (
-    <div className="home-parent-container">
+    <div className="home-parent-container"  onClick={hideMenu} >
       <div className="top-toolbar">
         <button className="toolbar-btn" onClick={showModal}>Upload</button>
         <UploadFile userInstance={userInstance} handleClose={hideModal} show={isModalViewed}/>
       </div>
-      <div className="home-container">
+      <div className="home-container" onScroll={hideMenu}>
             <br></br>
             <h3>
               My Documents:
@@ -72,9 +96,11 @@ function Home({userInstance}) {
                 
                  {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                   <div className="file-container">
-                   {fileListState.map(elem =>                 
-                        <div className="files">   
+                   {fileListState.map((elem, index) =>                 
+                        <div className='files' key={index} onContextMenu={event => showMenu(event, index)}>   
 
+                            {index === isActive.activeIndex &&isMenu && <Menu cid={elem.cid}/>}
+                            
                             <div className="fileIcon">
                                 <img src={ (elem.filename.split('.').pop() === "docx") ? word : (elem.filename.split('.').pop() === "pdf") ? pdf : file } className='icon'/>
                             </div>
@@ -82,13 +108,10 @@ function Home({userInstance}) {
                             <div className="filename">
                                <p>{elem.filename}</p>    
                             </div>
-                                 
-                                
-                            {/* {elem.cid} */}
-                            
+
                             {/* <button className="download-btn" onClick={async ()=>{
-                            let cid_temp = elem.cid;
-                            let localFilename = elem.filename;
+                            let cid_temp = elem.cid
+                            let localFilename = elem.filename
                             console.log();
                             fetch(`https://${cid_temp}.ipfs.w3s.link/ipfs/${cid_temp}/${localFilename}`).then(res => {
                               let result = res.blob();
@@ -103,7 +126,8 @@ function Home({userInstance}) {
                               aElement.click();
                               URL.revokeObjectURL(href);
                             })
-                          }}>Download</button> */}
+                          }}>Download</button>  */}
+                                                                                                                                                                            
                         </div>               
                     )}    
                   </div>           

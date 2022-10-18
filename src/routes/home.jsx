@@ -12,8 +12,7 @@ import pdf from '../pdf.png'
 
 import file from '../file.png'
 
-import ContextMenu from "./ContextMenu";
-
+import Menu from './Menu.jsx'
 
 
 function Home({userInstance}) {
@@ -63,34 +62,31 @@ function Home({userInstance}) {
     })
   } */
 
-   const [isContextMenu, setContextMenu] = useState(false);
+  const [isMenu, setMenu] = useState(()=>false)
+  const [isActive, setActive] = useState({
+    activeIndex: 0
+  })
+  const showMenu = (event, index) => {
+    event.preventDefault();
+    setActive({...isActive, activeIndex: index});
+    console.log(index)   
+    setMenu(true);
+  }
+  const hideMenu = () => {
+    setMenu(false);
+  }
 
-   const rightClick = (e) => {  
-     e.preventDefault();
-     console.log('Right clicked');
-     setContextMenu(true); 
-   }
-
-   function clickAny(e){
-    if(isContextMenu && e.type === 'click'){
-      setContextMenu(false);
-    }
-   }
-    function scrollWhileRC(e) {
-     if(isContextMenu){
-       setContextMenu(false);
-     }
-    }
-
-   
+  
+  
+  
 
   return (
-    <div className="home-parent-container" onClick={clickAny}  >
+    <div className="home-parent-container"  onClick={hideMenu} >
       <div className="top-toolbar">
         <button className="toolbar-btn" onClick={showModal}>Upload</button>
         <UploadFile userInstance={userInstance} handleClose={hideModal} show={isModalViewed}/>
       </div>
-      <div className="home-container" onScroll={scrollWhileRC}>
+      <div className="home-container" onScroll={hideMenu}>
             <br></br>
             <h3>
               My Documents:
@@ -100,10 +96,10 @@ function Home({userInstance}) {
                 
                  {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                   <div className="file-container">
-                   {fileListState.map(elem =>                 
-                        <div className="files" onContextMenu={rightClick} >   
+                   {fileListState.map((elem, index) =>                 
+                        <div className='files' key={index} onContextMenu={event => showMenu(event, index)}>   
 
-                            {isContextMenu && <ContextMenu/>}
+                            {index === isActive.activeIndex &&isMenu && <Menu cid={elem.cid}/>}
                             
                             <div className="fileIcon">
                                 <img src={ (elem.filename.split('.').pop() === "docx") ? word : (elem.filename.split('.').pop() === "pdf") ? pdf : file } className='icon'/>
@@ -112,13 +108,10 @@ function Home({userInstance}) {
                             <div className="filename">
                                <p>{elem.filename}</p>    
                             </div>
-                                 
-                                
-                            {/* {elem.cid} */}
-                            
+
                             {/* <button className="download-btn" onClick={async ()=>{
-                            let cid_temp = elem.cid;
-                            let localFilename = elem.filename;
+                            let cid_temp = elem.cid
+                            let localFilename = elem.filename
                             console.log();
                             fetch(`https://${cid_temp}.ipfs.w3s.link/ipfs/${cid_temp}/${localFilename}`).then(res => {
                               let result = res.blob();
@@ -133,7 +126,8 @@ function Home({userInstance}) {
                               aElement.click();
                               URL.revokeObjectURL(href);
                             })
-                          }}>Download</button> */}
+                          }}>Download</button>  */}
+                                                                                                                                                                            
                         </div>               
                     )}    
                   </div>           

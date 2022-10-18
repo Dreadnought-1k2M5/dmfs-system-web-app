@@ -8,17 +8,18 @@ import { v4 as uuidv4 } from 'uuid';
 import { SEA } from "gun";
 import { NavLink } from "react-router-dom";
 
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show, handleCloseAfterRoomCreated}){
     let [groupName, setGroupName] = useState('');
     let [groupUUID, setGroupUUID] = useState('');
     let [seaChatObj, setseaChatObj] = useState({});
-    
+    const navigate = useNavigate();
+
     const toggleClassname = show ? "modal modal-create-room-container" : "modal display-none";
 
     function generateUUID(){
-        let uuid_group = uuidv4().concat("-timestamp-" + Date.now().toString());
+        let uuid_group = uuidv4().concat("_timestamp_" + Date.now().toString());
         setGroupUUID(uuid_group);
         setseaChatObj(SEA.pair()); // SEA used to encrypt/decrypt messages (public-private keys)
     }
@@ -44,14 +45,14 @@ function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show,
         let alias, epub, seaPriv;
         await userInstance.get("alias").once((data)=> alias = data);
         await userInstance.get("epub").once((data) => epub = data);
-        await gunInstance.get(groupUUID).get(memberList).set({ "user-alias": alias, "user-epub": epub, "chatroom-sea": seaChatObj});
+        await gunInstance.get(groupUUID).get(memberList).set({ "user_Alias": alias, "user_Epub": epub, "chatroom_Sea": seaChatObj});
 
         // Insert UUID-Date property name into your own user graph
         let roomName;
         await gunInstance.get(groupUUID).get("room_name").once(data=> roomName = data)
         await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID});
         roomUUIDObj.roomUUIDProperty = groupUUID;
-        handleCloseAfterRoomCreated();
+        navigate('room');
     }
 
     return(

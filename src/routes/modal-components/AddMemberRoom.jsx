@@ -54,7 +54,7 @@ function AddMemberModal({gunInstance, userInstance, handleClose, show, handleClo
                         </div>
                         <div className="label-input-box">
                             <p>{userAlias}</p>
-                            <label>User Encrypted: <b>{epubUser}</b></label>                        </div>
+                        </div>
                     </div>
                     <div>
                         <button onClick={handleCheckUser}>Add User</button>

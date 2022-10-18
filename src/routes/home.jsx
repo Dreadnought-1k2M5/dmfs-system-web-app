@@ -14,11 +14,22 @@ import file from '../file.png'
 
 import Menu from './Menu.jsx'
 
+/* const initialState = {
+  rooms: []
+}
+
+
+function reducerHandler(currentState, newRoom){
+  return {  rooms: [newRoom, ...currentState.rooms]  }
+} */
 
 function Home({userInstance}) {
   let [email, setEmail] = useState('');
   let [fileListState, setFileListState] = useState([]);
   let [isModalViewed, setIsModalViewed] = useState(false);
+
+  //let [fileLists, dispatch] = useReducer(reducerHandler, initialState);    
+
 
   function showModal(){
     setIsModalViewed(true);
@@ -32,13 +43,12 @@ function Home({userInstance}) {
   }, []);
 
   useEffect(()=>{
-    userInstance.get('fileObjectList').map().once((key)=>{
+    userInstance.get('fileObjectList').map().on((key)=>{
       console.log(key);
       setFileListState(oldList => [...oldList, {filename: key.filenameProperty, cid: key.CID_prop}]);
     });
 
   },[])
-
   
 
 /*   async function DownloadHandle(cid){
@@ -76,9 +86,6 @@ function Home({userInstance}) {
     setMenu(false);
   }
 
-  
-  
-  
 
   return (
     <div className="home-parent-container"  onClick={hideMenu} >
@@ -96,6 +103,7 @@ function Home({userInstance}) {
                 
                  {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                   <div className="file-container">
+
                    {fileListState.map((elem, index) =>                 
                         <div className='files' key={index} onContextMenu={event => showMenu(event, index)}>   
 

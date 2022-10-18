@@ -55,7 +55,7 @@
 .sidebar{
     height: 100%;
     background-color: rgba(39, 39, 39, 0.6);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
     color: rgb(255, 255, 255);
     width: 100%;
 /*     animation-name: initialAnimation;
@@ -173,8 +173,8 @@
 }
 
 .outlet-container{
-    background-color: rgba(19, 19, 19, 0.957);
-    backdrop-filter: blur(5px);
+    background-color: rgba(13, 13, 13, 0.94);
+    backdrop-filter: blur(10px);
     height: 100vh;
 /*     overflow-y: scroll; */ /* This adds a scrollbar on the right container applicable for all components */
 }

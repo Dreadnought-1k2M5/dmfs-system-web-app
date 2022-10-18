@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./room-component.css";
 import AddMemberModal from "../modal-components/AddMemberRoom";
@@ -6,9 +6,11 @@ import AddMemberModal from "../modal-components/AddMemberRoom";
 function RoomComponent({gunInstance, userInstance, roomUUIDObj}){
     let [isAddUserModalViewed, setIsAddUserModalViewed] = useState(false);
 
-    let roomName;
-    gunInstance.get(roomUUIDObj.roomUUIDProperty).get("room_name").once(data => roomName = data);
-
+    let [roomName, setRoomName] = useState('');
+    useEffect(()=>{
+        gunInstance.get(roomUUIDObj.roomUUIDProperty).get("room_name").once(data => setRoomName(data));
+        console.log("ROOM COMPONENT");
+    }, [])
     function showModal(){
         setIsAddUserModalViewed(true);
     }

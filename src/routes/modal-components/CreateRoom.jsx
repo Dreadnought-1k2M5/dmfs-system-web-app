@@ -15,7 +15,7 @@ function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show,
     let [groupUUID, setGroupUUID] = useState('');
     let [seaChatObj, setseaChatObj] = useState({});
     
-    const toggleClassname = show ? "modal modal-container" : "modal display-none";
+    const toggleClassname = show ? "modal modal-create-room-container" : "modal display-none";
 
     function generateUUID(){
         let uuid_group = uuidv4().concat("-timestamp-" + Date.now().toString());

@@ -1,4 +1,4 @@
-.modal-container{
+.modal-add-member-container{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -25,4 +25,62 @@
 
 .display-none{
     display: none;
+}
+
+
+@keyframes create-room-container-animation{
+    /* space from bottom */
+/*     25% {bottom: 75px;     background-color: rgba(255, 255, 255, 0);}
+    50% {bottom: 50px;     background-color: rgba(255, 255, 255, 0.125);}
+    75% {bottom: 25px;     background-color: rgba(255, 255, 255, 0.186);}
+    100% {bottom: 0px;     background-color: rgba(255, 255, 255, 0.329);} */
+
+    from { bottom: 40px;     background-color: rgba(111, 209, 255, 0.264); }
+    to { bottom: 0px;     background-color: rgba(111, 209, 255, 0.878);
+    }
+}
+
+
+.add-member-modal-box{
+    background-color: rgba(111, 209, 255, 0.878);
+    width: 35%;
+    height: 48%;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    position: relative;
+    animation-name: create-room-container-animation;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    color: rgb(41, 41, 41);
+
+}
+.add-member-modal-box > .exit-box{
+    display: flex;
+    flex-direction: row-reverse;
+}
+.add-user-form{
+    width: 90%;
+
+    margin: auto;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.label-input-box{
+    display: flex;
+    align-items: flex-start;
+}
+
+.add-user-form > .label-input-box > label{
+    width: 120px;
+    align-self: center;
+
+}
+.add-user-form > .label-input-box > input[type="text"] {
+    width: 60%;
+    flex-grow: 5fr;
+    height: 15px;
+    align-self: center;
 }

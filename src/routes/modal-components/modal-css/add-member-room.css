@@ -1,4 +1,4 @@
-.modal-create-room-container{
+.modal-add-member-container{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -24,9 +24,9 @@
 }
 
 .display-none{
-
     display: none;
 }
+
 
 @keyframes create-room-container-animation{
     /* space from bottom */
@@ -41,10 +41,10 @@
 }
 
 
-.create-room-container{
+.add-member-modal-box{
     background-color: rgba(111, 209, 255, 0.878);
     width: 35%;
-    height: 28%;
+    height: 48%;
     border-radius: 20px;
     backdrop-filter: blur(5px);
     padding: 10px;
@@ -55,61 +55,32 @@
     color: rgb(41, 41, 41);
 
 }
-
-.group-name-span{
-    font-weight: 100;
-}
-
-.create-room-container > div{
+.add-member-modal-box > .exit-box{
     display: flex;
     flex-direction: row-reverse;
 }
-.create-room-container > .create-room-form{
+.add-user-form{
+    width: 90%;
+
+    margin: auto;
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
-    width: 95%;
-    height: 72%;
-    margin: auto;
-    margin-top: 6px;
     justify-content: space-between;
 }
-.create-room-container > .create-room-form > .flex-item0{
-    padding-bottom: 25px;
-    flex-shrink: 1;
-}
-.create-room-container > .create-room-form > .flex-item0 > input[type="text"]{
-    width: 60%;
-    height: 15px;
-}
-
-.create-room-container > .create-room-form > .flex-item1{
-    align-self: center;
-    justify-self: end;
-    padding: 10px;
-    flex-shrink: 2;
-}
-
-
-.create-room-button{
-    padding: 4px 22px;
-    font-size: 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    color: rgb(41, 41, 41);
-    text-decoration: none;
-    display: block;
-    background-color: rgb(218, 218, 218);
-}
-.UUID-label-css{
-    margin-top: 20px;
-    font-size: 13px;
+.label-input-box{
     display: flex;
-    width: 100%;
     align-items: flex-start;
 }
-.UUID-label-css > p{
-    width: 108px;
+
+.add-user-form > .label-input-box > label{
+    width: 120px;
+    align-self: center;
+
 }
-.UUID-label-css > b{
-    color: rgb(134, 255, 54);
+.add-user-form > .label-input-box > input[type="text"] {
+    width: 60%;
+    flex-grow: 5fr;
+    height: 15px;
+    align-self: center;
 }

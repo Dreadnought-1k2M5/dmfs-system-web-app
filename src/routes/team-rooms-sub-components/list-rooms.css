@@ -1,0 +1,48 @@
+.rooms-flex-container{
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    height: 70vh;
+/*     background-color: red;
+ */    margin: auto;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    overflow-y: scroll;
+}
+
+.rooms-flex-container > .room-box{
+    margin: 10px;
+    height: 200px;
+    width: 200px;
+    background-color: rgba(111, 209, 255, 0.878);
+    border-radius: 12px;
+    cursor: auto;
+    padding: 30px;
+    padding-bottom: 15px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    word-break: break-all;
+    transition: 0.3s;
+}
+.rooms-flex-container > .room-box:hover{
+    background-color: rgba(255, 111, 178, 0.878);
+
+}
+.navlink-css{
+    text-decoration: none;
+    display: block;
+    color: rgb(41, 41, 41);
+    flex-grow: 2;
+}
+.navlink-css > h2 {
+    text-align: center;
+}
+.room-box > div{
+/*     background-color: red;
+ */}
+.room-box > div > p {
+    font-size: 12px;
+    flex-grow: 0.5;
+}

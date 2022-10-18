@@ -82,7 +82,7 @@ export default function Register({userInstance, userSession}){
                             </label>
                         </div>
                         <div className="login-register-form-submit-container">
-                            <input type="button" value="Register" onClick={handleSubmit} />
+                            <input className="login-register-css" type="button" value="Register" onClick={handleSubmit} />
                         </div>
                     </div>
                 </div>

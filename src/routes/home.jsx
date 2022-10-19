@@ -43,9 +43,9 @@ function Home({userInstance}) {
   }, []);
 
   useEffect(()=>{
-    userInstance.get('fileObjectList').map().on((key)=>{
+    userInstance.get('fileObjectList').map().once((key)=>{
       console.log(key);
-      setFileListState(oldList => [...oldList, {filename: key.filenameProperty, cid: key.CID_prop}]);
+      setFileListState(oldList => [...oldList, {filenameWithNoWhiteSpace: key.filenameWithNoWhiteSpace ,filename: key.filenameProperty, cid: key.CID_prop, fileKey: key.fileKey, iv: key.iv, fileType: key.fileType}]);
     });
 
   },[])
@@ -107,11 +107,11 @@ function Home({userInstance}) {
                    {fileListState.map((elem, index) =>                 
                         <div className='files' key={index} onContextMenu={event => showMenu(event, index)}>   
 
-                            {index === isActive.activeIndex &&isMenu && <Menu cid={elem.cid}/>}
+                            {index === isActive.activeIndex &&isMenu && <Menu fileElement={elem} />}
                             
                             <div className="fileIcon">
                                 <img src={ (elem.filename.split('.').pop() === "docx") ? word : (elem.filename.split('.').pop() === "pdf") ? pdf : file } className='icon'/>
-                            </div>
+                             </div>
                             
                             <div className="filename">
                                <p>{elem.filename}</p>    

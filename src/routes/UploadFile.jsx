@@ -15,13 +15,14 @@ function UploadFile({userInstance, handleClose, show}) {
   async function HandleSubmit(event){
     event.preventDefault();
 
-    let fileName, lastModdifiedVar, CID, fileFormat, exportedKey;
+    let fileName, fileNameNoWhiteSpace, lastModdifiedVar, CID, fileFormat, exportedKey;
     const fr = new FileReader();
 
     const getFileType = fileInput.current.files[0].type; // get the blob type to pass it later at the Blob() constructor
     fileName = fileInput.current.files[0].name;
+    fileNameNoWhiteSpace = fileInput.current.files[0].name.replaceAll(" ", "");
     lastModdifiedVar = fileInput.current.files[0].lastModdified;
-
+    
     console.log(fileInput.current.files[0]);
     
     fr.readAsArrayBuffer(fileInput.current.files[0]);
@@ -37,21 +38,28 @@ function UploadFile({userInstance, handleClose, show}) {
       .then(async encrypted => {
           console.log(encrypted); // encrypted is an ArrayBuffer
           alert('The encrypted data is ' + encrypted.byteLength + ' bytes long'); // encrypted is an ArrayBuffer
-          fileFormat = new File([encrypted], fileName, {type: getFileType, lastModified: lastModdifiedVar} ) // convert encrypted arraybuffer to blob.
+          fileFormat = new File([encrypted], fileNameNoWhiteSpace, {type: getFileType, lastModified: lastModdifiedVar} ) // convert encrypted arraybuffer to blob.
           console.log("ENCRYPTED:");
           console.log(fileFormat);
-          const fileInArray = [fileFormat]
-          exportedKey = crypto.subtle.exportKey("jwk", key);
-          console.log(exportedKey);
+          console.log("KEY USED TO ENCRYPT FILE");
+          console.log(key);
+          const fileInArray = [fileFormat];
 
-          
+          //Export CryptoKey in a JSON web key format
+          let exportedKey = await crypto.subtle.exportKey("jwk", key);
+          let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
+          console.log(parsedExportedKey);
+          let parsedInitializationVector = JSON.stringify(iv);
+          console.log(parsedInitializationVector);
+
+
           const res_CID = await client.put(fileInArray);
           
           CID = res_CID;
 
 /*           let obj = userInstance.get("obj").put({filenameProperty: fileName, CID_prop: CID, jsonKey: exportedKey}); */
 
-          await userInstance.get('fileObjectList').set(`${fileName}`).put({filenameProperty: fileName, CID_prop: CID, jsonKey: exportedKey}); // set of names - each node is an object with a file name and corresponding CID
+          await userInstance.get('fileObjectList').set(`${fileName}`).put({filenameProperty: fileName, filenameWithNoWhiteSpace: fileNameNoWhiteSpace, CID_prop: CID, fileKey: parsedExportedKey, iv: parsedInitializationVector, fileType: getFileType}); // set of names - each node is an object with a file name and corresponding CID
           alert("FILE ADDED");
           window.location.reload();
 

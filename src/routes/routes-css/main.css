@@ -58,18 +58,27 @@
     backdrop-filter: blur(10px);
     color: rgb(255, 255, 255);
     width: 100%;
-/*     animation-name: initialAnimation;
-    animation-duration: 1s; */
+    animation-name: sidebarAnimation;
+    animation-duration: 0.4s;
+    animation-timing-function: ease-out;
+    position: relative;
+
 }
 
-/* @keyframes initialAnimation {
-    0%{
-        width: 0%;
+@keyframes sidebarAnimation {
+    from{
+        background-color: rgba(39, 39, 39, 0);
+        backdrop-filter: blur(0px);
+        right: 150px;
     }
-    100%{
-        width: 100%;
+    to{
+        background-color: rgba(39, 39, 39, 0.6);
+        backdrop-filter: blur(10px);
+        right: 0px;
     }
-} */
+}
+
+
 
 .top-nav-bar{
     background-color: rgb(25, 25, 25);
@@ -177,5 +186,19 @@
     backdrop-filter: blur(10px);
     height: 100vh;
 /*     overflow-y: scroll; */ /* This adds a scrollbar on the right container applicable for all components */
+    animation-name: outletContainerAnimation;
+    animation-duration: 0.9s;
+    animation-timing-function: ease-out;
 }
 
+@keyframes outletContainerAnimation{
+    from {
+        background-color: rgba(13, 13, 13, 0);
+        backdrop-filter: blur(0px);
+
+    }
+    to{
+        background-color: rgba(13, 13, 13, 0.94);
+        backdrop-filter: blur(10px);
+    }
+}

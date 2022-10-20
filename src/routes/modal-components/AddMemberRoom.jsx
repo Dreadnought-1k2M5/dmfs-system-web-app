@@ -12,33 +12,59 @@ import { Navigate } from "react-router-dom";
 
 import "./modal-css/add-member-room.css";
 
-function AddMemberModal({gunInstance, userInstance, handleClose, show, handleCloseAfterMemberAdded}){
+function AddMemberModal({uuidRoom, gunInstance, userInstance, handleClose, show, handleCloseAfterMemberAdded}){
     const toggleClassname = show ? "modal modal-add-member-container" : "modal display-none";
 
     let [userAlias, setUserAlias] = useState('');
     let [epubUser, setEpubUser] = useState('');
-
+    
     useEffect(()=>{
         
     }, [])
 
     async function handleCheckUser(){
-        console.log(userAlias);
-        let publicUserNode;
-        await gunInstance.get("~@".concat(userAlias)).on(data => {
-            publicUserNode = data;
-        });
+
+        let ownAlias;
+        userInstance.get("alias").once(data => ownAlias = data);
+        console.log(ownAlias);
+        if(userAlias === ownAlias){
+            alert("You can't add your own username!\nTry a different user");
+            return;
+        }
+
+        let publicUserNode = await gunInstance.get("~@".concat(userAlias));
+        console.log(publicUserNode);
+        if(publicUserNode === undefined){
+            alert("USER DOESN'T EXIST\nTRY AGAIN");
+            return;
+        }
+
+
         delete publicUserNode._;
 
+        //public key of the user being added.
         let getUserPublicKey = Object.keys(publicUserNode)[0].substring(1); //remove '~' and extract public key
         console.log(getUserPublicKey);
 
         //Query user graph of a user that contains encrypted public key
         let user = await gunInstance.user(getUserPublicKey);
+        console.log(user);
         console.log(user.epub);
 
-    }
 
+        const generateKey = SEA.secret(user.epub, userInstance._.sea);
+        let tempRoomSEAPair;
+        //Get the encrypted copy of the SEA.pair of the room in your own user graph
+        userInstance.get("my_team_rooms").get(uuidRoom).once(async data =>{
+            tempRoomSEAPair = data.roomSEA;            
+        })
+                    
+        //decrypt the encrypted copy of SEA.pair of the room.
+        let decryptedSEAPair = await SEA.decrypt(tempRoomSEAPair, userInstance._.sea);
+
+
+    }
+    
     return (
         <div className={toggleClassname}>
             <div className="add-member-modal-box">

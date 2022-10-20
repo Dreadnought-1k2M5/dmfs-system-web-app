@@ -7,6 +7,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj}){
     let [isAddUserModalViewed, setIsAddUserModalViewed] = useState(false);
 
     let [roomName, setRoomName] = useState('');
+    let [uuidRoom, setUUIDRoom] = useState('');
     useEffect(()=>{
         gunInstance.get(roomUUIDObj.roomUUIDProperty).get("room_name").once(data => setRoomName(data));
         console.log("ROOM COMPONENT");
@@ -22,7 +23,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj}){
     }
     return (
         <div>
-            <AddMemberModal gunInstance={gunInstance} userInstance={userInstance} handleClose={hideModal} show={isAddUserModalViewed} handleCloseAfterMemberAdded={hideModalAfterCreatedRoom}></AddMemberModal>
+            <AddMemberModal uuidRoom={uuidRoom} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideModal} show={isAddUserModalViewed} handleCloseAfterMemberAdded={hideModalAfterCreatedRoom}></AddMemberModal>
             <div className="top-toolbar-room">
                 <button className="toolbar-btn-create-room" onClick={(e)=> {e.preventDefault(); showModal();}}>Add a user</button>
                 <button className="toolbar-btn-create-room" >Upload a document</button>

@@ -39,18 +39,22 @@ function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show,
         await gunInstance.get(groupUUID).get(chatroomName); // use SEA to encrypt content/message
         await gunInstance.get(groupUUID).get(filesCID) //gun.get(setnode).set(filename).put{filenameProperty: fileName, CID_prop: CID, isEncrypted: (exportedKey ? true : false), jsonKey: exportedKey}
         await gunInstance.get(groupUUID).get(listEncryptedShare); //(gun.get.set.put || gun.get ) {forUser: “querty1”, share: enc}
-        
+
+
+        let encryptedSEAObj = await SEA.encrypt(seaChatObj, userInstance._.sea); // encrypt copy of room's SEA pair using my own SEA unique as the account.
 
         // Insert your account to the groupUUID->memberList Node
         let alias, epub, seaPriv;
         await userInstance.get("alias").once((data)=> alias = data);
         await userInstance.get("epub").once((data) => epub = data);
-        await gunInstance.get(groupUUID).get(memberList).set({ "user_Alias": alias, "user_Epub": epub, "chatroom_Sea": seaChatObj});
+
+        //Insert myself in the memberList node. without needing to put the encrypted copy of the SEA.pair() of the room
+        await gunInstance.get(groupUUID).get(memberList).set({ "user_Alias": alias, "user_Epub": epub});
 
         // Insert UUID-Date property name into your own user graph
         let roomName;
         await gunInstance.get(groupUUID).get("room_name").once(data=> roomName = data)
-        await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID});
+        await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID, roomSEA: encryptedSEAObj});
         roomUUIDObj.roomUUIDProperty = groupUUID;
         navigate('room');
     }

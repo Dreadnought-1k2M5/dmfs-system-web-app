@@ -10,6 +10,7 @@ import Home from './routes/home';
 import UploadFile from './routes/UploadFile';
 import TeamRoomComponent from './routes/team-rooms';
 import RoomComponent from './routes/team-rooms-sub-components/room-component';
+import VersionControlComponent from './routes/version-control';
 
 /* import App from './App'; */
 import GUN from 'gun';
@@ -36,7 +37,7 @@ root.render(
       <div>
         <Routes>
             <Route path='/' element={<Login userInstance={user} userSession={userSessionObj}/>} />
-            <Route path="/register" element={<Register userInstance={user} userSession={userSessionObj}/>} />
+            <Route path="/register" element={<Register gunInstance={gundb} userInstance={user} userSession={userSessionObj}/>} />
             <Route path='/main' element={<Main userInstance={user} userSession={userSessionObj}/>}>
               <Route index element={<Home userInstance={user}/>} />
               <Route path='upload' element={<UploadFile userInstance={user}/>} />
@@ -44,7 +45,7 @@ root.render(
               
               {/* Cannot embed this route inside a route witn <TeamRoomComponent> */}
               <Route path='Teams/room' element={<RoomComponent gunInstance={gundb} userInstance={user} roomUUIDObj={roomUUIDObj}/>} />
-
+              <Route path='audit' element={<VersionControlComponent gunInstance={gundb} userInstance={user}/>} />
             </Route>
         </Routes>
       </div>

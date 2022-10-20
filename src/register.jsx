@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import './login-register.css'
 
-export default function Register({userInstance, userSession}){
+export default function Register({gunInstance, userInstance, userSession}){
     let [username, setUsername] = useState('');
     let [password, setPassword] = useState('');
     let [email, setEmail] = useState('');
@@ -22,18 +22,20 @@ export default function Register({userInstance, userSession}){
         }
     });
     function handleSubmit(){
-        console.log(`${username} ${password}`)
+        console.log(`${username} ${password}`);
+        let isAliasAlreadyExist = false;
         userInstance.create(username, password, function(ack){
-            if(ack){
+            if(ack.pub){
                 console.log(`USER CREATED!\n Public key: ${ack.pub}`);
                 initialAuth();
-            }else{
-                alert("Wrong username or password!");
+            }else if (ack.err){
+                alert(`${ack.err}\nPlease Try A Different Username.`);
                 return 0;
             }
 
         });
     }
+
     function initialAuth(){
         userInstance.auth(username, password, function(at){
             if(at.err){

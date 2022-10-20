@@ -49,7 +49,7 @@ function UploadFile({userInstance, handleClose, show}) {
           let exportedKey = await crypto.subtle.exportKey("jwk", key);
           let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
           console.log(parsedExportedKey);
-          let parsedInitializationVector = JSON.stringify(iv);
+          let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv));
           console.log(parsedInitializationVector);
 
 
@@ -59,7 +59,15 @@ function UploadFile({userInstance, handleClose, show}) {
 
 /*           let obj = userInstance.get("obj").put({filenameProperty: fileName, CID_prop: CID, jsonKey: exportedKey}); */
 
-          await userInstance.get('fileObjectList').set(`${fileName}`).put({filenameProperty: fileName, filenameWithNoWhiteSpace: fileNameNoWhiteSpace, CID_prop: CID, fileKey: parsedExportedKey, iv: parsedInitializationVector, fileType: getFileType}); // set of names - each node is an object with a file name and corresponding CID
+          await userInstance.get('fileObjectList').set(`${fileName}`).put({
+            filenameProperty: fileName, 
+            filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+            CID_prop: CID, 
+            fileKey: parsedExportedKey, 
+            iv: parsedInitializationVector, 
+            fileType: getFileType
+          }); // set of names - each node is an object with a file name and corresponding CID
+
           alert("FILE ADDED");
           window.location.reload();
 

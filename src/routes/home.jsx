@@ -90,7 +90,7 @@ function Home({userInstance}) {
   return (
     <div className="home-parent-container"  onClick={hideMenu} >
       <div className="top-toolbar">
-        <button className="toolbar-btn" onClick={showModal}>Upload</button>
+        <button className="toolbar-upload-btn" onClick={showModal}>Upload</button>
         <UploadFile userInstance={userInstance} handleClose={hideModal} show={isModalViewed}/>
       </div>
       <div className="home-container" onScroll={hideMenu}>
@@ -110,31 +110,13 @@ function Home({userInstance}) {
                             {index === isActive.activeIndex &&isMenu && <Menu fileElement={elem} />}
                             
                             <div className="fileIcon">
-                                <img src={ (elem.filename.split('.').pop() === "docx") ? word : (elem.filename.split('.').pop() === "pdf") ? pdf : file } className='icon'/>
+                              {console.log(elem.fileType)}
+                                <img src={ (elem.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (elem.fileType === "application/pdf") ? pdf : file } className='icon'/>
                              </div>
                             
                             <div className="filename">
                                <p>{elem.filename}</p>    
                             </div>
-
-                            {/* <button className="download-btn" onClick={async ()=>{
-                            let cid_temp = elem.cid
-                            let localFilename = elem.filename
-                            console.log();
-                            fetch(`https://${cid_temp}.ipfs.w3s.link/ipfs/${cid_temp}/${localFilename}`).then(res => {
-                              let result = res.blob();
-                              console.log(result);
-                              return result;
-                            }).then(res => {
-                              const aElement = document.createElement('a');
-                              aElement.setAttribute('download', `${localFilename}`);
-                              const href = URL.createObjectURL(res);
-                              aElement.href = href;
-                              aElement.setAttribute('target', '_blank');
-                              aElement.click();
-                              URL.revokeObjectURL(href);
-                            })
-                          }}>Download</button>  */}
                                                                                                                                                                             
                         </div>               
                     )}    

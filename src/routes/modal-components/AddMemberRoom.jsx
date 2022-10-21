@@ -12,57 +12,85 @@ import { Navigate } from "react-router-dom";
 
 import "./modal-css/add-member-room.css";
 
-function AddMemberModal({uuidRoom, gunInstance, userInstance, handleClose, show, handleCloseAfterMemberAdded}){
+function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, show, handleCloseAfterMemberAdded}){
     const toggleClassname = show ? "modal modal-add-member-container" : "modal display-none";
 
     let [userAlias, setUserAlias] = useState('');
     let [epubUser, setEpubUser] = useState('');
+    let [roomContext, setRoomContext] = useState('');
     
     useEffect(()=>{
-        
-    }, [])
+        gunInstance.get(uuidRoomObj.roomUUIDProperty).get("room_name").once(data =>{
+            setRoomContext(data);
+        });
+
+    }, []);
 
     async function handleCheckUser(){
 
         let ownAlias;
-        userInstance.get("alias").once(data => ownAlias = data);
-        console.log(ownAlias);
+        let myEpub = await userInstance._.sea.epub;
+
+        await userInstance.get("alias").once(data => ownAlias = data);
+
         if(userAlias === ownAlias){
             alert("You can't add your own username!\nTry a different user");
             return;
         }
 
+        //Get public user object of the new member (non-encrypted pubkey)
         let publicUserNode = await gunInstance.get("~@".concat(userAlias));
-        console.log(publicUserNode);
+
         if(publicUserNode === undefined){
             alert("USER DOESN'T EXIST\nTRY AGAIN");
             return;
         }
 
-
-        delete publicUserNode._;
+        delete publicUserNode._; // Delete '_' to access the non-encrypted public key
 
         //public key of the user being added.
         let getUserPublicKey = Object.keys(publicUserNode)[0].substring(1); //remove '~' and extract public key
-        console.log(getUserPublicKey);
 
-        //Query user graph of a user that contains encrypted public key
+        //Query user graph of a new member that contains encrypted public key
         let user = await gunInstance.user(getUserPublicKey);
-        console.log(user);
-        console.log(user.epub);
+        
+        // Get new member's epub
+        let epubKey = user.epub;
 
-
-        const generateKey = SEA.secret(user.epub, userInstance._.sea);
-        let tempRoomSEAPair;
         //Get the encrypted copy of the SEA.pair of the room in your own user graph
-        userInstance.get("my_team_rooms").get(uuidRoom).once(async data =>{
-            tempRoomSEAPair = data.roomSEA;            
+        let decryptedSEAPair;
+
+        await userInstance.get("my_team_rooms").map(async data => {
+            delete data._;
+
+
+            //Check if the current iteration's nameOfRoom property matches the room you are in
+            if (data.nameOfRoom === uuidRoomObj.roomName){
+
+                console.group(data.roomSEA);
+                decryptedSEAPair = await SEA.decrypt(data.roomSEA, userInstance._.sea);
+
+            }
+
+        });
+
+        //Generate new key for the new member
+        const generateKey = await SEA.secret(user.epub, userInstance._.sea);
+        console.log(generateKey);
+        const encryptedSEAKey = await SEA.encrypt(decryptedSEAPair, generateKey);
+        console.log(typeof myEpub);
+        console.log(encryptedSEAKey);
+
+        //Insert into the public memberList.
+        await gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).set({ "user_Alias": userAlias, "user_Epub": epubKey, "keyPairCopy": encryptedSEAKey, "AddedByFriend": ownAlias, "friendEpub": myEpub })
+        
+        console.log("MEMBER LIST");
+        await gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).map().on(data => {
+            console.log(data);
         })
-                    
-        //decrypt the encrypted copy of SEA.pair of the room.
-        let decryptedSEAPair = await SEA.decrypt(tempRoomSEAPair, userInstance._.sea);
-
-
+        //Insert into 
+/*         
+ */
     }
     
     return (
@@ -90,4 +118,5 @@ function AddMemberModal({uuidRoom, gunInstance, userInstance, handleClose, show,
         </div>
     )
 }
+
 export default AddMemberModal;

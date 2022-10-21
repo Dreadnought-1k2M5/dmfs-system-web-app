@@ -6,8 +6,9 @@
  */    color: #f6f6f6;
     height: 100vh;
     background-image: url('../../background.png'); 
-    background-repeat: no-repeat;
     background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     overflow: hidden;
 }
 
@@ -59,7 +60,7 @@
     color: rgb(255, 255, 255);
     width: 100%;
     animation-name: sidebarAnimation;
-    animation-duration: 0.4s;
+    animation-duration: 0.7s;
     animation-timing-function: ease-out;
     position: relative;
 
@@ -86,7 +87,22 @@
     justify-content: space-between;
     padding: 7px;
     height: 4%;
+    animation-name: topNavBarAnimation;
+    animation-duration: 0.4s;
+    animation-timing-function: ease-out;
+    position: relative;
 }
+@keyframes topNavBarAnimation {
+    from{
+        background-color: rgba(25, 25, 25, 0);
+        bottom: 50px;
+    }
+    to{
+        background-color: rgb(25, 25, 25);
+        bottom: 0px;
+    }
+}
+
 
 .username-logout-box{
     display: flex;
@@ -146,10 +162,25 @@
 .title-subtitle-box{
     padding: 10px;
     background-color: rgb(25, 25, 25);
-    backdrop-filter: blur(5px);
+    animation-name: titleSubtitleBoxAnimation;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    position: relative;
 }
+
+@keyframes titleSubtitleBoxAnimation {
+    from {
+        background-color: rgba(25, 25, 25, 0);
+    }
+    to{
+        background-color: rgb(25, 25, 25);
+
+    }
+}
+
 .title-subtitle-box > h1{
     font-size: 25px;
+    
 }
 .title-subtitle-box > p{
     font-size: 12px;
@@ -168,6 +199,10 @@
 .navlink-component:hover{
     background-color: rgba(255, 255, 255, 0.221);
 }
+
+
+
+
 .navlink-component-active{
     text-decoration: none;
     font-size: 14px;
@@ -176,18 +211,21 @@
     margin: 10px 0px;
     color: rgb(36, 36, 36);
     background-color: rgb(111, 209, 255);
+
 }
+
+
 .navlink-tabs{
     margin-top: 50px;
 }
 
 .outlet-container{
-    background-color: rgba(13, 13, 13, 0.94);
+    background-color: rgba(13, 13, 13, 0.977);
     backdrop-filter: blur(10px);
     height: 100vh;
 /*     overflow-y: scroll; */ /* This adds a scrollbar on the right container applicable for all components */
     animation-name: outletContainerAnimation;
-    animation-duration: 0.9s;
+    animation-duration: 0.6s;
     animation-timing-function: ease-out;
 }
 
@@ -198,7 +236,7 @@
 
     }
     to{
-        background-color: rgba(13, 13, 13, 0.94);
+        background-color: rgba(13, 13, 13, 0.977);
         backdrop-filter: blur(10px);
     }
 }

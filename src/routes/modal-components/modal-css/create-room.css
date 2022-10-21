@@ -108,8 +108,10 @@
     align-items: flex-start;
 }
 .UUID-label-css > p{
-    width: 108px;
+    width: 90px;
 }
 .UUID-label-css > b{
-    color: rgb(134, 255, 54);
+    color: rgb(169, 255, 112);
+    word-break: break-all;
+    width: 60%;
 }

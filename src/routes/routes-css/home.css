@@ -11,8 +11,9 @@
     background-color: rgba(255, 255, 255, 0.086);
     height: 35px;
     padding: 0px 10px 0px 10px;
+
 }
-.toolbar-btn{
+.toolbar-upload-btn{
     height: 100%;
     background-color: rgba(178, 177, 177, 0);
     border: none;
@@ -20,7 +21,9 @@
     color: white;
     font-size: 17px;
 }
-.toolbar-home-btn:hover{
+
+
+.toolbar-upload-btn:hover{
     background-color: rgba(178, 177, 177, 0.116);
 
 }
@@ -64,15 +67,32 @@
     margin: 1%;
     cursor: pointer;
     border-radius: 10px;
+    
  }
 
  .files:hover {
     background-color: rgba(158, 158, 158, 0.311);
  }
 
+ @keyframes fileIconAnimation {
+   from{
+      width: 0px;
+      height: 0px;
+   }
+   to{
+      width: 80px;
+      height: 80px;
+   }
+}
+
+
  .icon {
     width: 80px;
     height: 80px;
+    animation-name: fileIconAnimation;
+    animation-duration: 0.4s;
+    animation-timing-function: ease-out;
+    position: relative;
  }
 
 .fileIcon {
@@ -92,6 +112,28 @@
     width: 100%;
     flex: 1;
  }
+
+.filename > p{
+   font-size: 14px;
+   animation-name: filenameAnimation;
+   animation-duration: 1.4s;
+   animation-timing-function: ease-out;
+   position: relative;
+   color: rgba(255, 255, 255, 0.907);
+}
+
+ @keyframes filenameAnimation {
+   from{
+      color: rgba(255, 255, 255, 0);
+
+
+   }
+   to{
+      color: rgba(255, 255, 255, 0.907);
+
+   }
+}
+ 
 
  .Menu {
     position: absolute

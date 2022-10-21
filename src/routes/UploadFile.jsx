@@ -71,33 +71,6 @@ function UploadFile({userInstance, handleClose, show}) {
           alert("FILE ADDED");
           window.location.reload();
 
-          //data = encrypted; // change value of data to encrypted for decrypting - this is for testing purposes only
-
-          //Download blob
-/*           const aElement = document.createElement('a');
-          aElement.setAttribute('download', `${fileInput.current.files[0].name}`);
-          const href = URL.createObjectURL(blob);
-          aElement.href = href;
-          aElement.setAttribute('target', '_blank');
-          aElement.click();
-          URL.revokeObjectURL(href); */
-          //-------------
-
-
-          //Decrypt
-/*        crypto.subtle.decrypt({ 'name': 'AES-CBC', iv }, key, data).then(decrypted => {
-            //Convert ArrayBuffer to Blob and Download
-            const blob = new Blob([decrypted], {type: getBlobType} ) // convert decrypted arraybuffer to blob.
-            const aElement = document.createElement('a');
-            aElement.setAttribute('download', `${fileInput.current.files[0].name}`);
-            const href = URL.createObjectURL(blob);
-            aElement.href = href;
-            aElement.setAttribute('target', '_blank');
-            aElement.click();
-          }).catch(console.error);URL.revokeObjectURL(href);
-             */
-            //-------------
-
       }).catch(console.error);
     });
 

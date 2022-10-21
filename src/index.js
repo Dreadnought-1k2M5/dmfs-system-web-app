@@ -27,7 +27,8 @@ let userSessionObj = {
 }
 
 let roomUUIDObj = {
-    roomUUIDProperty: ''
+    roomUUIDProperty: '',
+    roomName: ''
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

@@ -27,19 +27,10 @@ export default function JoinRoomModal({ roomUUIDObj, gunInstance, userInstance, 
 
         await userInstance.get("alias").once(alias => myAlias = alias);
 
-/*         console.log(myAlias);
-        console.log(myEpub); */
         let secretKey, decryptedSEAPair, friendEpub, keyPairCopy;
         await gunInstance.get("memberList_".concat(roomUUIDState)).map().once( async (data) =>{
             if(myAlias == data.user_Alias && data.user_Epub == myEpub){
-/*                 console.log(data);
-                console.log(data.keyPairCopy);
-                console.log(userInstance._.sea);
     
-                console.log(data.friendEpub); */
-    
-
-
                 friendEpub = data.friendEpub;
                 keyPairCopy = data.keyPairCopy;
 

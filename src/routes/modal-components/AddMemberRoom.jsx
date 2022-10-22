@@ -10,6 +10,8 @@ import { NavLink } from "react-router-dom";
 
 import { Navigate } from "react-router-dom";
 
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+
 import "./modal-css/add-member-room.css";
 
 function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, show, handleCloseAfterMemberAdded}){
@@ -98,19 +100,25 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
                 <div className="exit-box">
                     <button onClick={handleClose}>X</button>
                 </div>
+                <h2>Add a user to the group</h2>
                 <div className="add-member-modal-form">
-                    <h2>Add a user to the group</h2>
                     <div className="add-user-form">
                         <div className="label-input-box">
                             <label>User Alias (username): </label>
                             <input type="text" onChange={(e)=> setUserAlias(e.target.value)} />
                         </div>
-                        <div className="label-input-box">
-                            <p>{userAlias}</p>
+                        <div className="clipboard-box">
+                            <CopyToClipboard className="clipboard-css" text={uuidRoomObj.roomUUIDProperty} onCopy={() => this.setState({copied: true})}>
+                                <button>Copy:</button>
+                            </CopyToClipboard>
+                            <div className="label-uuid-css">
+                                <label>{uuidRoomObj.roomUUIDProperty}</label>
+                            </div>
+
                         </div>
                     </div>
-                    <div>
-                        <button onClick={handleCheckUser}>Add User</button>
+                    <div className="add-user-btn-box">
+                        <button class="add-btn" onClick={handleCheckUser}>Add User</button>
                     </div>
                 </div>
             </div>

@@ -18,3 +18,77 @@
     display: grid;
     
 }
+
+.header-box{
+    padding: 5px;
+    width: 90%;
+    margin: auto;
+}
+
+.chatroom-container{
+/*     background-color: red; */
+    width: 70%;
+    height: 250px;
+    margin: auto;
+    border: 1px solid white;
+    border-radius: 8px;
+}
+.flexbox-chatbox{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+}
+.messages > ul, li{
+    list-style-type: none;
+
+}
+
+.messages{
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    
+}
+
+.messages > ul{
+    overflow-y: scroll;
+    height: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.message-item{
+    margin-bottom: 10px;
+}
+
+.username-box{
+    width: 20px;
+    background-color: red;
+}
+
+.input-box{
+    padding: 2px;
+    width: 99%;
+    /* background-color: rgb(0, 90, 128); */
+    display: flex;
+    margin-bottom: 4px;
+}
+
+.textbox-css{
+    flex-grow: 9;
+    height: 25px;
+    font-size: 20px;
+    background-color: rgba(0, 0, 0, 0.258);
+    color: rgba(255, 255, 255, 0.745);
+}
+.send-btn-css{
+    flex-grow: 1;
+    padding: 2px 20px 2px 20px;
+    font-size: 17px;
+    cursor: pointer;
+}
+

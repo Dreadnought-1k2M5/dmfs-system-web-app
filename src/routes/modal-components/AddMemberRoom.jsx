@@ -53,44 +53,43 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
 
         //Query user graph of a new member that contains encrypted public key
         let user = await gunInstance.user(getUserPublicKey);
-        
+        console.log(user);
         // Get new member's epub
         let epubKey = user.epub;
 
-        //Get the encrypted copy of the SEA.pair of the room in your own user graph
-        let decryptedSEAPair;
+        //Get the copy of the SEA.pair of the room in your own user graph
+        let copySEAPair;
 
         await userInstance.get("my_team_rooms").map(async data => {
             delete data._;
 
-
             //Check if the current iteration's nameOfRoom property matches the room you are in
             if (data.nameOfRoom === uuidRoomObj.roomName){
-
                 console.group(data.roomSEA);
-                decryptedSEAPair = await SEA.decrypt(data.roomSEA, userInstance._.sea);
+                copySEAPair = data.roomSEA;
+                console.log("PRINT MEEE")
 
+                console.log(user.epub);
+                console.log(userInstance._.sea);
+                //Generate new key for the new member
+                const generateKey = await SEA.secret(user.epub, userInstance._.sea);
+                console.log(generateKey);
+                const encryptedSEAKey = await SEA.encrypt(copySEAPair, generateKey);
+                console.log(typeof myEpub);
+                console.log(encryptedSEAKey);
+        
+                //Insert into the public memberList.
+                gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).set({ "user_Alias": userAlias, "user_Epub": epubKey, "keyPairCopy": encryptedSEAKey, "AddedByFriend": ownAlias, "friendEpub": myEpub })
+                
+                console.log("MEMBER LIST");
+                await gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).map().on(data => {
+                    console.log(data);
+                })
             }
 
         });
 
-        //Generate new key for the new member
-        const generateKey = await SEA.secret(user.epub, userInstance._.sea);
-        console.log(generateKey);
-        const encryptedSEAKey = await SEA.encrypt(decryptedSEAPair, generateKey);
-        console.log(typeof myEpub);
-        console.log(encryptedSEAKey);
 
-        //Insert into the public memberList.
-        await gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).set({ "user_Alias": userAlias, "user_Epub": epubKey, "keyPairCopy": encryptedSEAKey, "AddedByFriend": ownAlias, "friendEpub": myEpub })
-        
-        console.log("MEMBER LIST");
-        await gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).map().on(data => {
-            console.log(data);
-        })
-        //Insert into 
-/*         
- */
     }
     
     return (

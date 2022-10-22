@@ -17,8 +17,8 @@ function ListRoomsComponent({roomUUIDObj, gunInstance, userInstance}){
     let navigate = useNavigate();
 
     useEffect(()=>{
-        userInstance.get('my_team_rooms').map().on((key)=>{
-            //console.log({roomName: key.nameOfRoom, roomUUID: key.uuidOfRoom});
+        userInstance.get('my_team_rooms').map().once((key)=>{
+            console.log({roomName: key.nameOfRoom, roomUUID: key.uuidOfRoom});
             dispatch({roomName: key.nameOfRoom, roomUUID: key.uuidOfRoom});
         })
     }, []);

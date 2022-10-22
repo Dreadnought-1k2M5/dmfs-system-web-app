@@ -9,9 +9,9 @@ import { SEA } from "gun";
 import { NavLink } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
-import { getMouseEventOptions } from "@testing-library/user-event/dist/utils";
 
-function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show, handleCloseAfterRoomCreated}){
+
+export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show}){
     let [groupName, setGroupName] = useState('');
     let [groupUUID, setGroupUUID] = useState('');
     let [seaChatObj, setseaChatObj] = useState({});
@@ -40,9 +40,9 @@ function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show,
         // Insert relevant data in the groupUUID node
         await gunInstance.get(groupUUID).get("room_name").put(groupName);
         await gunInstance.get(groupUUID).get("uuid_date").put(groupUUID);
-        await gunInstance.get(groupUUID).get(chatroomName); // use SEA to encrypt content/message
-        await gunInstance.get(groupUUID).get(filesCID) //gun.get(setnode).set(filename).put{filenameProperty: fileName, CID_prop: CID, isEncrypted: (exportedKey ? true : false), jsonKey: exportedKey}
-        await gunInstance.get(groupUUID).get(listEncryptedShare); //(gun.get.set.put || gun.get ) {forUser: “querty1”, share: enc}
+        await gunInstance.get(chatroomName); // use SEA to encrypt content/message
+        await gunInstance.get(filesCID) //gun.get(filesCID)set(filesMetadata_).put{filenameProperty: fileName, CID_prop: CID, fileKey: encrypted exportedKey}
+        await gunInstance.get(listEncryptedShare); //(gun.get.set.put || gun.get ) {forUser: “querty1”, share: enc}
 
         // Encrypt the SEA.pair() used to encrypt/decrypt chat messages
         let encryptedSEAObj = await SEA.encrypt(seaChatObj, userInstance._.sea); // encrypt copy of room's SEA pair using my own SEA unique as the account.
@@ -62,7 +62,7 @@ function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show,
         //This block is to insert data into your my_team_rooms to indicate which room you have access to.
         let roomName;
         await gunInstance.get(groupUUID).get("room_name").once(data=> roomName = data)
-        await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID, roomSEA: encryptedSEAObj});
+        await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID, roomSEA: seaChatObj});
         roomUUIDObj.roomUUIDProperty = groupUUID;
         roomUUIDObj.roomName = roomName;
         
@@ -99,5 +99,3 @@ function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show,
         </div>
     );
 }
-
-export default CreateRoom;

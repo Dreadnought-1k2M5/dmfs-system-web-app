@@ -37,7 +37,6 @@ function Main({userInstance, userSession}) {
           <NavLink onClick={()=>  setHomeActive(true) } className={()=> homeActive ? "navlink-component-active" : "navlink-component" } to="/main"> Home</NavLink>          
           <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="Teams"> Team Rooms</NavLink>
           <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="audit"> Version Control / Audit Trail</NavLink>
-          <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="x"> Connect To your Local Node</NavLink>
           
         </div> 
       </div>

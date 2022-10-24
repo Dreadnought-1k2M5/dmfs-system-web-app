@@ -29,20 +29,13 @@
 }
 
 @keyframes create-room-container-animation{
-    /* space from bottom */
-/*     25% {bottom: 75px;     background-color: rgba(255, 255, 255, 0);}
-    50% {bottom: 50px;     background-color: rgba(255, 255, 255, 0.125);}
-    75% {bottom: 25px;     background-color: rgba(255, 255, 255, 0.186);}
-    100% {bottom: 0px;     background-color: rgba(255, 255, 255, 0.329);} */
-
-    from { bottom: 40px;     background-color: rgba(111, 209, 255, 0.264); }
-    to { bottom: 0px;     background-color: rgba(111, 209, 255, 0.878);
-    }
+    from { bottom: 90px;     background-color: rgba(255, 111, 181, 0); }
+    to { bottom: 0px;        background-color: rgba(52, 191, 255, 0.47); }
 }
 
 
 .create-room-container{
-    background-color: rgba(111, 209, 255, 0.878);
+    background-color: rgba(52, 191, 255, 0.47);
     width: 35%;
     height: 28%;
     border-radius: 20px;
@@ -52,7 +45,8 @@
     animation-name: create-room-container-animation;
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
-    color: rgb(41, 41, 41);
+    color: rgb(255, 255, 255);
+
 
 }
 

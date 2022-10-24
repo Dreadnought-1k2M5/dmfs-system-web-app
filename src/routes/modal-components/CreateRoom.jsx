@@ -33,7 +33,7 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
         }
         //variables for the 4 main properties in the ROoom
         let chatroomName = "CHATROOM_".concat(groupUUID);
-        let filesCID = "filesMetadata_".concat(groupUUID);
+        let folders = "foldersMetadata_".concat(groupUUID);
         let listEncryptedShare = "listEncryptedShare_".concat(groupUUID);
         let memberList = "memberList_".concat(groupUUID);
 
@@ -41,7 +41,7 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
         await gunInstance.get(groupUUID).get("room_name").put(groupName);
         await gunInstance.get(groupUUID).get("uuid_date").put(groupUUID);
         await gunInstance.get(chatroomName); // use SEA to encrypt content/message
-        await gunInstance.get(filesCID) //gun.get(filesCID)set(filesMetadata_).put{filenameProperty: fileName, CID_prop: CID, fileKey: encrypted exportedKey}
+        await gunInstance.get(folders) //gun.get(filesCID)set(filesMetadata_).put{filenameProperty: fileName, CID_prop: CID, fileKey: encrypted exportedKey}
         await gunInstance.get(listEncryptedShare); //(gun.get.set.put || gun.get ) {forUser: “querty1”, share: enc}
 
         // Encrypt the SEA.pair() used to encrypt/decrypt chat messages

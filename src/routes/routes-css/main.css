@@ -1,7 +1,7 @@
 
 .App{
     display: grid;
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: 0.9fr 5fr;
 /*     background-color: rgb(30, 30, 30);
  */    color: #f6f6f6;
     height: 100vh;
@@ -14,13 +14,13 @@
 
 @media only screen and (max-width: 1400px) {  
     .App{
-        grid-template-columns: 1fr 4.5fr;
+        grid-template-columns: 0.9fr 4.5fr;
     }
 
 }
 @media only screen and (max-width: 1300px) {  
     .App{
-        grid-template-columns: 1fr 4fr;
+        grid-template-columns: 0.9fr 4fr;
     }
     .username-logout-box{
         background-color: red;
@@ -32,7 +32,7 @@
 
 @media only screen and (max-width: 1185px) {  
     .title-subtitle-box > h1{
-        font-size: 22px !important;
+        font-size: 19px !important;
     }
     .title-subtitle-box > p{
         font-size: 9px  !important;
@@ -60,7 +60,7 @@
     color: rgb(255, 255, 255);
     width: 100%;
     animation-name: sidebarAnimation;
-    animation-duration: 0.7s;
+    animation-duration: 0.8s;
     animation-timing-function: ease-out;
     position: relative;
 
@@ -88,7 +88,7 @@
     padding: 7px;
     height: 4%;
     animation-name: topNavBarAnimation;
-    animation-duration: 0.4s;
+    animation-duration: 0.9s;
     animation-timing-function: ease-out;
     position: relative;
 }
@@ -179,11 +179,11 @@
 }
 
 .title-subtitle-box > h1{
-    font-size: 25px;
+    font-size: 22px;
     
 }
 .title-subtitle-box > p{
-    font-size: 12px;
+    font-size: 10px;
     color: rgb(111, 209, 255);
     width: 90%;
 }
@@ -225,7 +225,7 @@
     height: 100vh;
 /*     overflow-y: scroll; */ /* This adds a scrollbar on the right container applicable for all components */
     animation-name: outletContainerAnimation;
-    animation-duration: 0.6s;
+    animation-duration: 1.3s;
     animation-timing-function: ease-out;
 }
 

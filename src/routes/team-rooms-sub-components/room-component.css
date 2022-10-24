@@ -1,8 +1,34 @@
+
+.room-top-container{
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+
+}
+
 .top-toolbar-room{
     background-color: rgba(255, 255, 255, 0.086);
     height: 31px;
     /* padding: 0px 0px 0px 40px; */ /* the 40px is for the left padding of "Create New Team" Button at team-rooms.jsx */
     display: flex;
+}
+.top-toolbar-nav-room-flex-container{
+    display: flex;
+    width: 30%;
+    justify-content: space-between;
+}
+.btn-navigate-room{
+    background-color: rgba(255, 255, 255, 0);
+    color: white;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-navigate-room:hover{
+    background-color: rgba(255, 255, 255, 0.13);
+
 }
 .toolbar-btn-add-member{
     height: 100%;
@@ -14,23 +40,45 @@
     margin-left: 25px;
 }
 
-.grid-room{
-    display: grid;
-    
-}
-
 .header-box{
-    padding: 5px;
+    padding: 12px;
     width: 90%;
     margin: auto;
+    word-break: break-all;
+    margin-bottom: 10px;
 }
 
+.documents-list-sidebar{
+    background-color: rgba(58, 58, 58, 0.26);
+    height: 100vh;
+    
+}
+.folder-list-flex-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.folder-item-css{
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    width: 100%;
+}
+.folder-item-css > p{
+    margin-left: 10px;
+}
+
+
+.folder-item-css:hover{
+    background-color: rgba(255, 255, 255, 0.273);
+    border-radius: 10px;
+}
 .chatroom-container{
-/*     background-color: red; */
+    background-color: rgb(29, 29, 29);
     width: 70%;
     height: 250px;
     margin: auto;
-    border: 1px solid white;
+    border: 0.5px solid white;
     border-radius: 8px;
 }
 .flexbox-chatbox{
@@ -92,3 +140,20 @@
     cursor: pointer;
 }
 
+
+
+@media only screen and (max-width: 1470px){
+    .btn-navigate-room{
+        background-color: rgba(255, 255, 255, 0);
+        color: white;
+        border: none;
+        font-size: 13px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+}
+@media only screen and (max-width: 1300px){
+    .folder-item-css > p{
+        font-size: 13px;
+    }
+}

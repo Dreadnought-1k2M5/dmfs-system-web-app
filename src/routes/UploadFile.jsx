@@ -109,7 +109,7 @@ function UploadFile({userInstance, handleClose, show}) {
             </div>
           </div>
           <div className="flex-item-last">
-            <button type="submit" className="submit-btn" onClick={HandleSubmit}>Upload</button>
+            <button type="submit" className="submit-btn" onClick={(e) => HandleSubmit(e)}>Upload</button>
           </div>
         </form>
       </div>

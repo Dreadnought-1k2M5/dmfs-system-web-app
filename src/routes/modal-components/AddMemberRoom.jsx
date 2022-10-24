@@ -14,7 +14,7 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import "./modal-css/add-member-room.css";
 
-function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, show, handleCloseAfterMemberAdded}){
+function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, show}){
     const toggleClassname = show ? "modal modal-add-member-container" : "modal display-none";
 
     let [userAlias, setUserAlias] = useState('');
@@ -67,7 +67,7 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
 
             //Check if the current iteration's nameOfRoom property matches the room you are in
             if (data.nameOfRoom === uuidRoomObj.roomName){
-                console.group(data.roomSEA);
+                console.log(data.roomSEA);
                 copySEAPair = data.roomSEA;
                 console.log("PRINT MEEE")
 
@@ -79,7 +79,9 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
                 const encryptedSEAKey = await SEA.encrypt(copySEAPair, generateKey);
                 console.log(typeof myEpub);
                 console.log(encryptedSEAKey);
-        
+                
+                
+
                 //Insert into the public memberList.
                 gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).set({ "user_Alias": userAlias, "user_Epub": epubKey, "keyPairCopy": encryptedSEAKey, "AddedByFriend": ownAlias, "friendEpub": myEpub })
                 
@@ -109,7 +111,7 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
                         </div>
                         <div className="clipboard-box">
                             <CopyToClipboard className="clipboard-css" text={uuidRoomObj.roomUUIDProperty} onCopy={() => this.setState({copied: true})}>
-                                <button>Copy:</button>
+                                <button>Copy Room's Unique Identifier:</button>
                             </CopyToClipboard>
                             <div className="label-uuid-css">
                                 <label>{uuidRoomObj.roomUUIDProperty}</label>
@@ -118,7 +120,7 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
                         </div>
                     </div>
                     <div className="add-user-btn-box">
-                        <button class="add-btn" onClick={handleCheckUser}>Add User</button>
+                        <button className="add-btn" onClick={handleCheckUser}>Add User</button>
                     </div>
                 </div>
             </div>

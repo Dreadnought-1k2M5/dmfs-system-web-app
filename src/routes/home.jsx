@@ -4,8 +4,6 @@ import UploadFile from "./UploadFile";
 
 import "./routes-css/home.css"
 
-import "./routes-css/home.css"
-
 import word from '../ms-word.png'
 
 import pdf from '../pdf.png'
@@ -111,7 +109,7 @@ function Home({userInstance}) {
                             
                             <div className="fileIcon">
                               {console.log(elem.fileType)}
-                                <img src={ (elem.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (elem.fileType === "application/pdf") ? pdf : file } className='icon'/>
+                                <img src={ (elem.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (elem.fileType === "application/pdf") ? pdf : file } className='icon-folder-group-component'/>
                              </div>
                             
                             <div className="filename">

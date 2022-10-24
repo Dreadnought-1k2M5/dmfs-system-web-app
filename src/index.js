@@ -11,6 +11,7 @@ import UploadFile from './routes/UploadFile';
 import TeamRoomComponent from './routes/team-rooms';
 import RoomComponent from './routes/team-rooms-sub-components/room-component';
 import VersionControlComponent from './routes/version-control';
+import FolderComponent from './routes/team-rooms-sub-components/folder-component';
 
 /* import App from './App'; */
 import GUN from 'gun';
@@ -31,6 +32,10 @@ let roomUUIDObj = {
     roomName: ''
 }
 
+let folderContext = {
+  folderName: ''
+}
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
@@ -45,8 +50,11 @@ root.render(
               <Route path='Teams' element={<TeamRoomComponent roomUUIDObj={roomUUIDObj} gunInstance={gundb} userInstance={user} />}/>
               
               {/* Cannot embed this route inside a route witn <TeamRoomComponent> */}
-              <Route path='Teams/room' element={<RoomComponent gunInstance={gundb} userInstance={user} roomUUIDObj={roomUUIDObj}/>} />
+              <Route path='Teams/room' element={<RoomComponent folderContext={folderContext} gunInstance={gundb} userInstance={user} roomUUIDObj={roomUUIDObj}/>} />
+              <Route path='Teams/room/folder' element={<FolderComponent folderContext={folderContext} gunInstance={gundb} userInstance={user} roomUUIDObj={roomUUIDObj}/>} />
+
               <Route path='audit' element={<VersionControlComponent gunInstance={gundb} userInstance={user}/>} />
+              
             </Route>
         </Routes>
       </div>

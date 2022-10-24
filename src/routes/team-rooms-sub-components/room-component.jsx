@@ -4,12 +4,9 @@ import "./room-component.css";
 import AddMemberModal from "../modal-components/AddMemberRoom";
 import UploadGroupModal from "../modal-components/UploadGroupModal";
 
-
+import { Outlet, useNavigate } from "react-router-dom";
 
 import folderIcon from "../../icons/folder.png";
-
-import { useNavigate } from "react-router-dom";
-
 
 import { SEA } from "gun";
 
@@ -33,27 +30,22 @@ const folderReducerHandler = (currentFolderState, folder) =>{
     }
 }
 
-/* async function getSEAHandler(gunInstance, userInstance, setSeaChatRoom, roomUUIDObj, roomName){
-
-    await gunInstance.get(roomUUIDObj.roomUUIDProperty).get("room_name").once(room => {
-        userInstance.get("my_team_rooms").map(async data => {
-            console.log(data.roomSEA);
-            console.log(data.nameOfRoom);
-            console.log(room)
-            if(data.nameOfRoom == room){
-                setSeaChatRoom(data.roomSEA);
-            }
-        })
-    }); 
+//Members
+const currentMemberListState = {
+    membersArray: []
 }
-    */
+const memberListReducerHandler = (currentMemberListState, member) =>{
+    return {
+        membersArray: [member, ...currentMemberListState.membersArray]
+    }
+}
 
-/*     await gunInstance.get("memberList_".concat(roomUUIDObj.roomUUIDProperty)).map().on(data =>{
-        console.log(data);
-    }) */
 
 function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
     let navigate = useNavigate();
+
+    //useReducer for members
+    const [stateMemberList, memberListDispatch] = useReducer(memberListReducerHandler, currentMemberListState);
 
     //userReducer for chat
     const [stateMessages, msgDispatch] = useReducer(msgReducerHandler, currentMsgState);
@@ -146,6 +138,22 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         return formattedFolderNames;
     }
 
+    const filteredMemberList = () =>{
+        console.log("filtered members function called")
+        const formattedMemberList = stateMemberList.membersArray.filter((value, index) => {
+            console.log(value);
+            const _value = JSON.stringify(value);
+            return (
+                index ===
+                stateMemberList.membersArray.findIndex(obj => {
+                return JSON.stringify(obj) === _value
+                })
+            )
+        })
+
+        return formattedMemberList;
+    }
+
     useEffect(()=>{
         setRoomUUID(roomUUIDObj.roomUUIDProperty);
         userInstance.get('alias').on(v => setMyAlias(v));
@@ -175,21 +183,17 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             console.log(data);
         }) */
 
+        gunInstance.get("memberList_".concat(roomUUIDObj.roomUUIDProperty)).map().on(data => {
+            console.log(data);
+            memberListDispatch({memberAlias: data.user_Alias});
+        })
+
         gunInstance.get("foldersMetadata_".concat(roomUUIDObj.roomUUIDProperty)).map().on(data =>{
             console.log(data);
             folderDispatch(data);
         })
 
-        
-
-
-
     }, []);
-
-    function navigateToFolder(folderName){
-        folderContext.folderName = folderName;
-        navigate("folder");
-    }
 
     return (
         <div>
@@ -212,7 +216,8 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
                     <div className="folder-list-flex-container">
                         {filteredFolders().map((folder, index)=>
-                            <div key={index} className="folder-item-css" onClick={() => navigateToFolder(folder)}>
+                            <div key={index} className="folder-item-css" onClick={() => {folderContext.folderName = folder; navigate("folder") } }>
+                                {console.log(folder)}
                                 <img src={folderIcon} height="33px" width="33px"></img>
                                 <p>{folder}</p>
                             </div>
@@ -220,32 +225,41 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                     </div>
                 </div>
 
+                <div>
                 <div className="chatroom-container">
-                    <main className="flexbox-chatbox">
-                        <div className='messages'>
-                            <ul>
-                                {filteredMessages().map((msg, index)=>
-                                    <li className='message-item' key={index}>
-                                        {/* For avatar */}
-                                        {/* <img alt='avatar' src={msg.avatar} /> */}
-                                        <div>
-                                            <p><b className="username-box">{msg.name}</b> - {msg.content}</p>
-                                        </div>
-                                    </li>
-                                )}
+                        <main className="flexbox-chatbox">
+                            <div className='messages'>
+                                <ul>
+                                    {filteredMessages().map((msg, index)=>
+                                        <li className='message-item' key={index}>
+                                            {/* For avatar */}
+                                            {/* <img alt='avatar' src={msg.avatar} /> */}
+                                            <div>
+                                                <p><b className="username-box">{msg.name}</b> - {msg.content}</p>
+                                            </div>
+                                        </li>
+                                    )}
 
-                            </ul>
-                        </div>
-                        <div className='input-box'>
-                            <input type="texbox-css" className="textbox-css" value={textMessage} placeholder='Type a message...' onKeyUp={e => {submitEventHandler(e)}} onChange={e => setTextMessage(e.target.value)} />
-                            <button className="send-btn-css" onClick={sendMessage}>Send</button>
-                        </div>
-                    </main>
+                                </ul>
+                            </div>
+                            <div className='input-box'>
+                                <input type="texbox-css" className="textbox-css" value={textMessage} placeholder='Type a message...' onKeyUp={e => {submitEventHandler(e)}} onChange={e => setTextMessage(e.target.value)} />
+                                <button className="send-btn-css" onClick={sendMessage}>Send</button>
+                            </div>
+                        </main>
+                    </div>
                 </div>
 
-
                 <div className="member-list-container">
-                                            
+                    <div className="member-list-box1">
+                        <h3>Members</h3>
+
+                    </div>
+                    <div className="member-list-box2"> 
+                        {filteredMemberList().map((member, index)=>
+                            <p className="member-label-css" key={index}>{member.memberAlias}</p>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

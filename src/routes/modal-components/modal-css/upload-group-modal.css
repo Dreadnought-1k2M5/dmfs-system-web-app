@@ -3,6 +3,7 @@
     justify-content: center;
     align-items: center;
     height: 100%;
+    
 }
 @keyframes modal-animation {
     from { background-color: rgba(19, 19, 19, 0); } /* background color from outlet-container at main.css */
@@ -20,6 +21,7 @@
     animation-name: modal-animation;
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
+    z-index: 9;
     
 }
 
@@ -39,7 +41,7 @@
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
     color: rgb(255, 255, 255);
-
+    z-index: 100;
 }
 
 @keyframes upload-group-container-animation {

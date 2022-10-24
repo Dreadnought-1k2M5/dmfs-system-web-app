@@ -35,24 +35,11 @@
     cursor: pointer;
     width: 80%;
     height: 18%;
-    z-index: 999;
+    z-index: 9;
 }
 .download-btn:hover{
    background-color: rebeccapurple;
 }
-
-/* .flexbox-file {
-    margin: 10px;
-    height: 220px;
-    width: 220px;
-    background-color: rgba(255, 255, 255, 0.259);
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column-reverse;
-    padding: 7px;  
-}
- */
 
  .file-container {
     display: flex;
@@ -62,7 +49,7 @@
  }
 
  .files {
-    padding: 10px;
+    padding: 7px;
     width: 130px;
     margin: 1%;
     cursor: pointer;
@@ -106,11 +93,12 @@
 
  .filename {
     display: flex;
-    word-wrap: break-word;
-    margin: 20px 10px 20px 10px;
+    margin: 20px 0px 20px 0px;
     height: 100%;
     width: 100%;
     flex: 1;
+    justify-content: center;
+    align-items: center;
  }
 
 .filename > p{
@@ -120,6 +108,7 @@
    animation-timing-function: ease-out;
    position: relative;
    color: rgba(255, 255, 255, 0.907);
+   text-align: center;
 }
 
  @keyframes filenameAnimation {

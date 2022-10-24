@@ -12,18 +12,18 @@ import file from '../file.png'
 
 import Menu from './Menu.jsx'
 
-/* const initialState = {
-  rooms: []
+const currentItemListState = {
+  items: []
 }
 
 
-function reducerHandler(currentState, newRoom){
-  return {  rooms: [newRoom, ...currentState.rooms]  }
-} */
+function itemListReducerHandler(currentItemListState, newItem){
+  return {  items: [newItem, ...currentItemListState.items]  }
+}
 
 function Home({userInstance}) {
   let [email, setEmail] = useState('');
-  let [fileListState, setFileListState] = useState([]);
+  let [itemListState, dispatchItemListState] = useReducer(itemListReducerHandler, currentItemListState)
   let [isModalViewed, setIsModalViewed] = useState(false);
 
   //let [fileLists, dispatch] = useReducer(reducerHandler, initialState);    
@@ -42,33 +42,30 @@ function Home({userInstance}) {
 
   useEffect(()=>{
     userInstance.get('fileObjectList').map().once((key)=>{
+      delete key._;
       console.log(key);
-      setFileListState(oldList => [...oldList, {filenameWithNoWhiteSpace: key.filenameWithNoWhiteSpace ,filename: key.filenameProperty, cid: key.CID_prop, fileKey: key.fileKey, iv: key.iv, fileType: key.fileType}]);
+      dispatchItemListState({filenameWithNoWhiteSpace: key.filenameWithNoWhiteSpace, filename: key.filenameProperty, cid: key.CID_prop, fileKey: key.fileKey, iv: key.iv, fileType: key.fileType});
     });
+
+
 
   },[])
-  
 
-/*   async function DownloadHandle(cid){
-    let cid_temp = cid;
-    let localFilename;
-    await userInstance.get('fileObjectList').get(`${cid}`).on(data => {
-      localFilename = data.filenameProperty;
-    });
-    fetch(`https://${cid_temp}.ipfs.w3s.link/ipfs/${cid_temp}/${localFilename}`).then(res => {
-      let result = res.blob();
-      console.log(result);
-      return result;
-    }).then(res => {
-      const aElement = document.createElement('a');
-      aElement.setAttribute('download', `${localFilename}`);
-      const href = URL.createObjectURL(res);
-      aElement.href = href;
-      aElement.setAttribute('target', '_blank');
-      aElement.click();
-      URL.revokeObjectURL(href);
+  const filteredItems = () =>{
+    console.log("filtered documents function called")
+    const filteredItemList = itemListState.items.filter((value, index) => {
+      console.log(value)
+        const _value = JSON.stringify(value);
+        return (
+            index ===
+            itemListState.items.findIndex(obj => {
+            return JSON.stringify(obj) === _value
+            })
+        )
     })
-  } */
+
+    return filteredItemList;
+  }
 
   const [isMenu, setMenu] = useState(()=>false)
   const [isActive, setActive] = useState({
@@ -101,23 +98,24 @@ function Home({userInstance}) {
                 
                  {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                   <div className="file-container">
-
-                   {fileListState.map((elem, index) =>                 
+                    {filteredItems().map((elem, index)=>
                         <div className='files' key={index} onContextMenu={event => showMenu(event, index)}>   
 
-                            {index === isActive.activeIndex &&isMenu && <Menu fileElement={elem} />}
-                            
-                            <div className="fileIcon">
-                              {console.log(elem.fileType)}
-                                <img src={ (elem.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (elem.fileType === "application/pdf") ? pdf : file } className='icon-folder-group-component'/>
-                             </div>
-                            
-                            <div className="filename">
-                               <p>{elem.filename}</p>    
-                            </div>
-                                                                                                                                                                            
-                        </div>               
-                    )}    
+                          {index === isActive.activeIndex && isMenu && <Menu fileElement={elem} />}
+                          
+                          <div className="fileIcon">
+                            {console.log(elem.fileType)}
+                              <img src={ (elem.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (elem.fileType === "application/pdf") ? pdf : file } className='icon'/>
+                          </div>
+                          
+                          <div className="filename">
+                              <p>{elem.filename}</p>    
+                          </div>
+                                                                                                                                                                          
+                      </div>   
+                    )}
+
+                    
                   </div>           
       </div>
     </div>

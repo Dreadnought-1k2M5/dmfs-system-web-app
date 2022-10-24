@@ -85,6 +85,7 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
                 //Insert into the public memberList.
                 gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).set({ "user_Alias": userAlias, "user_Epub": epubKey, "keyPairCopy": encryptedSEAKey, "AddedByFriend": ownAlias, "friendEpub": myEpub })
                 
+                handleClose();
                 console.log("MEMBER LIST");
                 await gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).map().on(data => {
                     console.log(data);

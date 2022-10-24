@@ -99,7 +99,7 @@ function UploadFile({userInstance, handleClose, show}) {
             <label>Upload File(s): </label>
             <input type="file" accept=".doc,.DOC,.docx,.DOCX,.txt,TXT" className="upload-btn-class" ref={fileInput}></input>
           </div>
-          <div className="flex-item2">
+{/*           <div className="flex-item2">
             <label>Choose Where to Pin Data:</label>
             <div className="checkbox-container">
               <input type="checkbox" name="web3storage" value="web3storage"/>
@@ -107,7 +107,7 @@ function UploadFile({userInstance, handleClose, show}) {
               <input type="checkbox" name="ipfsLocal" value="local"/>
               <label> My own IPFS node</label><br/>
             </div>
-          </div>
+          </div> */}
           <div className="flex-item-last">
             <button type="submit" className="submit-btn" onClick={(e) => HandleSubmit(e)}>Upload</button>
           </div>

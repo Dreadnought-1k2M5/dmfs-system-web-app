@@ -93,7 +93,6 @@ function Home({userInstance}) {
             <h3>
               My Documents:
             </h3>
-            <p>NOTE: Metadata of each file is transmitted across GUN peers, so you may see duplicates of the same file listed below.</p>
             <br></br>
                 
                  {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}

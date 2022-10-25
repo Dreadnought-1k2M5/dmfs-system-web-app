@@ -66,9 +66,10 @@ export default function JoinRoomModal({ roomUUIDObj, gunInstance, userInstance, 
                 <div className="exit-box">
                     <button onClick={handleClose}>X</button>
                 </div>
-                <h2>Join Room:</h2>
+
                 <div className="join-room-form">
                     <div className="flex-item0">
+                        <h2>Join Room:</h2>
                         <p className="flex-tiem0-description">Enter the Room's UUID-Date to check if you are added by a member</p>
                         <label>Group UUID: </label>
                         <input type="text" onChange={(e) => {

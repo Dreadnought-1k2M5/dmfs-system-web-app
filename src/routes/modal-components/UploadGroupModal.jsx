@@ -114,6 +114,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                 await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(inputFolderState);
 
                 alert("FILE ADDED");
+                handleClose();
                 //window.location.reload();
 
             }).catch(console.error);

@@ -22,13 +22,15 @@
 .upload-container{
     background-color: rgba(111, 209, 255, 0.267);
     width: 35%;
-    height: 25%;
+    height: 28%;
     border-radius: 20px;
     backdrop-filter: blur(5px);
     position: relative;
     animation-name: uploadFileAnimation1;
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
+    display: flex;
+    flex-direction: column;
 }
 
 @keyframes uploadFileAnimation1 {
@@ -48,17 +50,18 @@
     display: flex;
     justify-content: space-around;
     flex-direction: column;
-    height: 70%;
-    margin: 0px 20px;
+    height: 43%;
 }
-/* .flex-upload-container > .flex-item1{
-    background-color: rgb(255, 253, 212);
-} */
+.flex-upload-container > .flex-item1{
+    flex-grow: 3fr;
+}
 
 .flex-upload-container > .flex-item-last{
     display: flex;
-    width: 90%;
-    margin: auto;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1fr;
+
 }
 .upload-btn-class::file-selector-button{
     padding: 6px 17px;
@@ -67,6 +70,6 @@
 }
 
 .submit-btn{
-    padding: 10px 17px;
+    padding: 7px 15px;
     border-radius: 8px;
 }

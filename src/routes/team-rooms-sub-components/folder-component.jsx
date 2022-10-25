@@ -32,7 +32,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     let [documentSelectedState, setDocumentSelectedState] = useState({});
     
     //Track which item is selected or clicked.
-    let [itemSelected, setItemSelected] = useState({index: -1, isSelected: false});
+    let [itemSelected, setItemSelected] = useState({index: -1, isSelected: false, fileNameVar: ''});
 
     let navigate = useNavigate();
     useEffect(()=>{
@@ -72,24 +72,26 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
         return filteredDocumentList;
     }
 
-    function handleItemSelected(elem, index){
+    function handleItemSelected(elem, index, fileNameVar){
 
         //Check if an item is currently selected or not.
         if(itemSelected.isSelected){
-            setItemSelected({isSelected: false, index: -1})
+            setItemSelected({isSelected: false, index: -1, fileNameVar: elem.filename})
             setDocumentSelectedState({});
-
             //This part is for when a user tries to click a different item/document
             setDocumentSelectedState(elem); 
-            setItemSelected({isSelected: true, index: index})
+            setItemSelected({isSelected: true, index: index, fileNameVar: elem.filename})
+
         } else{
+
             setDocumentSelectedState(elem); 
-            setItemSelected({isSelected: true, index: index})
+            setItemSelected({isSelected: true, index: index,  fileNameVar: elem.filename})
         }
     }
 
 
     async function handleDownloadSharedFile(){
+        alert("Downloading file\nPlease wait for a few moments.\nYour document will download automatically");
         console.log(documentSelectedState);
         await gunInstance.get(documentSelectedState.fileNameUUID).once( async data =>{
             console.log(data);
@@ -145,12 +147,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
             
                 })
         })
-        /* 
-        
 
-
-
-         */
     }
 
     return (
@@ -162,6 +159,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                     <button className="btn-navigate-folder btn-selected">{folderContext.folderName}</button>
                 </div>
                 <div className={itemSelected.isSelected === true ? "top-toolbar-option-document" : "top-toolbar-option-document-hide"}>
+                    <p className="label-item-selected"><b>{itemSelected.fileNameVar} - </b></p>
                     <button className="btn-navigate-folder" onClick={()=> handleDownloadSharedFile()}>Download</button>
                     <button className="btn-navigate-folder" onClick={()=> navigate("/main/Teams/room")}>Delete</button>
                     <button className="btn-navigate-folder" onClick={()=> setItemSelected({isSelected: false, index: -1})}>Cancel</button>

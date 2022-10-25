@@ -73,12 +73,13 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
 
         <div className={toggleClassname}>
             <div className="create-room-container">
-                <div>
+                <div className="create-room-box-exit">
                     <button onClick={handleClose}>X</button>
                 </div>
-                <h2>Create Room: <span className="group-name-span"></span></h2>
+
                 <div className="create-room-form">
                     <div className="flex-item0">
+                        <h2>Create Room:</h2>
                         <label>Group Name: </label>
                         <input type="text" onChange={(e) => {
                             /* If textbox is empty, set groupName and groupUUID to '' */

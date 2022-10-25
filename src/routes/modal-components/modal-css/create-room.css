@@ -30,12 +30,13 @@
 
 @keyframes create-room-container-animation{
     from { bottom: 90px;     background-color: rgba(255, 111, 181, 0); }
-    to { bottom: 0px;        background-color: rgba(52, 191, 255, 0.47); }
+    to { bottom: 0px;        background-color: rgba(111, 209, 255, 0.267);
+    }
 }
 
 
 .create-room-container{
-    background-color: rgba(52, 191, 255, 0.47);
+    background-color: rgba(111, 209, 255, 0.267);
     width: 35%;
     height: 28%;
     border-radius: 20px;
@@ -47,14 +48,15 @@
     animation-timing-function: ease-out;
     color: rgb(255, 255, 255);
 
-
+    display: flex;
+    flex-direction: column;
 }
 
 .group-name-span{
     font-weight: 100;
 }
 
-.create-room-container > div{
+.create-room-container > .create-room-box-exit{
     display: flex;
     flex-direction: row-reverse;
 }
@@ -62,25 +64,29 @@
     display: flex;
     flex-direction: column;
     width: 95%;
-    height: 72%;
     margin: auto;
     margin-top: 6px;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 .create-room-container > .create-room-form > .flex-item0{
-    padding-bottom: 25px;
-    flex-shrink: 1;
+    padding-bottom: 10px;
+    flex-grow: 2;
 }
+.create-room-container > .create-room-form > .flex-item0 > h2{
+    margin-bottom: 9px;
+    font-size: 20px;
+}
+
 .create-room-container > .create-room-form > .flex-item0 > input[type="text"]{
     width: 60%;
-    height: 15px;
+    height: 13px;
 }
 
 .create-room-container > .create-room-form > .flex-item1{
     align-self: center;
-    justify-self: end;
+    justify-content: center;
     padding: 10px;
-    flex-shrink: 2;
+    flex-grow: 1;
 }
 
 

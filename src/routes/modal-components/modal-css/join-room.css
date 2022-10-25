@@ -30,12 +30,13 @@
 
 @keyframes join-room-container-animation{
     from { bottom: 90px;     background-color: rgba(255, 111, 181, 0); }
-    to { bottom: 0px;        background-color: rgba(52, 191, 255, 0.47); }
+    to { bottom: 0px;        background-color: rgba(111, 209, 255, 0.267);
+    }
 }
 
 .join-room-container{
-    background-color: rgba(52, 191, 255, 0.47);
-    width: 35%;
+    background-color: rgba(111, 209, 255, 0.267);
+    width: 45%;
     height: 31%;
     border-radius: 20px;
     backdrop-filter: blur(5px);
@@ -45,7 +46,8 @@
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
     color: rgb(255, 255, 255);    
-
+    display: flex;
+    flex-direction: column;
 }
 
 .join-room-container > .exit-box{
@@ -57,31 +59,32 @@
     display: flex;
     flex-direction: column;
     width: 95%;
-    height: 72%;
     margin: auto;
     margin-top: 6px;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 .flex-item0{
     padding-bottom: 25px;
-    flex-shrink: 1;
+    flex-grow: 2;
 }
 .flex-tiem0-description{
     width: 80%;
-    text-align: justify;
+
     margin-top: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    font-size: 14px;
 }
 
 .flex-item0 > input[type="text"]{
     width: 60%;
+    height: 13px;
 }
 
 .flex-item1{
-    align-self: center;
-    justify-self: end;
-    padding: 10px;
-    flex-shrink: 2;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-grow: 3;
 }
 
 .join-room-button{

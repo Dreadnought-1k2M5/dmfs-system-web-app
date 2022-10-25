@@ -42,7 +42,6 @@
 
 .header-box{
     padding: 12px;
-    width: 90%;
     margin: auto;
     margin-bottom: 10px;
     transition: 0.3s;
@@ -74,6 +73,7 @@
 
 .folder-item-css > p{
     margin-left: 10px;
+    font-size: 13px;
 }
 
 
@@ -173,9 +173,12 @@
         cursor: pointer;
         transition: 0.2s;
     }
+    .header-box > h2{
+        font-size: 19px;
+    }
 }
 @media only screen and (max-width: 1300px){
     .folder-item-css > p{
-        font-size: 13px;
+        font-size: 10px;
     }
 }

@@ -3,7 +3,7 @@
     display: grid;
     grid-template-columns: 0.9fr 5fr;
 /*     background-color: rgb(30, 30, 30);
- */    color: #f6f6f6;
+ */    color: #ffffffda;
     height: 100vh;
     background-image: url('../../background.png'); 
     background-size: cover;
@@ -103,11 +103,10 @@
     }
 }
 
-
 .username-logout-box{
     display: flex;
     flex-grow: 0.4;/*     width: 100%; */
-    color: white;
+    color: rgb(255, 255, 255);
     justify-content: space-between;
     align-items: center;
     

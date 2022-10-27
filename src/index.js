@@ -43,7 +43,7 @@ root.render(
         <Routes>
             <Route path='/' element={<Login userInstance={user} userSession={userSessionObj}/>} />
             <Route path="/register" element={<Register gunInstance={gundb} userInstance={user} userSession={userSessionObj}/>} />
-            <Route path='/main' element={<Main userInstance={user} userSession={userSessionObj}/>}>
+            <Route path='/main' element={<Main gunInstance={gundb} userInstance={user} userSession={userSessionObj}/>}>
               <Route index element={<Home userInstance={user}/>} />
               <Route path='upload' element={<UploadFile userInstance={user}/>} />
               <Route path='Teams' element={<TeamRoomComponent roomUUIDObj={roomUUIDObj} gunInstance={gundb} userInstance={user} />}/>

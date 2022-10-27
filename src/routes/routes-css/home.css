@@ -28,19 +28,6 @@
 
 }
 
-.download-btn{
-    background-color: rgba(111, 209, 255, 0.685);
-    border: 1px solid white;
-    border-radius: 7px;
-    cursor: pointer;
-    width: 80%;
-    height: 18%;
-    z-index: 9;
-}
-.download-btn:hover{
-   background-color: rebeccapurple;
-}
-
  .file-container {
     display: flex;
     flex-direction: row;

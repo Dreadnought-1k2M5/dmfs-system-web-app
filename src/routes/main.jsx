@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useReducer } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from 'react';
 import './routes-css/main.css'
@@ -7,24 +7,30 @@ import search from '../search-icon.png'
 
 import { useState } from "react";
 
-function Main({userInstance, userSession}) {
+
+
+function Main({gunInstance, userInstance, userSession}) {
   let navigate = useNavigate();
   let [username, setUsername] = useState('');
   let [homeActive, setHomeActive] = useState('true'); // This is for the 'Home' NavLink
 
   useEffect(()=>{
-    userInstance.get('alias').on(v => setUsername(v)); // listens to node 'alias' and pass its value to v as argument then setUsername to change state variable
+    userInstance.get('alias').on(v => setUsername(v) ); // listens to node 'alias' and pass its value to v as argument then setUsername to change state variable
     navigate('/main'); // keep in mind that current active navlinks will no longer be active when url changes
     if(!userSession.isLoggedIn){
       navigate('/');
     }
+  
+
   }, []);
+
 
   function handleLogout(){
     userInstance.leave();
     userSession.isLoggedIn = false;
     document.location.reload(); //reload to execute callback in useEffect
   }
+
 
   return (
     <div className="App">
@@ -43,10 +49,10 @@ function Main({userInstance, userSession}) {
       <div className="right-component">
         <div className="top-nav-bar">
           <div className="search-box">
-            <div>
+{/*             <div>
               <input type="text" placeholder='Search Files'/>
               <img src= {search} alt="" className='search-icon'/>
-            </div>
+            </div> */}
             {/* Search */}
           </div>
           <div className="username-logout-box">
@@ -54,6 +60,7 @@ function Main({userInstance, userSession}) {
             <button className="logout-btn" onClick={handleLogout}>Log Out</button>
           </div>
         </div>
+
         <div className="outlet-container">
           <Outlet />
         </div>

@@ -59,14 +59,36 @@ function UploadFile({userInstance, handleClose, show}) {
 
 /*           let obj = userInstance.get("obj").put({filenameProperty: fileName, CID_prop: CID, jsonKey: exportedKey}); */
 
-          await userInstance.get('fileObjectList').set(`${fileName}`).put({
+          let versionControlNode = await userInstance.get("vc_".concat(fileName)).set({ 
             filenameProperty: fileName, 
             filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
             CID_prop: CID, 
             fileKey: parsedExportedKey, 
             iv: parsedInitializationVector, 
             fileType: getFileType
-          }); // set of names - each node is an object with a file name and corresponding CID
+          })
+          //individual unique node for a document.
+          let fileNodeRef = await userInstance.get(fileName).put({
+            filenameProperty: fileName, 
+            filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+            CID_prop: CID, 
+            fileKey: parsedExportedKey, 
+            iv: parsedInitializationVector, 
+            fileType: getFileType,
+            versionControlNodeRef: versionControlNode
+          });
+
+          //Version 
+          await userInstance.get("vc_".concat(fileName)).set({ 
+            filenameProperty: fileName, 
+            filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+            CID_prop: CID, 
+            fileKey: parsedExportedKey, 
+            iv: parsedInitializationVector, 
+            fileType: getFileType
+          })
+
+          await userInstance.get('fileObjectList').set(fileNodeRef); // set of names - each node is an object with a file name and corresponding CID
 
           alert("FILE ADDED");
           window.location.reload();

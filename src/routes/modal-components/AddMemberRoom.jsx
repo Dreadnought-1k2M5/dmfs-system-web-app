@@ -81,9 +81,11 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
                 console.log(encryptedSEAKey);
                 
                 
+                //Create unique public node for user data
+                let userPublicNodeRef = await gunInstance.get(userAlias).put({ "user_Alias": userAlias, "user_Epub": epubKey, "keyPairCopy": encryptedSEAKey, "AddedByFriend": ownAlias, "friendEpub": myEpub })
 
                 //Insert into the public memberList.
-                gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).set({ "user_Alias": userAlias, "user_Epub": epubKey, "keyPairCopy": encryptedSEAKey, "AddedByFriend": ownAlias, "friendEpub": myEpub })
+                gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).set(userPublicNodeRef);
                 
                 handleClose();
                 console.log("MEMBER LIST");

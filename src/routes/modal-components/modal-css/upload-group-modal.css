@@ -31,8 +31,8 @@
 
 .upload-group-modal-box{
     background-color: rgba(111, 209, 255, 0.267);
-    width: 40%;
-    height: 60%;
+    width: 38%;
+    height: 75%;
     border-radius: 20px;
     backdrop-filter: blur(5px);
     padding: 10px;
@@ -75,10 +75,33 @@
     display: flex;
     padding: 5px;
 }
-
+.radiobox-item-secret-share{
+    display: flex;
+    flex-direction: column;
+}
 .radiobox-item > div{
-    margin-right: 20px;
+    margin-right: 15px;
+}
 
+.secret-share-holder-form{
+    margin-left: 20px;
+}
+.secret-share-holder-form > div{
+    display: flex;
+    margin: 10px;
+    align-items: center;
+}
+.secret-share-holder-form input[type="text"]{
+    height: 10px;
+}
+.secret-share-holder-form label{
+    width: 40%;
+    font-size: 13.5px;
+}
+
+
+.ss-ooption-description-css{
+    font-size: 13px;
 }
 
 .location-node-box{

@@ -1,15 +1,38 @@
 .top-folder-container{
     padding: 20px;
+    display: grid;
+    height: 80vh;
+    grid-template-rows: 2fr 2fr;
+    grid-template-columns: 3fr 2fr;
+    grid-template-areas: 
+        "secret-shared-folder-area vc"
+        "shared-folder-area vc"
+        ;
+    overflow-y: auto;
 }
 
 .icon-document {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     animation-name: documentIconAnimation;
     animation-duration: 0.3s;
     animation-timing-function: ease-out;
     position: relative;
     z-index: 0;
+ }
+
+ .vc-container{
+    grid-area: vc;
+    background-color: rgba(58, 58, 58, 0.701);
+    padding: 10px;
+    border-radius: 13px;
+    /* height: 240px; */
+    margin-left: 13px;
+ }
+
+ .vc-sidebar-subtitle{
+    margin-top: 5px;
+    font-size: 13px;
  }
 
 
@@ -33,6 +56,7 @@
     flex-wrap: wrap;
     margin: auto;
     align-items: flex-start;
+
  }
 
 
@@ -47,7 +71,6 @@
     width: 100px;
     display: flex;
     flex-direction: column;
-    padding: 10px;
     align-items: center;
     justify-content: space-around;
     margin: 24px;
@@ -55,6 +78,7 @@
 .document-item > p{
     text-align: center;
     font-size: 13px;
+    margin-top: 10px;
 }
 
 .document-item:hover{
@@ -68,14 +92,17 @@
     width: 100px;
     display: flex;
     flex-direction: column;
-    padding: 10px;
     align-items: center;
     justify-content: space-around;
     margin: 24px;
     border-radius: 10px;
 
+}
+
+.item-selected > p{
     text-align: center;
     font-size: 13px;
+    margin-top: 10px;
 }
 
 .top-toolbar-folder{
@@ -90,18 +117,20 @@
 .top-toolbar-nav-folder{
     display: flex;
     margin-left: 20px;
-    width: 30%;
+    width: 40%;
     justify-content: space-between;
-}
+/*     background-color: red;
+ */}
 .top-toolbar-option-document{
     display: flex;
     margin-left: 20px;
-    justify-content: space-between;
+    justify-content: space-around;
     width: 40%;
-    margin-right: 55px;
     animation-name: topToolbarOptionAnimation;
     animation-duration: 0.9s;
     animation-timing-function: ease-out;
+    background-color: rgba(0, 109, 128, 0.286);
+
 }
 
 @keyframes topToolbarOptionAnimation {
@@ -109,7 +138,8 @@
         background-color: rgb(255, 124, 124);
     }
     to{
-        background-color: rgba(0, 0, 0, 0);
+        background-color: rgba(0, 109, 128, 0.286);
+
     }
 }
 
@@ -124,18 +154,40 @@
     font-size: 15px;
     cursor: pointer;
     transition: 0.2s;
+    width: 40%;
 }
 
-.label-item-selected{
+.btn-navigate-folder > .btn-room-css{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.btn-option-document-css{
     background-color: rgba(255, 255, 255, 0);
     color: white;
     border: none;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 30%;
+}
+.btn-option-document-css:hover{
+    background-color: rgba(255, 255, 255, 0.273);
+}
+
+.label-item-selected{
+    color: white;
+    border: none;
     font-size: 15px;
+    width: 40%;
     transition: 0.2s;
     align-self: center;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis
+    text-overflow: ellipsis;
+    margin-left: 10px
 }
 
 .btn-selected{
@@ -146,6 +198,79 @@
 .btn-navigate-folder:hover{
     background-color: rgba(255, 255, 255, 0.13);
 
+}
+
+
+.shared-docs-container{
+    background-color: rgba(58, 58, 58, 0.701);
+    padding: 10px;
+    border-radius: 13px;
+    overflow-y: auto;
+    /* height: 240px; */
+    grid-area: shared-folder-area;
+    margin-top: 13px;
+    overflow-y: auto;
+
+}
+.secret-share-docs-container{
+    margin-top: 10px;
+    grid-area: secret-shared-folder-area;
+    background-color: rgba(58, 58, 58, 0.338);
+    border-radius: 20px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.table-container{
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.086);
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    border: 0.2px solid white;
+    border-collapse: collapse;
+    margin: auto;
+}
+.table-container-vc{
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.086);
+    text-align: center;
+    padding: 5px;
+    border-radius: 5px;
+    border: 0.2px solid white;
+    border-collapse: collapse;
+    margin: auto;
+}
+
+.table-row-container {
+    border: 0.2px solid white;
+}
+.table-row-css:hover{
+    background-color: rgba(255, 255, 255, 0.149);
+}
+.table-row-container > tr > th{
+    padding: 10px;
+}
+
+.table-container td{
+    padding: 10px;
+}
+
+
+.date-label-table-css{
+    font-size: 12px;
+}
+.download-btn{
+    background-color: rgba(111, 209, 255, 0.685);
+    border: 1px solid white;
+    border-radius: 7px;
+    cursor: pointer;
+    width: 80%;
+    height: 18%;
+    z-index: 9;
+}
+.download-btn:hover{
+    background-color: rgba(111, 209, 255, 0.938);
 }
 
 @media only screen and (max-width: 1470px){

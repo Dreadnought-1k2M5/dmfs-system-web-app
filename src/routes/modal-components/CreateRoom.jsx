@@ -42,7 +42,6 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
         await gunInstance.get(groupUUID).get("uuid_date").put(groupUUID);
         await gunInstance.get(chatroomName); // use SEA to encrypt content/message
         await gunInstance.get(folders) //gun.get(filesCID)set(filesMetadata_).put{filenameProperty: fileName, CID_prop: CID, fileKey: encrypted exportedKey}
-        await gunInstance.get(listEncryptedShare); //(gun.get.set.put || gun.get ) {forUser: “querty1”, share: enc}
 
         // Encrypt the SEA.pair() used to encrypt/decrypt chat messages
         let encryptedSEAObj = await SEA.encrypt(seaChatObj, userInstance._.sea); // encrypt copy of room's SEA pair using my own SEA unique as the account.
@@ -55,8 +54,9 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
         //Insert myself in the memberList node without needing to put the encrypted copy of the SEA.pair() of the room
         let myEpub = await userInstance._.sea.epub; // Get my own encrypted public key (epub)
 
-        
-        await gunInstance.get(memberList).set({ "user_Alias": alias, "user_Epub": myEpub, "keyPairCopy": encryptedSEAObj, "AddedByFriend": alias, "friendEpub": myEpub  });
+        //Create unique public gun node
+        let userPublicNodeRef = await gunInstance.get(alias).put({ "user_Alias": alias, "user_Epub": myEpub, "keyPairCopy": encryptedSEAObj, "AddedByFriend": alias, "friendEpub": myEpub  })
+        await gunInstance.get(memberList).set(userPublicNodeRef);
 
         // Insert UUID-Date property name into your own user graph
         //This block is to insert data into your my_team_rooms to indicate which room you have access to.

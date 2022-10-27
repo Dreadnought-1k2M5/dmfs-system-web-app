@@ -16,8 +16,8 @@
 .login-register-form-container{
     width: 25%;
     margin: auto;
-    background-image: linear-gradient(140deg, #0616276e, #021f3d75);
-    backdrop-filter: blur(23px);
+    background-image: linear-gradient(140deg, #0616279c, #021e3d92);
+    backdrop-filter: blur(25px);
     display: flex;
     justify-content: center;
     align-items: center;

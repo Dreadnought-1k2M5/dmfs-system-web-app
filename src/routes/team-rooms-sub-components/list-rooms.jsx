@@ -1,6 +1,6 @@
 import React, { useState, useReducer } from "react";
 import { useEffect } from "react";
-import { Navigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 
 import './list-rooms.css'
 
@@ -14,16 +14,21 @@ const initialRoomListState = {
 
 function ListRoomsComponent({roomUUIDObj, gunInstance, userInstance}){
     let [roomList, dispatch] = useReducer(reducerHandler, initialRoomListState);    
+    let navigate = useNavigate();
 
     useEffect(()=>{
-        userInstance.get('my_team_rooms').map().on((key)=>{
+        userInstance.get('my_team_rooms').map().once((key)=>{
             console.log({roomName: key.nameOfRoom, roomUUID: key.uuidOfRoom});
             dispatch({roomName: key.nameOfRoom, roomUUID: key.uuidOfRoom});
         })
     }, []);
 
     function event(elem){ 
+        console.log("POINT HEREEEEEEEEEEEE");
         roomUUIDObj.roomUUIDProperty = elem.roomUUID;
+        roomUUIDObj.roomName = elem.roomName;
+        navigate('room');
+        
     }
 
     function filterDuplicatedRooms(){
@@ -43,9 +48,9 @@ function ListRoomsComponent({roomUUIDObj, gunInstance, userInstance}){
             <div className="rooms-flex-container">
                 { filterDuplicatedRooms().map((elem, index) =>
                     <div className="room-box" key={index}>
-                        <NavLink className="navlink-css" to="room" onClick={() => event(elem)}>
+                        <div className="navlink-css" onClick={(e) => {e.preventDefault(); event(elem)} }>
                             <h2>{elem.roomName}</h2>
-                        </NavLink>
+                        </div>
                         <div>
                             <p>UUID-Date: <b>{elem.roomUUID}</b></p>
                         </div>  

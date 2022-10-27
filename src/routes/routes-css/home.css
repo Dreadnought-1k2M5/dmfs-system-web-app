@@ -11,8 +11,9 @@
     background-color: rgba(255, 255, 255, 0.086);
     height: 35px;
     padding: 0px 10px 0px 10px;
+
 }
-.toolbar-btn{
+.toolbar-upload-btn{
     height: 100%;
     background-color: rgba(178, 177, 177, 0);
     border: none;
@@ -20,36 +21,12 @@
     color: white;
     font-size: 17px;
 }
-.toolbar-home-btn:hover{
+
+
+.toolbar-upload-btn:hover{
     background-color: rgba(178, 177, 177, 0.116);
 
 }
-
-.download-btn{
-    background-color: rgba(111, 209, 255, 0.685);
-    border: 1px solid white;
-    border-radius: 7px;
-    cursor: pointer;
-    width: 80%;
-    height: 18%;
-    z-index: 999;
-}
-.download-btn:hover{
-   background-color: rebeccapurple;
-}
-
-/* .flexbox-file {
-    margin: 10px;
-    height: 220px;
-    width: 220px;
-    background-color: rgba(255, 255, 255, 0.259);
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column-reverse;
-    padding: 7px;  
-}
- */
 
  .file-container {
     display: flex;
@@ -59,20 +36,37 @@
  }
 
  .files {
-    padding: 10px;
+    padding: 7px;
     width: 130px;
     margin: 1%;
     cursor: pointer;
     border-radius: 10px;
+    
  }
 
  .files:hover {
     background-color: rgba(158, 158, 158, 0.311);
  }
 
+ @keyframes fileIconAnimation {
+   from{
+      width: 0px;
+      height: 0px;
+   }
+   to{
+      width: 80px;
+      height: 80px;
+   }
+}
+
+
  .icon {
     width: 80px;
     height: 80px;
+    animation-name: fileIconAnimation;
+    animation-duration: 0.4s;
+    animation-timing-function: ease-out;
+    position: relative;
  }
 
 .fileIcon {
@@ -86,12 +80,36 @@
 
  .filename {
     display: flex;
-    word-wrap: break-word;
-    margin: 20px 10px 20px 10px;
+    margin: 20px 0px 20px 0px;
     height: 100%;
     width: 100%;
     flex: 1;
+    justify-content: center;
+    align-items: center;
  }
+
+.filename > p{
+   font-size: 14px;
+   animation-name: filenameAnimation;
+   animation-duration: 1.4s;
+   animation-timing-function: ease-out;
+   position: relative;
+   color: rgba(255, 255, 255, 0.907);
+   text-align: center;
+}
+
+ @keyframes filenameAnimation {
+   from{
+      color: rgba(255, 255, 255, 0);
+
+
+   }
+   to{
+      color: rgba(255, 255, 255, 0.907);
+
+   }
+}
+ 
 
  .Menu {
     position: absolute
@@ -119,6 +137,7 @@
     font-size: 20px;
     background-color: rgba(255, 255, 255, 0.329);
     cursor: pointer;
+    z-index: 3;
  }
 
  .CopyCid-Menu {

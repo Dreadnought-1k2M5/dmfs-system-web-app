@@ -10,7 +10,8 @@ import { NavLink } from "react-router-dom";
 
 import { useNavigate } from "react-router-dom";
 
-function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show, handleCloseAfterRoomCreated}){
+
+export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show}){
     let [groupName, setGroupName] = useState('');
     let [groupUUID, setGroupUUID] = useState('');
     let [seaChatObj, setseaChatObj] = useState({});
@@ -18,40 +19,53 @@ function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show,
 
     const toggleClassname = show ? "modal modal-create-room-container" : "modal display-none";
 
-    function generateUUID(){
-        let uuid_group = uuidv4().concat("_timestamp_" + Date.now().toString());
+    async function generateUUID(){
+        let uuidv4String = uuidv4();
+        uuidv4String = uuidv4String.replaceAll("-", "_");
+        let uuid_group = uuidv4String.concat("_timestamp_" + Date.now().toString());
         setGroupUUID(uuid_group);
-        setseaChatObj(SEA.pair()); // SEA used to encrypt/decrypt messages (public-private keys)
+        setseaChatObj(await SEA.pair()); // SEA used to encrypt/decrypt messages (public-private keys)
     }
     async function handleCreateRoom(){
         if (groupName === ''){
             alert("PLEASE ENTER A NAME FOR THE ROOM");
             return;
         }
+        //variables for the 4 main properties in the ROoom
         let chatroomName = "CHATROOM_".concat(groupUUID);
-        let filesCID = "filesMetadata_".concat(groupUUID);
+        let folders = "foldersMetadata_".concat(groupUUID);
         let listEncryptedShare = "listEncryptedShare_".concat(groupUUID);
         let memberList = "memberList_".concat(groupUUID);
 
+        // Insert relevant data in the groupUUID node
         await gunInstance.get(groupUUID).get("room_name").put(groupName);
         await gunInstance.get(groupUUID).get("uuid_date").put(groupUUID);
+        await gunInstance.get(chatroomName); // use SEA to encrypt content/message
+        await gunInstance.get(folders) //gun.get(filesCID)set(filesMetadata_).put{filenameProperty: fileName, CID_prop: CID, fileKey: encrypted exportedKey}
 
-        await gunInstance.get(groupUUID).get(chatroomName); // use SEA to encrypt content/message
-        await gunInstance.get(groupUUID).get(filesCID) //gun.get(setnode).set(filename).put{filenameProperty: fileName, CID_prop: CID, isEncrypted: (exportedKey ? true : false), jsonKey: exportedKey}
-        await gunInstance.get(groupUUID).get(listEncryptedShare); //(gun.get.set.put || gun.get ) {forUser: “querty1”, share: enc}
-        
+        // Encrypt the SEA.pair() used to encrypt/decrypt chat messages
+        let encryptedSEAObj = await SEA.encrypt(seaChatObj, userInstance._.sea); // encrypt copy of room's SEA pair using my own SEA unique as the account.
 
-        // Insert your account to the groupUUID->memberList Node
-        let alias, epub, seaPriv;
+
+        // Get your own username string and encrypted public key (epub) and intialize them into alias
+        let alias, epub;
         await userInstance.get("alias").once((data)=> alias = data);
-        await userInstance.get("epub").once((data) => epub = data);
-        await gunInstance.get(groupUUID).get(memberList).set({ "user_Alias": alias, "user_Epub": epub, "chatroom_Sea": seaChatObj});
+
+        //Insert myself in the memberList node without needing to put the encrypted copy of the SEA.pair() of the room
+        let myEpub = await userInstance._.sea.epub; // Get my own encrypted public key (epub)
+
+        //Create unique public gun node
+        let userPublicNodeRef = await gunInstance.get(alias).put({ "user_Alias": alias, "user_Epub": myEpub, "keyPairCopy": encryptedSEAObj, "AddedByFriend": alias, "friendEpub": myEpub  })
+        await gunInstance.get(memberList).set(userPublicNodeRef);
 
         // Insert UUID-Date property name into your own user graph
+        //This block is to insert data into your my_team_rooms to indicate which room you have access to.
         let roomName;
         await gunInstance.get(groupUUID).get("room_name").once(data=> roomName = data)
-        await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID});
+        await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID, roomSEA: seaChatObj});
         roomUUIDObj.roomUUIDProperty = groupUUID;
+        roomUUIDObj.roomName = roomName;
+        
         navigate('room');
     }
 
@@ -59,12 +73,13 @@ function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show,
 
         <div className={toggleClassname}>
             <div className="create-room-container">
-                <div>
+                <div className="create-room-box-exit">
                     <button onClick={handleClose}>X</button>
                 </div>
-                <h2>Create Room: <span className="group-name-span"></span></h2>
+
                 <div className="create-room-form">
                     <div className="flex-item0">
+                        <h2>Create Room:</h2>
                         <label>Group Name: </label>
                         <input type="text" onChange={(e) => {
                             /* If textbox is empty, set groupName and groupUUID to '' */
@@ -85,5 +100,3 @@ function CreateRoom({ roomUUIDObj, gunInstance, userInstance, handleClose, show,
         </div>
     );
 }
-
-export default CreateRoom;

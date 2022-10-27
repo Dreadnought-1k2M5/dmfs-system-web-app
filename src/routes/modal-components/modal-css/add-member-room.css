@@ -28,45 +28,48 @@
 }
 
 
-@keyframes create-room-container-animation{
-    /* space from bottom */
-/*     25% {bottom: 75px;     background-color: rgba(255, 255, 255, 0);}
-    50% {bottom: 50px;     background-color: rgba(255, 255, 255, 0.125);}
-    75% {bottom: 25px;     background-color: rgba(255, 255, 255, 0.186);}
-    100% {bottom: 0px;     background-color: rgba(255, 255, 255, 0.329);} */
-
-    from { bottom: 40px;     background-color: rgba(111, 209, 255, 0.264); }
-    to { bottom: 0px;     background-color: rgba(111, 209, 255, 0.878);
+@keyframes add-member-container-animation{
+    from { bottom: 90px;     background-color: rgba(255, 111, 181, 0); }
+    to { bottom: 0px;            background-color: rgba(111, 209, 255, 0.267);
     }
 }
 
 
 .add-member-modal-box{
-    background-color: rgba(111, 209, 255, 0.878);
+    background-color: rgba(111, 209, 255, 0.267);
     width: 35%;
-    height: 48%;
+    height: 40%;
     border-radius: 20px;
     backdrop-filter: blur(5px);
     padding: 10px;
     position: relative;
-    animation-name: create-room-container-animation;
+    animation-name: add-member-container-animation;
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
-    color: rgb(41, 41, 41);
+    color: rgb(255, 255, 255);
 
 }
 .add-member-modal-box > .exit-box{
     display: flex;
     flex-direction: row-reverse;
 }
-.add-user-form{
-    width: 90%;
 
-    margin: auto;
-    margin-top: 20px;
+.add-member-modal-form{
+/*     background-color: red; */
+    height: 70%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+}
+
+.add-user-form{
+    width: 90%;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
 }
 .label-input-box{
     display: flex;
@@ -83,4 +86,57 @@
     flex-grow: 5fr;
     height: 15px;
     align-self: center;
+}
+
+
+.clipboard-box{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+}
+.clipboard-css{
+    width: 120px;
+    font-size: 11px;
+    border-radius: 5px;
+    border: 1px solid rgb(26, 26, 26);
+    background-color: rgba(111, 209, 255, 0.356);
+    cursor: pointer;
+    margin-right: 20px;
+    align-self: center;
+
+    color: rgb(255, 255, 255);
+
+}
+
+.clipboard-css:hover{
+    background-color: rgba(111, 209, 255, 0.585);
+
+}
+.clipboard-box > .label-uuid-css{
+    color: rgb(169, 255, 112);
+    word-break: break-all;
+    font-size: 12px;
+    width: 70%;
+}
+
+.add-user-btn-box{
+    justify-self: flex-end;
+    align-self: center;
+
+}
+
+.add-btn{
+    padding: 7px 20px 7px 20px;
+    font-size: 15px;
+    border-radius: 10px;
+    border: 1px solid rgb(26, 26, 26);
+    background-color: rgba(111, 209, 255, 0.356);
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+
+}
+
+.add-btn:hover{
+    background-color: rgba(111, 209, 255, 0.585);
+
 }

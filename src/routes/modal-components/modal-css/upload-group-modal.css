@@ -1,0 +1,134 @@
+.modal-upload-group-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    
+}
+@keyframes modal-animation {
+    from { background-color: rgba(19, 19, 19, 0); } /* background color from outlet-container at main.css */
+    to { background-color: rgba(30, 30, 30, 0.6); }
+}   
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
+    background-color: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(5px);
+    animation-name: modal-animation;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    z-index: 9;
+    
+}
+
+.display-none{
+    display: none;
+}
+
+.upload-group-modal-box{
+    background-color: rgba(111, 209, 255, 0.267);
+    width: 38%;
+    height: 75%;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    position: relative;
+    animation-name: upload-group-container-animation;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    color: rgb(255, 255, 255);
+    z-index: 100;
+}
+
+@keyframes upload-group-container-animation {
+    from { bottom: 40px;     background-color: rgba(111, 209, 255, 0); }
+    to { bottom: 0px;        background-color: rgba(111, 209, 255, 0.267); }
+}
+
+.upload-group-modal-box > .exit-box{
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.upload-group-input-box{
+    width: 90%;
+    margin: auto;
+}
+.upload-group-input-box > div{
+    margin-top: 1rem;
+    margin-bottom: 10px;
+}
+
+.radiobox-container{
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    margin: auto;
+    justify-content: space-around;
+}
+
+.radiobox-item{
+    display: flex;
+    padding: 5px;
+}
+.radiobox-item-secret-share{
+    display: flex;
+    flex-direction: column;
+}
+.radiobox-item > div{
+    margin-right: 15px;
+}
+
+.secret-share-holder-form{
+    margin-left: 20px;
+}
+.secret-share-holder-form > div{
+    display: flex;
+    margin: 10px;
+    align-items: center;
+}
+.secret-share-holder-form input[type="text"]{
+    height: 10px;
+}
+.secret-share-holder-form label{
+    width: 40%;
+    font-size: 13.5px;
+}
+
+
+.ss-ooption-description-css{
+    font-size: 13px;
+}
+
+.location-node-box{
+    padding: 5px;
+    width: 95%;
+    margin: auto;
+}
+
+.location-node-item > .textbox-foldername{
+    font-size: 15px;
+    width: 80%;
+}
+
+.upload-btn-box{
+    width: 95%;
+    margin: auto;
+}
+
+.submit-btn-upload-group{
+    background-color: rgb(221, 221, 221);
+
+    padding: 10px 20px 10px 20px;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.submit-btn-upload-group:hover{
+    background-color: rgb(255, 255, 255);
+}

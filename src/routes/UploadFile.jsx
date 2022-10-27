@@ -59,44 +59,39 @@ function UploadFile({userInstance, handleClose, show}) {
 
 /*           let obj = userInstance.get("obj").put({filenameProperty: fileName, CID_prop: CID, jsonKey: exportedKey}); */
 
-          await userInstance.get('fileObjectList').set(`${fileName}`).put({
+          let versionControlNode = await userInstance.get("vc_".concat(fileName)).set({ 
             filenameProperty: fileName, 
             filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
             CID_prop: CID, 
             fileKey: parsedExportedKey, 
             iv: parsedInitializationVector, 
             fileType: getFileType
-          }); // set of names - each node is an object with a file name and corresponding CID
+          })
+          //individual unique node for a document.
+          let fileNodeRef = await userInstance.get(fileName).put({
+            filenameProperty: fileName, 
+            filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+            CID_prop: CID, 
+            fileKey: parsedExportedKey, 
+            iv: parsedInitializationVector, 
+            fileType: getFileType,
+            versionControlNodeRef: versionControlNode
+          });
+
+          //Version 
+          await userInstance.get("vc_".concat(fileName)).set({ 
+            filenameProperty: fileName, 
+            filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+            CID_prop: CID, 
+            fileKey: parsedExportedKey, 
+            iv: parsedInitializationVector, 
+            fileType: getFileType
+          })
+
+          await userInstance.get('fileObjectList').set(fileNodeRef); // set of names - each node is an object with a file name and corresponding CID
 
           alert("FILE ADDED");
           window.location.reload();
-
-          //data = encrypted; // change value of data to encrypted for decrypting - this is for testing purposes only
-
-          //Download blob
-/*           const aElement = document.createElement('a');
-          aElement.setAttribute('download', `${fileInput.current.files[0].name}`);
-          const href = URL.createObjectURL(blob);
-          aElement.href = href;
-          aElement.setAttribute('target', '_blank');
-          aElement.click();
-          URL.revokeObjectURL(href); */
-          //-------------
-
-
-          //Decrypt
-/*        crypto.subtle.decrypt({ 'name': 'AES-CBC', iv }, key, data).then(decrypted => {
-            //Convert ArrayBuffer to Blob and Download
-            const blob = new Blob([decrypted], {type: getBlobType} ) // convert decrypted arraybuffer to blob.
-            const aElement = document.createElement('a');
-            aElement.setAttribute('download', `${fileInput.current.files[0].name}`);
-            const href = URL.createObjectURL(blob);
-            aElement.href = href;
-            aElement.setAttribute('target', '_blank');
-            aElement.click();
-          }).catch(console.error);URL.revokeObjectURL(href);
-             */
-            //-------------
 
       }).catch(console.error);
     });
@@ -126,17 +121,8 @@ function UploadFile({userInstance, handleClose, show}) {
             <label>Upload File(s): </label>
             <input type="file" accept=".doc,.DOC,.docx,.DOCX,.txt,TXT" className="upload-btn-class" ref={fileInput}></input>
           </div>
-          <div className="flex-item2">
-            <label>Choose Where to Pin Data:</label>
-            <div className="checkbox-container">
-              <input type="checkbox" name="web3storage" value="web3storage"/>
-              <label> Web3Storage</label><br/>
-              <input type="checkbox" name="ipfsLocal" value="local"/>
-              <label> My own IPFS node</label><br/>
-            </div>
-          </div>
           <div className="flex-item-last">
-            <button type="submit" className="submit-btn" onClick={HandleSubmit}>Upload</button>
+            <button type="submit" className="submit-btn" onClick={(e) => HandleSubmit(e)}>Upload</button>
           </div>
         </form>
       </div>

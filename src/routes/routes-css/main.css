@@ -1,25 +1,26 @@
 
 .App{
     display: grid;
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: 0.9fr 5fr;
 /*     background-color: rgb(30, 30, 30);
- */    color: #f6f6f6;
+ */    color: #ffffffda;
     height: 100vh;
     background-image: url('../../background.png'); 
-    background-repeat: no-repeat;
     background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     overflow: hidden;
 }
 
 @media only screen and (max-width: 1400px) {  
     .App{
-        grid-template-columns: 1fr 4.5fr;
+        grid-template-columns: 0.9fr 4.5fr;
     }
 
 }
 @media only screen and (max-width: 1300px) {  
     .App{
-        grid-template-columns: 1fr 4fr;
+        grid-template-columns: 0.9fr 4fr;
     }
     .username-logout-box{
         background-color: red;
@@ -31,7 +32,7 @@
 
 @media only screen and (max-width: 1185px) {  
     .title-subtitle-box > h1{
-        font-size: 22px !important;
+        font-size: 19px !important;
     }
     .title-subtitle-box > p{
         font-size: 9px  !important;
@@ -54,22 +55,31 @@
 
 .sidebar{
     height: 100%;
-    background-color: rgba(39, 39, 39, 0.6);
+    background-color: rgba(36, 46, 53, 0.6);
     backdrop-filter: blur(10px);
     color: rgb(255, 255, 255);
     width: 100%;
-/*     animation-name: initialAnimation;
-    animation-duration: 1s; */
+    animation-name: sidebarAnimation;
+    animation-duration: 0.8s;
+    animation-timing-function: ease-out;
+    position: relative;
+
 }
 
-/* @keyframes initialAnimation {
-    0%{
-        width: 0%;
+@keyframes sidebarAnimation {
+    from{
+        background-color: rgba(39, 39, 39, 0);
+        backdrop-filter: blur(0px);
+        right: 150px;
     }
-    100%{
-        width: 100%;
+    to{
+        background-color: rgba(39, 39, 39, 0.6);
+        backdrop-filter: blur(10px);
+        right: 0px;
     }
-} */
+}
+
+
 
 .top-nav-bar{
     background-color: rgb(25, 25, 25);
@@ -77,12 +87,26 @@
     justify-content: space-between;
     padding: 7px;
     height: 4%;
+    animation-name: topNavBarAnimation;
+    animation-duration: 0.9s;
+    animation-timing-function: ease-out;
+    position: relative;
+}
+@keyframes topNavBarAnimation {
+    from{
+        background-color: rgba(25, 25, 25, 0);
+        bottom: 50px;
+    }
+    to{
+        background-color: rgb(25, 25, 25);
+        bottom: 0px;
+    }
 }
 
 .username-logout-box{
     display: flex;
     flex-grow: 0.4;/*     width: 100%; */
-    color: white;
+    color: rgb(255, 255, 255);
     justify-content: space-between;
     align-items: center;
     
@@ -137,13 +161,28 @@
 .title-subtitle-box{
     padding: 10px;
     background-color: rgb(25, 25, 25);
-    backdrop-filter: blur(5px);
+    animation-name: titleSubtitleBoxAnimation;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    position: relative;
 }
+
+@keyframes titleSubtitleBoxAnimation {
+    from {
+        background-color: rgba(25, 25, 25, 0);
+    }
+    to{
+        background-color: rgb(25, 25, 25);
+
+    }
+}
+
 .title-subtitle-box > h1{
-    font-size: 25px;
+    font-size: 22px;
+    
 }
 .title-subtitle-box > p{
-    font-size: 12px;
+    font-size: 10px;
     color: rgb(111, 209, 255);
     width: 90%;
 }
@@ -159,6 +198,10 @@
 .navlink-component:hover{
     background-color: rgba(255, 255, 255, 0.221);
 }
+
+
+
+
 .navlink-component-active{
     text-decoration: none;
     font-size: 14px;
@@ -167,15 +210,32 @@
     margin: 10px 0px;
     color: rgb(36, 36, 36);
     background-color: rgb(111, 209, 255);
+
 }
+
+
 .navlink-tabs{
     margin-top: 50px;
 }
 
 .outlet-container{
-    background-color: rgba(13, 13, 13, 0.94);
+    background-color: rgba(13, 13, 13, 0.977);
     backdrop-filter: blur(10px);
     height: 100vh;
 /*     overflow-y: scroll; */ /* This adds a scrollbar on the right container applicable for all components */
+    animation-name: outletContainerAnimation;
+    animation-duration: 1.3s;
+    animation-timing-function: ease-out;
 }
 
+@keyframes outletContainerAnimation{
+    from {
+        background-color: rgba(13, 13, 13, 0);
+        backdrop-filter: blur(0px);
+
+    }
+    to{
+        background-color: rgba(13, 13, 13, 0.977);
+        backdrop-filter: blur(10px);
+    }
+}

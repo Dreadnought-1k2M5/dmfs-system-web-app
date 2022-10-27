@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import CreateRoom from "./modal-components/CreateRoom";
 
 import ListRoomsComponent from "./team-rooms-sub-components/list-rooms";
+import JoinRoomModal from "./modal-components/JoinRoomModal";
 
 import './routes-css/team-rooms.css';
 
@@ -13,7 +14,8 @@ import './routes-css/team-rooms.css';
 } */
 
 function TeamRoomComponent({roomUUIDObj, gunInstance, userInstance}){
-    let [isModalViewed, setIsModalViewed] = useState(false);
+    let [isModalCreateRoomViewed, setIsCreateRoomModalViewed] = useState(false);
+    let [isModalJoinRoomViewed, setIsModalJoinRoomViewed] = useState(false);
 
     //let [roomList, dispatch] = useReducer(reducerHandler, {rooms: []});
 
@@ -21,22 +23,28 @@ function TeamRoomComponent({roomUUIDObj, gunInstance, userInstance}){
         userInstance.get('my_team_rooms').map().once((key)=>{
             dispatch({roomName: key.nameOfRoom, roomUUID: key.uuidOfRoom});        })
     }, []); */
-    function showModal(){
-        setIsModalViewed(true);
+    function showCreateRoomModal(){
+        setIsCreateRoomModalViewed(true);
     }
-    function hideModal(){
-        setIsModalViewed(false);
-    }
-    function hideModalAfterCreatedRoom(){
-        setIsModalViewed(false);
+    function hideCreateRoomModal(){
+        setIsCreateRoomModalViewed(false);
     }
     
+
+    function showJoinRoomModal(){
+        setIsModalJoinRoomViewed(true);
+    }
+    function hideJoinRoomModal(){
+        setIsModalJoinRoomViewed(false);
+    }
+
     return (
         <div>
             <div className="top-toolbar">
-                <button className="toolbar-btn-create-room" onClick={showModal}>Create New Team</button>
-                <button className="toolbar-btn-create-room" >Join Team</button>
-                <CreateRoom roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideModal} handleCloseAfterRoomCreated={hideModalAfterCreatedRoom} show={isModalViewed} />
+                <button className="toolbar-btn-create-room" onClick={showCreateRoomModal}>Create New Team</button>
+                <button className="toolbar-btn-create-room" onClick={showJoinRoomModal}>Join Room</button>
+                <CreateRoom roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideCreateRoomModal} show={isModalCreateRoomViewed} />
+                <JoinRoomModal roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideJoinRoomModal} show={isModalJoinRoomViewed} />
             </div>
 
             <ListRoomsComponent roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} />

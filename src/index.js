@@ -31,6 +31,7 @@ let roomUUIDObj = {
     roomUUIDProperty: '',
     roomName: ''
 }
+
 let folderContext = {
   folderName: ''
 }

@@ -13,7 +13,7 @@ export default function JoinRoomModal({ roomUUIDObj, gunInstance, userInstance, 
     let [roomUUIDState, setRoomUUIDState] = useState('');
     let navigate = useNavigate();
 
-    const toggleClassname = show ? "modal modal-join-room-container" : "modal display-none";
+    const toggleClassname = show ? "modal-join-room modal-join-room-container" : "modal-join-room display-none";
 
 
     async function handleJoinRoom(){

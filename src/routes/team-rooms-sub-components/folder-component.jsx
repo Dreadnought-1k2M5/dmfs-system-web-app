@@ -389,8 +389,8 @@ const filteredVCList = () =>{
         <div>
             <div className="top-toolbar-folder" >
                 <div className="top-toolbar-nav-folder">
-                    <button className="btn-navigate-folder" onClick={()=> navigate("/main/Teams")}><p>Team Rooms</p></button>
-                    <button className="btn-navigate-folder" onClick={()=> navigate("/main/Teams/room")}> <p className="btn-room-css">{roomUUIDObj.roomName}</p></button>
+                    <button className="btn-navigate-folder" onClick={()=> navigate("/main")}><p>Team Rooms</p></button>
+                    <button className="btn-navigate-folder" onClick={()=> navigate("/main/room")}> <p className="btn-room-css">{roomUUIDObj.roomName}</p></button>
                     <button className="btn-navigate-folder btn-selected"><p className="btn-room-css">{folderContext.folderName}</p></button>
                 </div>
                 <div className={itemSelected.isSelected === true ? "top-toolbar-option-document" : "top-toolbar-option-document-hide"}>

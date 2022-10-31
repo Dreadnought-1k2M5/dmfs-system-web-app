@@ -11,11 +11,11 @@
     height: 31px;
     /* padding: 0px 0px 0px 40px; */ /* the 40px is for the left padding of "Create New Team" Button at team-rooms.jsx */
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 .top-toolbar-nav-room-flex-container-one{
     display: flex;
-    width: 30%;
+    width: 50%;
     justify-content: space-between;
 }
 

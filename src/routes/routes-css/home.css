@@ -1,16 +1,15 @@
-/* .home-parent-container{
 
-} */
 .home-container{
     padding: 20px;
     overflow-y: scroll;
     height: 82vh;   
 }
 
-.top-toolbar{
-    background-color: rgba(255, 255, 255, 0.086);
+.top-toolbar-home{
+    background-color: rgba(255, 255, 255, 0);
     height: 35px;
-    padding: 0px 10px 0px 10px;
+    padding: 5px 10px 5px 10px;
+    padding-top: 23px;
 
 }
 .toolbar-upload-btn{

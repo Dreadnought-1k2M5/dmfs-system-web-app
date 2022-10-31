@@ -108,7 +108,7 @@ function UploadFile({userInstance, handleClose, show}) {
     alert("FILE ADDED"); */
   }
 
-  const toggleClassname = show ? "modal modal-container" : "modal display-none";
+  const toggleClassname = show ? "modal-home modal-container-home" : "modal-home display-none";
   return (
     <div className={toggleClassname}>
       <div className="upload-container">

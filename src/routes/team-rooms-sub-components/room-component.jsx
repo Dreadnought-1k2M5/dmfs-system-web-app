@@ -370,16 +370,17 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             <UploadGroupModal uuidRoomObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideUploadGroupModal} show={isUploadGroupModalViewed} />
             <div className="top-toolbar-room">
                 <div className="top-toolbar-nav-room-flex-container-one">
-                    <button className="btn-navigate-room" onClick={() => navigate("/main/Teams")}>Team Rooms</button>
+                    <button className="btn-navigate-room" onClick={() => navigate("/main")}>Team Rooms</button>
                     <button className="btn-navigate-room" onClick={(e)=> {e.preventDefault(); showModal();}}>Add a user</button>
                     <button className="btn-navigate-room" onClick={()=> showUploadGroupModal() }>Upload a document</button>
-                </div>
-                <div className="top-toolbar-nav-room-flex-container-two">
                     <button className={ isTheresNotification ? "show-notif-css btn-navigate-room-selected" : "btn-navigate-room" }  onClick={() => setIsNotificationClicked(!isNotificationClicked)}>
                         Notification!
                     </button>
                     <button className={viewRoomChat ? "btn-navigate-room-selected" : "btn-navigate-room"} onClick={()=> setViewRoomChat(!viewRoomChat) }>Group Chat</button>
                 </div>
+{/*                 <div className="top-toolbar-nav-room-flex-container-two">
+                    
+                </div> */}
                 <div className={isNotificationClicked ? "notification-box" : "notification-box-hidden"}>
                     <h3>Notification</h3>
                     {filteredShareNotification().map((elem, index)=>

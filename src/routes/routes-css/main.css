@@ -1,7 +1,7 @@
 
 .App{
     display: grid;
-    grid-template-columns: 0.9fr 5fr;
+    grid-template-rows: 0.9fr 5fr;
 /*     background-color: rgb(30, 30, 30);
  */    color: #ffffffda;
     height: 100vh;
@@ -12,15 +12,110 @@
     overflow: hidden;
 }
 
+.top-bar-parent{
+    background-color: rgb(25, 25, 25);
+    animation-name: topBarParentBoxAnimation;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    position: relative;
+}
+.top-bar-box1{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.top-bar-parent > .top-bar-box1 > .title-subtitle-box{
+     padding: 6px;
+}
+
+
+@keyframes topBarParentBoxAnimation {
+    from {
+        background-color: rgba(25, 25, 25, 0);
+        bottom: 50px;
+    }
+    to{
+        background-color: rgb(25, 25, 25);
+        bottom: 0px;
+    }
+}
+
+.top-bar-parent > .top-bar-box1 > .title-subtitle-box > h1{
+    font-size: 22px;
+    
+}
+.top-bar-parent > .top-bar-box1 > .title-subtitle-box > p{
+    font-size: 10px;
+    color: rgb(111, 209, 255);
+    width: 70%;
+}
+
+.top-bar-parent > .top-bar-box1 > .search-user-logout-box{
+    display: flex;
+    flex-grow: 2fr;
+
+}
+
+.search-box > div{
+    display: flex;
+    height: 100%;
+    width: 70%;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    
+}
+.search-box > div > input[type="text"]{
+    height: 18px;
+    width: 70%;
+    border-style: none;
+    font-size: 14px;
+    background-color: rgba(0, 0, 0, 0.863);
+    color: #f6f6f6d7;
+    border-radius: 0%;
+   
+}
+.search-icon {
+   width: 23px;
+   background-color: rgba(163, 163, 163, 0.144);
+   padding: 5px 14px 5px 14px;
+}
+
+.top-navbar{
+    background-color: rgba(33, 33, 33, 0.323);
+    backdrop-filter: blur(10px);
+    color: rgb(255, 255, 255);
+    width: 100%;
+    animation-name: topNavbarAnimation;
+    animation-duration: 0.8s;
+    animation-timing-function: ease-out;
+    position: relative;
+    display: flex;
+    padding-top: 6px;
+}
+
+@keyframes topNavbarAnimation {
+    from{
+        background-color: rgba(39, 39, 39, 0);
+        backdrop-filter: blur(0px)
+    }
+    to{
+        background-color: rgba(39, 39, 39, 0.6);
+        backdrop-filter: blur(10px);
+    }
+}
+
+
 @media only screen and (max-width: 1400px) {  
     .App{
-        grid-template-columns: 0.9fr 4.5fr;
+        grid-template-rows: 0.9fr 4.5fr;
     }
 
 }
 @media only screen and (max-width: 1300px) {  
     .App{
-        grid-template-columns: 0.9fr 4fr;
+        grid-template-rows: 0.9fr 4fr;
     }
     .username-logout-box{
         background-color: red;
@@ -31,10 +126,10 @@
 }
 
 @media only screen and (max-width: 1185px) {  
-    .title-subtitle-box > h1{
+    .top-bar-parent > h1{
         font-size: 19px !important;
     }
-    .title-subtitle-box > p{
+    .top-bar-parent > p{
         font-size: 9px  !important;
     }
 }
@@ -45,63 +140,14 @@
         color: white;
         
     }
-    .title-subtitle-box > h1{
+    .top-bar-parent > h1{
         font-size: 20px !important;
     }
-    .title-subtitle-box > p{
+    .top-bar-parent > p{
         font-size: 7px !important;
     }
 }
 
-.sidebar{
-    height: 100%;
-    background-color: rgba(36, 46, 53, 0.6);
-    backdrop-filter: blur(10px);
-    color: rgb(255, 255, 255);
-    width: 100%;
-    animation-name: sidebarAnimation;
-    animation-duration: 0.8s;
-    animation-timing-function: ease-out;
-    position: relative;
-
-}
-
-@keyframes sidebarAnimation {
-    from{
-        background-color: rgba(39, 39, 39, 0);
-        backdrop-filter: blur(0px);
-        right: 150px;
-    }
-    to{
-        background-color: rgba(39, 39, 39, 0.6);
-        backdrop-filter: blur(10px);
-        right: 0px;
-    }
-}
-
-
-
-.top-nav-bar{
-    background-color: rgb(25, 25, 25);
-    display: flex;
-    justify-content: space-between;
-    padding: 7px;
-    height: 4%;
-    animation-name: topNavBarAnimation;
-    animation-duration: 0.9s;
-    animation-timing-function: ease-out;
-    position: relative;
-}
-@keyframes topNavBarAnimation {
-    from{
-        background-color: rgba(25, 25, 25, 0);
-        bottom: 50px;
-    }
-    to{
-        background-color: rgb(25, 25, 25);
-        bottom: 0px;
-    }
-}
 
 .username-logout-box{
     display: flex;
@@ -133,67 +179,19 @@
     height: 100%;
   
 }
-.search-box > div{
-    display: flex;
-    width: 50%;
-    height: 100%;
-    margin: auto;
-    justify-content: center;
-    align-items: center;
-    
-}
-.search-box > div > input[type="text"]{
-    height: 18px;
-    width: 70%;
-    border-style: none;
-    font-size: 14px;
-    background-color: rgba(0, 0, 0, 0.863);
-    color: #f6f6f6d7;
-    border-radius: 0%;
-   
-}
-.search-icon {
-   width: 23px;
-   background-color: rgba(163, 163, 163, 0.144);
-   padding: 5px 14px 5px 14px;
-}
 
-.title-subtitle-box{
-    padding: 10px;
-    background-color: rgb(25, 25, 25);
-    animation-name: titleSubtitleBoxAnimation;
-    animation-duration: 1s;
-    animation-timing-function: ease-out;
-    position: relative;
-}
 
-@keyframes titleSubtitleBoxAnimation {
-    from {
-        background-color: rgba(25, 25, 25, 0);
-    }
-    to{
-        background-color: rgb(25, 25, 25);
 
-    }
-}
-
-.title-subtitle-box > h1{
-    font-size: 22px;
-    
-}
-.title-subtitle-box > p{
-    font-size: 10px;
-    color: rgb(111, 209, 255);
-    width: 90%;
-}
 
 .navlink-component{
     text-decoration: none;
     font-size: 14px;
     padding: 10px;
     display: block;
-    margin: 10px 0px;
+    color: rgba(36, 36, 36, 0);
+    background-color: rgba(111, 209, 255, 0);
     color: rgb(246, 246, 246);
+    padding: 10px 25px 10px 25px;
 }
 .navlink-component:hover{
     background-color: rgba(255, 255, 255, 0.221);
@@ -205,17 +203,12 @@
 .navlink-component-active{
     text-decoration: none;
     font-size: 14px;
-    padding: 10px;
+    padding: 10px 25px 10px 25px;
+
     display: block;
-    margin: 10px 0px;
     color: rgb(36, 36, 36);
     background-color: rgb(111, 209, 255);
 
-}
-
-
-.navlink-tabs{
-    margin-top: 50px;
 }
 
 .outlet-container{

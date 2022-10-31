@@ -19,7 +19,7 @@ const memberListReducerHandler = (currentMemberListState, member) =>{
 }
 
 export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance, handleClose, show}){
-    const toggleClassname = show ? "modal modal-upload-group-container" : "modal display-none";
+    const toggleClassname = show ? "modal-upload-file-group modal-upload-group-container" : "modal-upload-file-group display-none";
     let [radioBoxSelected, setRadioBoxSelected] = useState(-1);
     let [inputFolderState, setInputFolderState] = useState('');
     let [isSecretShareEnabled, setSecretShareOption] = useState(false);

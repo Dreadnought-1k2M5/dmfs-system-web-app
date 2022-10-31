@@ -84,7 +84,7 @@ function Home({userInstance}) {
 
   return (
     <div className="home-parent-container"  onClick={hideMenu} >
-      <div className="top-toolbar">
+      <div className="top-toolbar-home">
         <button className="toolbar-upload-btn" onClick={showModal}>Upload</button>
         <UploadFile userInstance={userInstance} handleClose={hideModal} show={isModalViewed}/>
       </div>

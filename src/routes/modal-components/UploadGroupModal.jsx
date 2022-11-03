@@ -5,6 +5,11 @@ import { SEA } from "gun";
 
 import "./modal-css/upload-group-modal.css";
 
+
+import folderIcon from "../../icons/folder.png"
+import folderIconSelected from "../../icons/folder-selected.png"
+
+
 //REPLACE THIS LATER
 const client = new Web3Storage({token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDdlQzY1QkMwZTU4NEFCNEFFQjdhZjMyNjdEMjI5MTZDOTQ1NUJBNkQiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NjM0NTgzMzEwMTUsIm5hbWUiOiJjcDItbWluZXJ2YS1kbS1mc3MifQ.b4RKubGBnqq_x37Dm8xkocGvs05evwyS0x1U6_4CS5E'});
 
@@ -18,10 +23,75 @@ const memberListReducerHandler = (currentMemberListState, member) =>{
     }
 }
 
+//Folders
+let currentStateFolderList = {
+    folderListArray: []
+  }
+  
+  const folderListReducerHandler = (currentStateFolderList, folder)=>{
+    return {
+      folderListArray: [folder, ...currentStateFolderList.folderListArray]
+    }
+  
+  }
+
+
+function SubfolderRender({element, handleSelectedFolderItem}){
+    console.log(element);
+    element.map((data, index)=>{
+        console.log(data);
+    })
+
+/*     async function handleSelectedFolderItem(index, folder){
+        setFolderItemChosen(folder.folderNameNodeFull);
+        if(isSubFolderSelectedState.isSelected){
+            setIsSubFolderSelectedState({isSelected: false, indexProp: null}); 
+            setIsSubFolderSelectedState({isSelected: true, indexProp: index}); 
+        }
+
+        else{
+            setIsSubFolderSelectedState({isSelected: true, indexProp: index}); 
+        }
+    } */
+
+    return (
+        <ul>
+            {element.map((data, index)=>
+                <li key={index}>
+                    {console.log(data.itemsProp.length)}
+                    <div className={/* (isSubFolderSelectedState.isSelected && isSubFolderSelectedState.indexProp === index++) ? "folder-item-css-active" :  */"folder-item-css"}  onClick={(e) => { alert(data.folderNameProp); handleSelectedFolderItem(e, data);} }>
+                        {console.log(data)}
+                        <img src={/* (isSubFolderSelectedState.isSelected && isSubFolderSelectedState.indexProp === index++) ? folderIconSelected :  */folderIcon} height="33px" width="33px"></img>
+                        <p>{data.folderNameClean}</p>
+                    </div>
+                    {data.itemsProp.length > 0 && <SubfolderRender element={data.itemsProp} handleSelectedFolderItem={handleSelectedFolderItem}/>}
+
+                </li>
+            )}
+        </ul>
+
+
+    )
+}
+
 export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance, handleClose, show}){
     const toggleClassname = show ? "modal-upload-file-group modal-upload-group-container" : "modal-upload-file-group display-none";
     let [radioBoxSelected, setRadioBoxSelected] = useState(-1);
-    let [inputFolderState, setInputFolderState] = useState('');
+
+    //useReducer for folders
+    let [folderListState, dispatchFolderList] = useReducer(folderListReducerHandler, currentStateFolderList);
+    let [folderListToRender, setFolderListToRender] = useState([]);
+
+    //Track which folder is selected
+    //let [isFolderSelectedState, setIsFolderSelectedState] = useState({isSelected: false, indexProp: null})
+
+    //Track which folder is selected either to be the parent folder of the new FOLDER or the folder where the new document metadata will be stored
+    let [folderItemChosen, setFolderItemChosen] = useState(null);
+    
+
+    let [inputParentFolderState, setInputParentFolderState] = useState(null);
+    let [inputFolderState, setInputFolderState] = useState(null);
+    
     let [isSecretShareEnabled, setSecretShareOption] = useState(false);
     let [myAlias, setMyAlias] = useState('');
     //Member List useReducer
@@ -41,7 +111,61 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
             console.log(data);
             memberListDispatch({memberAlias: data.user_Alias, memberEpub: data.user_Epub});
         })
+
+        gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).map().once(async (data, key) =>{
+            let objectItem = {
+                folderNameNodeFull: null,
+                folderNameClean: null,
+                itemsProp: []
+            }
+            dispatchFolderList(await traverseSubfolder(data, key, objectItem));
+        })
+
     }, [])
+
+    // Remove duplicated folder names from the "folders" property in the currentFolderState.
+    const filteredFolderListHandler = () =>{
+        const filteredFolderList = folderListState.folderListArray.filter((value, index) => {
+            const _value = JSON.stringify(value);
+
+            return (
+                index ===
+                folderListState.folderListArray.findIndex(obj => {
+
+                    return JSON.stringify(obj) === _value 
+                })
+            )
+        })
+    
+        return filteredFolderList;
+    
+    }
+
+    async function traverseSubfolder(data, key, objectItem){
+        /*   console.log("-----------------------Traversed-----------------------");
+          console.log(key) */
+          objectItem.folderNameNodeFull = key;
+          let substr1 = key.substring(0, key.indexOf("_sep_"));
+          objectItem.folderNameClean = substr1.replaceAll('_', ' ');
+        
+          for (const key1 in data) {
+            if(key1.includes("_subfolder_")){
+              let itemPropObject = {
+                folderNameProp: key1,
+                itemsProp: []
+              }
+        
+        /*       console.log(key1) */
+              await gunInstance.get(key1).once(async (data, key) =>{
+                objectItem.itemsProp.push(await traverseSubfolder(data, key, itemPropObject));
+              })
+        
+            }
+          }
+        return objectItem;
+    }
+
+
     const filteredMemberList = () =>{
         console.log("filtered members function called")
         const formattedMemberList = stateMemberList.membersArray.filter((value, index) => {
@@ -63,7 +187,6 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
     }
     
     async function firstOption(){
-
         //Get the SEA.pair() of the team room you are in.
         let tempSEACopy;
         await userInstance.get("my_team_rooms").map().once(data => {
@@ -121,8 +244,9 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                 console.log(encIV);
 
                 alert("Folder: ".concat(inputFolderState));
-                const res_CID = await client.put(fileInArray);
-                let CID = res_CID;
+/*                 const res_CID = await client.put(fileInArray);
+                let CID = res_CID; */
+                let CID = "random_cid_123456";
                 console.log(CID);
                 
                 //Version 
@@ -137,7 +261,6 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                     uploadedBy: myAlias
                 })
 
-                //Insert Folder
 
                 //Individual UNIQUE node containing file metadata
                 let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
@@ -152,15 +275,35 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                     accessType: "shared"
                 });
 
-                //Inserting unique node into an actual "folder" node
-                await gunInstance.get(inputFolderState.concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
-                
-                //Inserting the string name of the folder into groupUUID list of folder names
-                await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(inputFolderState);
+                if(folderItemChosen === null){
+                    alert("No Folder selected");
+                    let finalInputFolderState = inputFolderState.replaceAll(' ','_');
+                    await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
+                    
+                    //reference of the folder node
+                    let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty))
+                    
+                    //Inserting the reference of the folder node into groupUUID list of folder names
+                    await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(folderRef);
+                }else{
+                    alert("Folder selected");
+                    console.log(folderItemChosen);
+                    let finalInputFolderState = inputFolderState.replaceAll(' ','_');
+
+                    //Inserting unique node into an actual "folder" node
+                    await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
+
+                    //reference of the folder node
+                    let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty));
+                    
+                    //Inserting the reference of the folder node into groupUUID list of folder names
+                    await gunInstance.get(folderItemChosen.folderNameNodeFull).set(folderRef);
+                }
+
 
                 alert("FILE ADDED");
                 handleClose();
-                //window.location.reload();
+                window.location.reload();
 
             }).catch(console.error);
 
@@ -331,8 +474,8 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
     }
     async function handleUploadGroup(event){
         event.preventDefault();
-
-
+        console.log("SELECTED FOLDER AS PARENT OF THE FOLDE SPECIFIED");
+        console.log(folderItemChosen);
         console.log(typeof radioBoxSelected)
         switch(radioBoxSelected){
             case "0":
@@ -372,6 +515,31 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
 /*         
          */
     }
+    
+    async function handleSelectedFolderItem(event, elem){
+        event.preventDefault();
+        setFolderItemChosen({folderNameNodeFull: elem.folderNameNodeFull, folderNameClean: elem.folderNameClean});
+/*         if(isFolderSelectedState.isSelected){
+            setIsFolderSelectedState({isSelected: false, indexProp: null}); 
+            setIsFolderSelectedState({isSelected: true, indexProp: index}); 
+        }
+
+        else{
+            setIsFolderSelectedState({isSelected: true, indexProp: index}); 
+        } */
+    }
+
+    async function showFoldersHandler(){
+        console.log("Test handler");
+        let arrayList = [];
+          filteredFolderListHandler().map((element, index)=>{
+            console.log("-----------------------------ITERATION (OUTER) -----------------------------")
+            arrayList.push(element);
+  
+          })
+  
+          setFolderListToRender(arrayList);
+    }
     return (
         <div className={toggleClassname}>
             <div className="upload-group-modal-box">
@@ -379,60 +547,101 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                     <button onClick={handleClose}>X</button>
                 </div>
                 <div className="upload-group-input-box">
-                    <div>
-                        <label>Upload a Document: </label>
-                        <input type="file" accept=".doc,.DOC,.docx,.DOCX,.txt,TXT" className="upload-btn-class" ref={fileUploadGroup}></input>
-                    </div>
-                    <div className="radiobox-container">
-                        <h3>Classify Document:</h3>
-                        <div className="radiobox-item" >
-                            <div>
-                                <input type="radio" id="option1" name="age" value="0" onChange={(e) => { setRadioBoxSelected(e.target.value); setSecretShareOption(false);}}/>
-                            </div>
-                            <div>
-                                <label htmlFor="option1"><b>Shared access to all members</b></label>
-                                <p className="ss-ooption-description-css">(This option enables all members to decrypt this document)</p>
-                            </div>
+                    <div className="folderTree-grid-cell">
+                        <button onClick={showFoldersHandler}>Show Folders</button>
+                        <div className="folder-list-tree-container">
+{/*                             <ul>
+                                    {folderListToRender.map((elem, index)=>
+                                    <li key={index} className={(isFolderSelectedState.isSelected && isFolderSelectedState.indexProp === index) ? "folder-item-css-active" : "folder-item-css"} onClick={() => { alert(elem.folderNameNodeFull); handleSelectedFolderItem(index); setFolderItemChosen(elem.folderNameNodeFull)} }>
+                                        {console.log(elem)}
+                                        <img src={(isFolderSelectedState.isSelected && isFolderSelectedState.indexProp === index) ? folderIconSelected : folderIcon} height="33px" width="33px"></img>
+                                        <p>{elem.folderNameClean}</p>
+                                        {elem.itemsProp.length > 0 && <SubfolderRender element={elem.itemsProp} index={index} />}
+                                    </li>
+                                    )}
+                            </ul> */}
+                            <ul>
+                                    {folderListToRender.map((elem, index)=>
+                                    <li key={index} >
+                                        <div className={/* (isFolderSelectedState.isSelected && isFolderSelectedState.indexProp === index) ? "folder-item-css-active" :  */"folder-item-css"}  onClick={(e) => { alert(elem.folderNameClean); handleSelectedFolderItem(e, elem);} }>
+                                            {console.log(elem)}
+                                            <img src={/* (isFolderSelectedState.isSelected && isFolderSelectedState.indexProp === index) ? folderIconSelected :  */folderIcon} height="33px" width="33px"></img>
+                                            <p>{elem.folderNameClean}</p>
+                                        </div>
+                                        {elem.itemsProp.length > 0 && <SubfolderRender element={elem.itemsProp} handleSelectedFolderItem={handleSelectedFolderItem} />}
+
+                                    </li>
+                                    )}
+                            </ul>
                         </div>
-                        <div className="radiobox-item-secret-share">
+                    </div>
+                    <div className="form-upload-grid-cell">
+                        <div>
+                            <label>Upload a Document: </label>
+                            <input type="file" accept=".doc,.DOC,.docx,.DOCX,.txt,TXT" className="upload-btn-class" ref={fileUploadGroup}></input>
+                        </div>
+                        <div className="radiobox-container">
+                            <h3>Classify Document:</h3>
+                            <div className="radiobox-item" >
+                                <div>
+                                    <input type="radio" id="option1" name="age" value="0" onChange={(e) => { setRadioBoxSelected(e.target.value); setSecretShareOption(false);}}/>
+                                </div>
+                                <div>
+                                    <label htmlFor="option1"><b>Shared access to all members</b></label>
+                                    <p className="ss-ooption-description-css">(This option enables all members to decrypt this document)</p>
+                                </div>
+                            </div>
+                            <div className="radiobox-item-secret-share">
+                                <div className="radiobox-item">
+                                    <div>
+                                        <input type="radio" id="option2" name="age" value="1" onChange={(e) => { setRadioBoxSelected(e.target.value); setSecretShareOption(true); }}/>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="option2"><b>Enable Secret Share Protection</b></label>
+                                        <p className="ss-ooption-description-css">(This option requires atleast 3 members in the team room)</p>
+                                    </div>
+                                </div>
+
+                                {isSecretShareEnabled && 
+                                    <div className="secret-share-holder-form">
+                                        <div>
+                                            <label>Share holder 1:</label>
+                                            <input type="text" onChange={(e) => setShareHolder1(e.target.value)}></input>
+                                        </div>
+                                        <div>
+                                            <label>Share holder 2:</label>
+                                            <input type="text" onChange={(e) => setShareHolder2(e.target.value)}></input>
+                                        </div>
+                                    </div>}
+
+                            </div>
                             <div className="radiobox-item">
                                 <div>
-                                    <input type="radio" id="option2" name="age" value="1" onChange={(e) => { setRadioBoxSelected(e.target.value); setSecretShareOption(true); }}/>
+                                    <input type="radio" id="option3" name="age" value="2" onChange={(e) => setRadioBoxSelected(e.target.value)}/>
                                 </div>
                                 <div>
-                                    <label htmlFor="option2"><b>Enable Secret Share Protection</b></label>
-                                    <p className="ss-ooption-description-css">(This option requires atleast 3 members in the team room)</p>
+                                    <label htmlFor="option3"><b>Custom Permission</b></label>
+                                    <p className="ss-option-description-css">(Specify which user can decrypt the file later on)</p>
                                 </div>
                             </div>
-
-                            {isSecretShareEnabled && 
-                                <div className="secret-share-holder-form">
-                                    <div>
-                                        <label>Share holder 1:</label>
-                                        <input type="text" onChange={(e) => setShareHolder1(e.target.value)}></input>
-                                    </div>
-                                    <div>
-                                        <label>Share holder 2:</label>
-                                        <input type="text" onChange={(e) => setShareHolder2(e.target.value)}></input>
-                                    </div>
-                                </div>}
-
                         </div>
-                        <div className="radiobox-item">
-                            <div>
-                                <input type="radio" id="option3" name="age" value="2" onChange={(e) => setRadioBoxSelected(e.target.value)}/>
+                        <div className="location-node-box">
+{/*                             <div className="foldername-textbox-box">
+                                <label>Parent Folder Name: </label>
+                                <input type="text" className="textbox-foldername" defaultValue={folderItemProp === null ? "" : folderItemProp} id="age2" name="age" onChange={(e) => setInputParentFolderState(e.target.value)} placeholder="Enter parent folder name" />
+                            </div> */}
+                            <div className="parent-foldername-box">
+                                <label>Parent Folder: <b>{folderItemChosen === null ? "No Parent Folder Selected" : folderItemChosen.folderNameClean}</b></label>
+                                <button className={folderItemChosen === null ? "button-display-none-parent-folder-btn" : "button-display-parent-folder-btn"} onClick={(e) => setFolderItemChosen(null)}>Clear Parent Folder</button>
                             </div>
-                            <div>
-                                <label htmlFor="option3"><b>Custom Permission</b></label>
-                                <p className="ss-ooption-description-css">(Specify which user can decrypt the file later on)</p>
+                            <div className="foldername-textbox-box">
+                                <label>Folder Name: </label>
+                                <input type="text" className="textbox-foldername" id="age2" name="age" onChange={(e) => setInputFolderState(e.target.value)} placeholder="Enter folder name" />
                             </div>
                         </div>
-                    </div>
-                    <div className="location-node-box">
-                        <input className="textbox-foldername" type="text" id="age2" name="age" onChange={(e) => setInputFolderState(e.target.value)} placeholder="Enter folder name" />
-                    </div>
-                    <div className="upload-btn-box">
-                        <button type="submit" className="submit-btn-upload-group" onClick={(e) => handleUploadGroup(e)}  >Upload Document</button>
+                        <div className="upload-btn-box">
+                            <button type="submit" className="submit-btn-upload-group" onClick={(e) => handleUploadGroup(e)}  >Upload Document</button>
+                        </div>
                     </div>
                 </div>
             </div>

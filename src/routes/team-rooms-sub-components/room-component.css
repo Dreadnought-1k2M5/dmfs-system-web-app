@@ -1,7 +1,9 @@
 
 .room-top-container{
     height: 100vh;
-    display: grid;
+    width: 100%;
+/*     background-color: green;
+ */    display: grid;
     grid-template-columns: 1.1fr 5fr;
     grid-template-areas: "sidebar rightSide";
 }
@@ -12,10 +14,12 @@
     /* padding: 0px 0px 0px 40px; */ /* the 40px is for the left padding of "Create New Team" Button at team-rooms.jsx */
     display: flex;
     justify-content: flex-end;
+    
 }
+
 .top-toolbar-nav-room-flex-container-one{
     display: flex;
-    width: 50%;
+    width: 42%;
     justify-content: space-between;
 }
 
@@ -119,16 +123,36 @@
 
 }
 
+.toolbar-upload-group-box{
+    display: flex;
+    background-color: rgba(0, 109, 128, 0.286);
+}
+.btn-upload-group-css{
+    background-color: rgba(255, 255, 255, 0);
+    color: white;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    padding: 10px;
+}
+
+.btn-upload-group-css:hover{
+    background-color: rgba(255, 255, 255, 0.13);
+}
+
 .documents-list-sidebar{
     background-color: rgba(58, 58, 58, 0.26);
-    height: 100vh;
+    height: 100%;
     grid-area: sidebar;
     
 }
-.folder-list-flex-container{
+.folder-list-tree-container{
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    overflow-x: auto;
+    overflow-y: auto;
+    height: 60%;
 }
 .folder-item-css{
     display: flex;
@@ -146,12 +170,30 @@
 .folder-item-css:hover{
     background-color: rgba(255, 255, 255, 0.273);
 }
+
+.folder-item-css-active{
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    width: 100%;
+    background-color: rgb(111, 209, 255);
+    color: rgb(36, 36, 36);
+}
+.folder-item-css-active > p{
+    margin-left: 10px;
+    font-size: 13px;
+}
+
 .room-right-side-grid{
     height: 89vh;
+    width: 95%;
     display: grid;
     grid-area: rightSide;
-/*     grid-template-columns: 3fr 2fr;
-    grid-template-areas: "box1 box2"; */
+/*     background-color: red;
+ */
+}
+.right-side-container{
+    width: 100%;
 }
 
 .chatroom-container{

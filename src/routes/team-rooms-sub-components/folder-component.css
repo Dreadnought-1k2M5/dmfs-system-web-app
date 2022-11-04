@@ -1,7 +1,7 @@
 .top-folder-container{
     padding: 20px;
     display: grid;
-    height: 80vh;
+    height: 66vh;
     grid-template-rows: 2fr 2fr;
     grid-template-columns: 3fr 2fr;
     grid-template-areas: 
@@ -23,11 +23,13 @@
 
  .vc-container{
     grid-area: vc;
-    background-color: rgba(58, 58, 58, 0.701);
+    background-color: rgba(58, 58, 58, 0.338);
     padding: 10px;
     border-radius: 13px;
     /* height: 240px; */
     margin-left: 13px;
+    border: 0.5px solid rgb(111, 209, 255);
+
  }
 
  .vc-sidebar-subtitle{
@@ -106,12 +108,12 @@
 }
 
 .top-toolbar-folder{
-    background-color: rgba(255, 255, 255, 0.086);
+    background-color: rgba(36, 36, 36, 0.796);
     height: 31px;
     display: flex;
     width: 100%;
     justify-content: space-between;
-
+    border: 0.5px solid rgba(255, 255, 255, 0.38);
 }
 
 .top-toolbar-nav-folder{
@@ -202,7 +204,7 @@
 
 
 .shared-docs-container{
-    background-color: rgba(58, 58, 58, 0.701);
+    background-color: rgba(58, 58, 58, 0.338);
     padding: 10px;
     border-radius: 13px;
     overflow-y: auto;
@@ -210,6 +212,8 @@
     grid-area: shared-folder-area;
     margin-top: 13px;
     overflow-y: auto;
+    border: 0.5px solid rgb(111, 209, 255);
+
 
 }
 .secret-share-docs-container{
@@ -219,59 +223,75 @@
     border-radius: 20px;
     padding: 10px;
     overflow-y: auto;
+    border: 0.5px solid rgb(111, 209, 255);
+
 }
 
 .table-container{
-    width: 90%;
+    width: 100%;
     background-color: rgba(255, 255, 255, 0.086);
     text-align: center;
-    padding: 5px;
+    padding: 2px;
     border-radius: 5px;
-    border: 0.2px solid white;
+    border: 0.2px solid rgba(255, 255, 255, 0.257);
     border-collapse: collapse;
     margin: auto;
 }
 .table-container-vc{
-    width: 90%;
+    width: 100%;
     background-color: rgba(255, 255, 255, 0.086);
     text-align: center;
     padding: 5px;
     border-radius: 5px;
-    border: 0.2px solid white;
+    border: 0.2px solid rgba(255, 255, 255, 0.214);
     border-collapse: collapse;
     margin: auto;
 }
 
 .table-row-container {
-    border: 0.2px solid white;
+    border: 0.2px solid rgba(255, 255, 255, 0.446);
 }
 .table-row-css:hover{
     background-color: rgba(255, 255, 255, 0.149);
 }
 .table-row-container > tr > th{
-    padding: 10px;
+    padding: 2px;
+}
+.table-header-label-css{
+    font-size: 12px;
 }
 
 .table-container td{
-    padding: 10px;
+    padding: 2px;
+    width: 20%;
+
 }
 
-
-.date-label-table-css{
+.table-data-label-css{
     font-size: 12px;
+}
+
+.cid-label-css{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 70%;
+    margin: auto;
 }
 .download-btn{
     background-color: rgba(111, 209, 255, 0.685);
     border: 1px solid white;
     border-radius: 7px;
     cursor: pointer;
-    width: 80%;
+    width: 90%;
     height: 18%;
-    z-index: 9;
+    z-index: 5;
+    font-size: 60%;
 }
 .download-btn:hover{
     background-color: rgba(111, 209, 255, 0.938);
 }
+
 
 @media only screen and (max-width: 1470px){
     .btn-navigate-folder{

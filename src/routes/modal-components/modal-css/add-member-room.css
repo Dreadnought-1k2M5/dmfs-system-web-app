@@ -30,13 +30,14 @@
 
 @keyframes add-member-container-animation{
     from { bottom: 90px;     background-color: rgba(255, 111, 181, 0); }
-    to { bottom: 40px;            background-color: rgba(111, 209, 255, 0.267);
+    to { bottom: 40px;       background-color: rgb(30, 30, 30);
+
     }
 }
 
 
 .add-member-modal-box{
-    background-color: rgba(111, 209, 255, 0.267);
+    background-color: rgb(30, 30, 30);
     width: 35%;
     height: 40%;
     border-radius: 20px;
@@ -48,6 +49,8 @@
     animation-timing-function: ease-out;
     color: rgb(255, 255, 255);
     bottom: 40px;
+    border: 0.5px solid rgb(111, 209, 255);
+
 
 }
 .add-member-modal-box > .exit-box{

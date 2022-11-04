@@ -10,13 +10,11 @@ import { SEA } from "gun";
 
 import './folder-component.css';
 
-// useReducer
+import RequestShareModalComponent from "../modal-components/RequestShareModal";
+
+// useReducer for shared documents
 const currentDocumentListState = {
     documents: []
-}
-
-function intialStateLazy(currentDocumentListState){
-    return { documents: [] }
 }
 
 const documentsUseReducerHandler = (documentListState, document)=>{
@@ -27,6 +25,22 @@ const documentsUseReducerHandler = (documentListState, document)=>{
     }
     return {
         documents: [document, ...documentListState.documents]
+    }
+}
+
+// useReducer for shared documents
+const currentDocumentSecretSharedListState = {
+    documentsSecretSharedArrayState: []
+}
+
+const documentsSecretSharedUseReducerHandler = (documentSecretSharedListState, documentSecretShared)=>{
+    if(documentSecretShared.reset){
+        return {
+            documentsSecretSharedArrayState: []
+        }
+    }
+    return {
+        documentsSecretSharedArrayState: [documentSecretShared, ...documentSecretSharedListState.documentsSecretSharedArrayState]
     }
 }
 
@@ -54,14 +68,32 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     //usereducer for documents/files
     let [vcListState, dispatchvcListState] = useReducer(vcUseReducerHandler, currentVCState);
 
-    //useReducer for documents/files
-    let [documentListState, documentsDispatch] = useReducer(documentsUseReducerHandler, currentDocumentListState, intialStateLazy);
+    //useReducer for documents/files (shared)
+    let [documentListState, documentsDispatch] = useReducer(documentsUseReducerHandler, currentDocumentListState);
+
+    //useReducer for documents/files (shared)
+    let [documentListStateSecretSharedState, documentsSecretSharedDispatch] = useReducer(documentsSecretSharedUseReducerHandler, currentDocumentSecretSharedListState);
 
     //Get the metadata of the selected document
     let [documentSelectedState, setDocumentSelectedState] = useState({});
     
     //Track which item is selected or clicked.
     let [itemSelected, setItemSelected] = useState({index: -1, isSelected: false, fileNameVar: ''});
+
+    //State to toggle the request share modal component
+    let [isRequestShareModalViewed, setIsRequestShareModalViewed] = useState(false);
+    async function showShareRequestModal(elem){
+        setIsRequestShareModalViewed(true);
+        setHoldSecretSharedObject(elem);
+
+    }
+    function hideShareRequestModal(){
+        setIsRequestShareModalViewed(false);
+    }
+
+    //State to hold the secret shared document metadata object to be passed on the RequestShareModal component
+    let [holdSecretSharedObject, setHoldSecretSharedObject] = useState();
+
 
     let navigate = useNavigate();
     async function gunHandlerCall(){
@@ -70,6 +102,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     }
     useEffect(()=>{
             documentsDispatch({reset: true});
+            documentsSecretSharedDispatch({reset: true});
             userInstance.get("alias").on(async data => {
                 setMyAlias(data);
             });
@@ -82,10 +115,11 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                     setSEA(data.roomSEA);
                 }
             })
-
-             gunInstance.get(folderContext.folderNameNodeFull).map().once(data =>{
+            console.log(folderContext.folderNameNodeFull);
+            gunInstance.get(folderContext.folderNameNodeFull).map().on(data =>{
                 //get the property name of the unique node containing the individual file's metadata
                 //let getFileNameRoomUUIDProperty = data.filenameProperty.concat(roomUUIDObj.roomUUIDProperty);
+                console.log(data);
                 let getFileName = data.filenameProperty;
                 let getFileType = data.fileType;
                 let getAccessType = data.accessType;
@@ -98,14 +132,27 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                     cid: CID, 
                     date: date
                 })
-    
-                documentsDispatch({ 
-                    filename: getFileName, 
-                    fileType: getFileType, 
-                    accessType: getAccessType, 
-                    cid: CID, 
-                    date: date
-                });
+                if(data.accessType === "secretShare"){
+                    documentsSecretSharedDispatch({
+                        filename: getFileName, 
+                        fileType: getFileType, 
+                        accessType: getAccessType, 
+                        cid: CID, 
+                        date: date,
+                        holder1: data.holder1,
+                        holder2: data.holder2, 
+                        holder3: data.holder3,
+                    })
+                }
+                else if (data.accessType === "shared"){
+                    documentsDispatch({ 
+                        filename: getFileName, 
+                        fileType: getFileType, 
+                        accessType: getAccessType, 
+                        cid: CID, 
+                        date: date
+                    });
+                }
             })
             gunHandlerCall();
     }, [folderContext])
@@ -131,12 +178,12 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     // Remove duplicated documents from the "documents" property in the documentListState and get only objects with access type of "secretShare".
     const filteredSecretSharedDocuments = () =>{
             console.log("filtered SECRET shared documents function called")
-            const filteredDocumentList = documentListState.documents.filter((value, index) => {
+            const filteredDocumentList = documentListStateSecretSharedState.documentsSecretSharedArrayState.filter((value, index) => {
                 console.log(value);
                 const _value = JSON.stringify(value);
                 return (
                     index ===
-                    documentListState.documents.findIndex(obj => {
+                    documentListStateSecretSharedState.documentsSecretSharedArrayState.findIndex(obj => {
                     return JSON.stringify(obj) === _value
                     }) && value.accessType === "secretShare"
                 )
@@ -179,7 +226,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
             console.log(SEAState);
             //Initialization Vector: Decrypt and Decode base64-encoded string back into Uint8Array type using the SEA.pair() of the team room
             let decryptedIVBase64 = await SEA.decrypt(data.iv, SEAState);
-            const decodedb64Uint8Array  = window.atob(decryptedIVBase64, decryptedIVBase64);
+            const decodedb64Uint8Array  = window.atob(decryptedIVBase64, decryptedIVBase64); //Decode base64-encoded string back into Uint8Array
             const buffer = new ArrayBuffer(decodedb64Uint8Array.length);
             const ivUint8Array = new Uint8Array(buffer);
             for (let i = 0; i < decodedb64Uint8Array.length; i++) {
@@ -223,10 +270,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
     }
 
-    async function HandleRequestShare(elem){
-        
 
-    }
 
     async function downloadSecretShared(elem){
         
@@ -267,6 +311,7 @@ const filteredVCList = () =>{
 }
     return (
         <div>
+            <RequestShareModalComponent secretSharedDocumentObj={holdSecretSharedObject} uuidRoomObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideShareRequestModal} show={isRequestShareModalViewed}/>
             <div className="top-toolbar-folder" >
                 <div className="top-toolbar-nav-folder">
                     <button className="btn-navigate-folder" onClick={()=> navigate("/main")}><p>Team Rooms</p></button>
@@ -289,21 +334,21 @@ const filteredVCList = () =>{
                     <table className="table-container">
                         <thead className="table-row-container">
                         <tr>
-                            <th>File Name</th>
-                            <th>Content Identifier (CID)</th>
-                            <th>Date of Upload (Last modified)</th>
+                            <th><p className="table-header-label-css">Document Name</p></th>
+                            <th><p className="table-header-label-css">Content Identifier (CID)</p></th>
+                            <th><p className="table-header-label-css">Date of Upload (Last modified)</p></th>
                         </tr>
                         </thead>
                         <tbody>
                         {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                             {filteredSecretSharedDocuments().map((elem, index) =>
                             <tr className="table-row-css">
-                            <td>{elem.filename}</td>
-                            <td>{elem.cid}</td>
-                            <td><p className="date-label-table-css">{elem.date}</p></td>
-                            <td><button className="download-btn" onClick={() => HandleRequestShare(elem)}>Request for all shares</button></td>
-                            <td><button className="download-btn" onClick={() => downloadSecretShared(elem)}>Download Document</button></td>
-                            </tr>
+                            <td><p className="table-data-label-css">{elem.filename}</p></td>
+                            <td><p className="table-data-label-css cid-label-css">{elem.cid}</p></td>
+                            <td><p className="table-data-label-css">{elem.date}</p></td>
+                            <td><button className="download-btn" onClick={() => showShareRequestModal(elem)}>Request for all shares</button></td>
+{/*                             <td><button className="download-btn" onClick={() => downloadSecretShared(elem)}>Download Document</button></td>
+ */}                            </tr>
                         )}
                         </tbody>
                     </table>
@@ -324,16 +369,17 @@ const filteredVCList = () =>{
                 <div className="vc-container">
                     <h3>Version Control</h3>
                     <p className="vc-sidebar-subtitle">Click on a file to check</p>
+                    <br></br>
                     <table className="table-container-vc">
                         <thead className="table-row-container">
                         <tr>
-                            <th>File Name</th>
-                            <th>Content Identifier (CID)</th>
-                            <th>Date of Upload (Last modified)</th>
+                            <th><p className="table-header-label-css">Document Name</p></th>
+                            <th><p className="table-header-label-css">Content Identifier (CID)</p></th>
+                            <th><p className="table-header-label-css">Date of Upload (Last modified)</p></th>
                         </tr>
                         </thead>
                         <tbody>
-                                                        {filteredVCList.apply().map((elem, index)=>
+                            {filteredVCList.apply().map((elem, index)=>
                                     <tr className="table-row-css" key={index}>
                                         <td>{elem.filenameProperty}</td>
                                         <td>{elem.CID_prop}</td>

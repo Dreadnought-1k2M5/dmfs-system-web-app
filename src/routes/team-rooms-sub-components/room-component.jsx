@@ -109,7 +109,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
     let [isNotificationClicked, setIsNotificationClicked] = useState(false);
   
     let [notificationListState, dispatchNotification] = useReducer(notificationListUseReducer, currentNotificationListState);
-    let [listShareRequest, dispatchListShareRequest] = useReducer(listShareRequestHandler, currentListShareRequestState);
+    let [listShareRequest, dispatchListShareRequestNotification] = useReducer(listShareRequestHandler, currentListShareRequestState);
   
 
     //useReducer for members
@@ -124,58 +124,112 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
     let [roomName, setRoomName] = useState(''); // Holds room name
     let [roomUUIDState, setRoomUUID] = useState(''); // Holds room uuid-date
-    let [seaChatRoom, setSeaChatRoom] = useState(''); // Holds the SEA pair of the chatroom
+    let [seaRoomState, setSEAPairRoom] = useState(''); // Holds the SEA pair of the team room
     let [myAlias, setMyAlias] = useState(''); //Display my username
     let [textMessage, setTextMessage] = useState(''); //Holds the user text input
     
-    //
-    async function QueryNodeNetworkHandler(myAlias){
-    await gunInstance.get("publicShareQueue".concat(roomUUIDObj.roomUUIDProperty)).map().on(data => {
-        if(data.intendedUser === myAlias){
-        console.log("TRUE. DISPATCHING NODE data");
-        setNotification(true);
-        dispatchNotification({
-            intendedUser: data.intendedUser, 
-            providedBy: data.providedBy, 
-            providerEpub: data.providerEpub, 
-            share: data.share, 
-            filename: data.filename,
-            roomUUID: data.roomUUID
+    
+    useEffect(()=>{
+
+        setRoomUUID(roomUUIDObj.roomUUIDProperty);
+        userInstance.get('alias').on(v => {
+            gunInstance.get(`${v}_requestSetNode`).map().on(data=>{
+                setNotification(true);
+                dispatchListShareRequestNotification(data);
+            })
+            setMyAlias(v);
+            QueryNodeNetworkHandler(v);
+            QueryShareRequestHandler(v);
         });
-        }
-    })
+
+        setRoomName(roomUUIDObj.roomName);
+
+        userInstance.get("my_team_rooms").map(async data => {
+            if(data.nameOfRoom == roomUUIDObj.roomName){
+                setSEAPairRoom(data.roomSEA);
+
+                //Read all messages from the chatroom
+                gunInstance.get("CHATROOM_".concat(roomUUIDObj.roomUUIDProperty)).map().on(async encryptedMessage => {
+                    let decrypted = await SEA.decrypt(encryptedMessage, data.roomSEA);
+                    msgDispatch( { name: decrypted.name, content: decrypted.content, timestamp: decrypted.timestamp } )
+                })
+            }
+        });
+
+/*         let foldername;
+        console.log("FOLDER");
+        gunInstance.get("random folder 1".concat(roomUUIDObj.roomUUIDProperty)).map().once(async data =>{
+            console.log(data);
+        }) */
+
+/*         console.log("VERSION CONTROL OF ONE FILE");
+        gunInstance.get("vc_".concat("doc1test.txt").concat(roomUUIDObj.roomUUIDProperty)).map().once(data =>{
+            console.log(data);
+        }) */
+
+        gunInstance.get("memberList_".concat(roomUUIDObj.roomUUIDProperty)).map().on(data => {
+            console.log(data);
+            memberListDispatch({memberAlias: data.user_Alias});
+        })
+
+/*         gunInstance.get("foldersMetadata_".concat(roomUUIDObj.roomUUIDProperty)).map().on(data =>{
+            console.log(data);
+            folderDispatch(data);
+        }) */
+
+        gunInstance.get("foldersMetadata_".concat(roomUUIDObj.roomUUIDProperty)).map().once(async (data, key) =>{
+            let objectItem = {
+              folderNameNodeFull: null,
+              folderNameClean: null,
+              itemsProp: []
+            }
+            console.log("QWERTY---------QWERY----------------");
+            console.log(data);
+            dispatchFolderList(await traverseSubfolder(data, key, objectItem));
+        })
+
+    }, []);
+
+
+    async function QueryNodeNetworkHandler(myAlias){
+
     }
 
     async function QueryShareRequestHandler(myAliasArg){
-    console.log("TESTTTT");
-    await gunInstance.get(myAliasArg.concat("publicNodeRequestList")).map().once(data => {
-        console.log("TRUE. DISPATCHING NODE data");
-        console.log(data);
-        setNotification(true);
-        dispatchListShareRequest({
-            requestor: data.requestor,
-            requestorEpub: data.requestorEpub,
-            shareHolder: data.shareHolder,
-            filename: data.filename
-        });
-    })
+        
+        await gunInstance.get(`${myAlias}_shareListNodeSet`).map().on(async data => {
+            //Attempt to decrypt the encryptedShare
+
+            //Generate Diffie–Hellman key exchange using my user graph SEA pair 
+            //and the SEA pair of the team room.
+            let secretKey = await SEA.secret(seaRoomState.epub, userInstance._.sea);
+            let decryptedShare = await SEA.decrypt(data.encryptedShare, secretKey);
+            
+            setNotification(true);
+            dispatchListShareRequestNotification({
+                filename: data.filename,
+                teamRoomUUID: data.teamRoomUUID,
+                encryptedShare: data.encryptedShare1
+            });
+        })
+
     } 
 
 
     //REMOVE DUPLICATED SHARED REQUESTS
     const filteredShareRequestList = () =>{
-    console.log("filtered share request list notifications handler called");
-    const filteredSharedRequestfArray = listShareRequest.listShareRequestArray.filter((value, index) => {
-        const _value = JSON.stringify(value);
-        return (
-            index ===
-            listShareRequest.listShareRequestArray.findIndex(obj => {
-            return JSON.stringify(obj) === _value 
-            })
-        )
-    })
+        console.log("filtered share request list notifications handler called");
+        const filteredSharedRequestfArray = listShareRequest.listShareRequestArray.filter((value, index) => {
+            const _value = JSON.stringify(value);
+            return (
+                index ===
+                listShareRequest.listShareRequestArray.findIndex(obj => {
+                return JSON.stringify(obj) === _value 
+                })
+            )
+        })
 
-    return filteredSharedRequestfArray;
+        return filteredSharedRequestfArray;
     } 
     
 
@@ -268,7 +322,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             timestamp: Date().substring(16, 21)
         }
         console.log(messageObject);
-        let encryptedMessage = await SEA.encrypt(messageObject, seaChatRoom);
+        let encryptedMessage = await SEA.encrypt(messageObject, seaRoomState);
         console.log(roomUUIDState);
 
         await gunInstance.get("CHATROOM_".concat(roomUUIDState)).set(encryptedMessage);
@@ -367,8 +421,12 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
     }
 
     async function authorizeShareHandler(elem1){
+        alert("ALERT")
+        await gunInstance.get(`${myAlias}_shareListNodeSet`).map().once(data =>{
+            console.log(data);
+        })
 
-        userInstance.get(elem1.filename.concat(myAlias)).once(async data=>{
+/*         userInstance.get(elem1.filename.concat(myAlias)).once(async data=>{
             //generate diffie helman
             let secretKey = await SEA.secret(elem1.requestorEpub, userInstance._.sea);
             let encryptedShare = await SEA.encrypt(data.encShareFile, secretKey);
@@ -386,7 +444,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 filename: null
             })
 
-        })
+        }) */
 
     }
 
@@ -414,65 +472,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         } */
     }
 
-    useEffect(()=>{
-        userInstance.get("documentsWithShares".concat(roomUUIDObj.roomUUIDProperty)).map().once(data =>{
-            console.log(data);
-        })
-        setRoomUUID(roomUUIDObj.roomUUIDProperty);
-        userInstance.get('alias').on(v => {
-            setMyAlias(v);
-            QueryNodeNetworkHandler(v);
-            QueryShareRequestHandler(v);
-        });
-
-        setRoomName(roomUUIDObj.roomName);
-
-        userInstance.get("my_team_rooms").map(async data => {
-            if(data.nameOfRoom == roomUUIDObj.roomName){
-                setSeaChatRoom(data.roomSEA);
-
-                //Read all messages from the chatroom
-                gunInstance.get("CHATROOM_".concat(roomUUIDObj.roomUUIDProperty)).map().on(async encryptedMessage => {
-                    let decrypted = await SEA.decrypt(encryptedMessage, data.roomSEA);
-                    msgDispatch( { name: decrypted.name, content: decrypted.content, timestamp: decrypted.timestamp } )
-                })
-            }
-        });
-
-/*         let foldername;
-        console.log("FOLDER");
-        gunInstance.get("random folder 1".concat(roomUUIDObj.roomUUIDProperty)).map().once(async data =>{
-            console.log(data);
-        }) */
-
-/*         console.log("VERSION CONTROL OF ONE FILE");
-        gunInstance.get("vc_".concat("doc1test.txt").concat(roomUUIDObj.roomUUIDProperty)).map().once(data =>{
-            console.log(data);
-        }) */
-
-        gunInstance.get("memberList_".concat(roomUUIDObj.roomUUIDProperty)).map().on(data => {
-            console.log(data);
-            memberListDispatch({memberAlias: data.user_Alias});
-        })
-
-/*         gunInstance.get("foldersMetadata_".concat(roomUUIDObj.roomUUIDProperty)).map().on(data =>{
-            console.log(data);
-            folderDispatch(data);
-        }) */
-
-        gunInstance.get("foldersMetadata_".concat(roomUUIDObj.roomUUIDProperty)).map().once(async (data, key) =>{
-            let objectItem = {
-              folderNameNodeFull: null,
-              folderNameClean: null,
-              itemsProp: []
-            }
-            console.log("QWERTY---------QWERY----------------");
-            console.log(data);
-            dispatchFolderList(await traverseSubfolder(data, key, objectItem));
-        })
-
-    }, []);
-
+   
     return (
         <div>
             <AddMemberModal uuidRoomObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideModal} show={isAddUserModalViewed} handleCloseAfterMemberAdded={hideModalAfterCreatedRoom}></AddMemberModal>

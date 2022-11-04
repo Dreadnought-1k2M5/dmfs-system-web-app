@@ -186,7 +186,7 @@
 
 .room-right-side-grid{
     height: 89vh;
-    width: 95%;
+    width: 99%;
     display: grid;
     grid-area: rightSide;
 /*     background-color: red;
@@ -203,6 +203,7 @@
     border: 0.5px solid rgba(255, 255, 255, 0.49);
     border-radius: 8px;
     position: fixed;
+    top: 4%;
     left: 73%;
 }
 .hide-chatroom-container{

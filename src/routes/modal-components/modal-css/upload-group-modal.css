@@ -10,7 +10,7 @@
     to { background-color: rgba(30, 30, 30, 0.6); }
 }   
 
-.modal {
+.modal-upload-file-group {
     position: fixed;
     top: 0;
     left: 0;
@@ -30,9 +30,9 @@
 }
 
 .upload-group-modal-box{
-    background-color: rgba(111, 209, 255, 0.267);
-    width: 38%;
-    height: 75%;
+    background-color: rgb(30, 30, 30);
+    width: 58%;
+    height: 65%;
     border-radius: 20px;
     backdrop-filter: blur(5px);
     padding: 10px;
@@ -40,13 +40,16 @@
     animation-name: upload-group-container-animation;
     animation-duration: 0.2s;
     animation-timing-function: ease-out;
-    color: rgb(255, 255, 255);
+    color: rgba(255, 255, 255, 0.852);
     z-index: 100;
+    bottom: 40px;
+    border: 0.5px solid rgb(111, 209, 255);
 }
 
 @keyframes upload-group-container-animation {
-    from { bottom: 40px;     background-color: rgba(111, 209, 255, 0); }
-    to { bottom: 0px;        background-color: rgba(111, 209, 255, 0.267); }
+    from { bottom: 90px;     background-color: rgba(111, 209, 255, 0); }
+    to { bottom: 40px;            background-color: rgb(30, 30, 30);
+    }
 }
 
 .upload-group-modal-box > .exit-box{
@@ -57,10 +60,24 @@
 .upload-group-input-box{
     width: 90%;
     margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas: "folderTree formUpload";
+
 }
-.upload-group-input-box > div{
+/* .upload-group-input-box > div{
     margin-top: 1rem;
     margin-bottom: 10px;
+} */
+.folderTree-grid-cell{
+    grid-area: folderTree;
+    background-color: rgba(45, 45, 45, 0.522);
+    overflow-y: auto;
+    overflow-x: auto;
+
+}
+.form-upload-grid-cell{
+    grid-area: formUpload;
 }
 
 .radiobox-container{
@@ -100,7 +117,7 @@
 }
 
 
-.ss-ooption-description-css{
+.ss-option-description-css{
     font-size: 13px;
 }
 
@@ -109,10 +126,33 @@
     width: 95%;
     margin: auto;
 }
+.parent-foldername-box{
+    display: flex;
+    padding: 10px;
+    width: 75%;
+    justify-content: space-between;
+}
+.button-display-parent-folder-btn{
+    background-color: rgb(221, 221, 221);
 
-.location-node-item > .textbox-foldername{
-    font-size: 15px;
-    width: 80%;
+    padding: 5px 17px 5px 17px;
+    font-size: 11px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+
+}
+.button-display-none-parent-folder-btn{
+    display: none;
+}
+.foldername-textbox-box{
+    display: flex;
+    padding: 4px;
+}
+
+.location-node-box .textbox-foldername{
+    height: 10px;
+    width: 60%;
 }
 
 .upload-btn-box{

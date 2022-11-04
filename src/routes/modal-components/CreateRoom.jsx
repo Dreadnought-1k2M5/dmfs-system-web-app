@@ -17,7 +17,7 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
     let [seaChatObj, setseaChatObj] = useState({});
     const navigate = useNavigate();
 
-    const toggleClassname = show ? "modal modal-create-room-container" : "modal display-none";
+    const toggleClassname = show ? "modal-create-room modal-create-room-container" : "modal-create-room display-none";
 
     async function generateUUID(){
         let uuidv4String = uuidv4();

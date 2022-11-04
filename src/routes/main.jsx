@@ -34,32 +34,38 @@ function Main({gunInstance, userInstance, userSession}) {
 
   return (
     <div className="App">
-      <div className="sidebar">
-        <div className="title-subtitle-box">
-          <h1>Project MINERVA</h1>
-          <p>Decentralized Document Management and File-Sharing System</p>
-        </div>
-        <div className="navlink-tabs">
-          <NavLink onClick={()=>  setHomeActive(true) } className={()=> homeActive ? "navlink-component-active" : "navlink-component" } to="/main"> Home</NavLink>          
-          <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="Teams"> Team Rooms</NavLink>
-          <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="audit"> Version Control / Audit Trail</NavLink>
-          
-        </div> 
-      </div>
-      <div className="right-component">
-        <div className="top-nav-bar">
+      <div className="top-bar-parent">
+
+        <div className="top-bar-box1">
+          <div className="title-subtitle-box">
+              <h1>Project MINERVA</h1>
+              <p>Decentralized Document Management and File-Sharing System</p>
+          </div>
           <div className="search-box">
-{/*             <div>
-              <input type="text" placeholder='Search Files'/>
-              <img src= {search} alt="" className='search-icon'/>
-            </div> */}
-            {/* Search */}
-          </div>
-          <div className="username-logout-box">
-            <h3>Hello {username}</h3>
-            <button className="logout-btn" onClick={handleLogout}>Log Out</button>
-          </div>
+                <div>
+                  <input type="text" placeholder='Search Files'/>
+                  <img src= {search} alt="" className='search-icon'/>
+                </div>
+              </div>
+
+              <div className="username-logout-box">
+                <h3>Hello {username}</h3>
+                <button className="logout-btn" onClick={handleLogout}>Log Out</button>
+              </div>
+
+
         </div>
+          
+          <div className="top-navbar">
+            <NavLink onClick={()=>  setHomeActive(true) } className={()=> homeActive ? "navlink-component-active" : "navlink-component" } to="/main"> Team Rooms</NavLink>          
+            <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="mydocs"> My Documents</NavLink>
+            <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="audit"> Version Control / Audit Trail</NavLink>
+          </div>
+          
+      </div>
+
+      <div className="right-component">
+
 
         <div className="outlet-container">
           <Outlet />

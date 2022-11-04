@@ -45,13 +45,13 @@ root.render(
             <Route path='/' element={<Login userInstance={user} userSession={userSessionObj}/>} />
             <Route path="/register" element={<Register gunInstance={gundb} userInstance={user} userSession={userSessionObj}/>} />
             <Route path='/main' element={<Main gunInstance={gundb} userInstance={user} userSession={userSessionObj}/>}>
-              <Route index element={<Home userInstance={user}/>} />
-              <Route path='upload' element={<UploadFile userInstance={user}/>} />
-              <Route path='Teams' element={<TeamRoomComponent roomUUIDObj={roomUUIDObj} gunInstance={gundb} userInstance={user} />}/>
+              <Route index element={<TeamRoomComponent roomUUIDObj={roomUUIDObj} gunInstance={gundb} userInstance={user} />} />
+{/*               <Route path='upload' element={<UploadFile userInstance={user}/>} />*/}              
+              <Route path='mydocs' element={<Home userInstance={user}/>}/>
               
               {/* Cannot embed this route inside a route witn <TeamRoomComponent> */}
-              <Route path='Teams/room' element={<RoomComponent gunInstance={gundb} userInstance={user} roomUUIDObj={roomUUIDObj} folderContext={folderContext}/>} />
-              <Route path='Teams/room/folder' element={<FolderComponent folderContext={folderContext} gunInstance={gundb} userInstance={user} roomUUIDObj={roomUUIDObj}/>} />
+              <Route path='room' element={<RoomComponent gunInstance={gundb} userInstance={user} roomUUIDObj={roomUUIDObj} folderContext={folderContext}/>} />
+              <Route path='room/folder' element={<FolderComponent folderContext={folderContext} gunInstance={gundb} userInstance={user} roomUUIDObj={roomUUIDObj}/>} />
 
               <Route path='audit' element={<VersionControlComponent gunInstance={gundb} userInstance={user}/>} />
             </Route>

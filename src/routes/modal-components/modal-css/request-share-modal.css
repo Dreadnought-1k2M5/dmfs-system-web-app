@@ -1,0 +1,69 @@
+.modal-request-share-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    
+}
+@keyframes modal-animation {
+    from { background-color: rgba(19, 19, 19, 0); } /* background color from outlet-container at main.css */
+    to { background-color: rgba(30, 30, 30, 0.6); }
+}   
+
+.modal-request-share-group {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
+    background-color: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(5px);
+    animation-name: modal-animation;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    z-index: 9;
+    
+}
+
+.display-none{
+    display: none;
+}
+
+.request-share-modal-box{
+    background-color: rgb(30, 30, 30);
+    width: 33%;
+    height: 65%;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    position: relative;
+    animation-name: upload-group-container-animation;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    color: rgba(255, 255, 255, 0.852);
+    z-index: 100;
+    bottom: 40px;
+    border: 0.5px solid rgb(111, 209, 255);
+}
+
+@keyframes upload-group-container-animation {
+    from { bottom: 90px;     background-color: rgba(111, 209, 255, 0); }
+    to { bottom: 40px;            background-color: rgb(30, 30, 30);
+    }
+}
+
+.request-share-modal-box > .exit-box{
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.request-share-modal-content-box{
+
+}
+.request-share-box1{
+    margin-top: 15px;
+}
+
+.list-shareholders-box{
+    margin-top: 50px;
+}

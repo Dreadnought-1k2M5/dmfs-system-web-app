@@ -10,14 +10,37 @@ import { SEA } from "gun";
 
 import './folder-component.css';
 
-// useReducer
-const currentDocumentListState ={
+import RequestShareModalComponent from "../modal-components/RequestShareModal";
+
+// useReducer for shared documents
+const currentDocumentListState = {
     documents: []
 }
 
 const documentsUseReducerHandler = (documentListState, document)=>{
+    if(document.reset){
+        return {
+            documents: []
+        }
+    }
     return {
         documents: [document, ...documentListState.documents]
+    }
+}
+
+// useReducer for shared documents
+const currentDocumentSecretSharedListState = {
+    documentsSecretSharedArrayState: []
+}
+
+const documentsSecretSharedUseReducerHandler = (documentSecretSharedListState, documentSecretShared)=>{
+    if(documentSecretShared.reset){
+        return {
+            documentsSecretSharedArrayState: []
+        }
+    }
+    return {
+        documentsSecretSharedArrayState: [documentSecretShared, ...documentSecretSharedListState.documentsSecretSharedArrayState]
     }
 }
 
@@ -39,11 +62,17 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
     let [isVcSidebarViews, setIsVcSidebarViews] = useState(false);
 
+    //state for the folderContext
+    let [folderContextState, setFolderContextState] = useState();
+
     //usereducer for documents/files
     let [vcListState, dispatchvcListState] = useReducer(vcUseReducerHandler, currentVCState);
 
-    //useReducer for documents/files
+    //useReducer for documents/files (shared)
     let [documentListState, documentsDispatch] = useReducer(documentsUseReducerHandler, currentDocumentListState);
+
+    //useReducer for documents/files (shared)
+    let [documentListStateSecretSharedState, documentsSecretSharedDispatch] = useReducer(documentsSecretSharedUseReducerHandler, currentDocumentSecretSharedListState);
 
     //Get the metadata of the selected document
     let [documentSelectedState, setDocumentSelectedState] = useState({});
@@ -51,14 +80,34 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     //Track which item is selected or clicked.
     let [itemSelected, setItemSelected] = useState({index: -1, isSelected: false, fileNameVar: ''});
 
+    //State to toggle the request share modal component
+    let [isRequestShareModalViewed, setIsRequestShareModalViewed] = useState(false);
+    async function showShareRequestModal(elem){
+        setIsRequestShareModalViewed(true);
+        setHoldSecretSharedObject(elem);
+
+    }
+    function hideShareRequestModal(){
+        setIsRequestShareModalViewed(false);
+    }
+
+    //State to hold the secret shared document metadata object to be passed on the RequestShareModal component
+    let [holdSecretSharedObject, setHoldSecretSharedObject] = useState();
+
+
     let navigate = useNavigate();
+    async function gunHandlerCall(){
+
+        
+    }
     useEffect(()=>{
+            documentsDispatch({reset: true});
+            documentsSecretSharedDispatch({reset: true});
             userInstance.get("alias").on(async data => {
                 setMyAlias(data);
             });
-
-
-            userInstance.get("my_team_rooms").map().once(data=>{
+    
+             userInstance.get("my_team_rooms").map().once(data=>{
                 delete data._;
                 console.log(data);
                 if(data.uuidOfRoom === roomUUIDObj.roomUUIDProperty){
@@ -66,23 +115,47 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                     setSEA(data.roomSEA);
                 }
             })
-
-            gunInstance.get(folderContext.folderName.concat(roomUUIDObj.roomUUIDProperty)).map().once(data =>{
+            console.log(folderContext.folderNameNodeFull);
+            gunInstance.get(folderContext.folderNameNodeFull).map().on(data =>{
                 //get the property name of the unique node containing the individual file's metadata
                 //let getFileNameRoomUUIDProperty = data.filenameProperty.concat(roomUUIDObj.roomUUIDProperty);
+                console.log(data);
                 let getFileName = data.filenameProperty;
                 let getFileType = data.fileType;
                 let getAccessType = data.accessType;
                 let CID = data.CID_prop;
                 let date = data.date;
-                let getshareHoldersList = data.shareHoldersList; //ShareHodlerList is a reference to an individual unique node
-
-                //console.log(getFileNameRoomUUIDProperty);
-                console.log(getFileName)
-                documentsDispatch({ filename: getFileName, fileType: getFileType, accessType: getAccessType, cid: CID, date: date, shareHoldersList: getshareHoldersList});
+                console.log({ 
+                    filename: getFileName, 
+                    fileType: getFileType, 
+                    accessType: getAccessType, 
+                    cid: CID, 
+                    date: date
+                })
+                if(data.accessType === "secretShare"){
+                    documentsSecretSharedDispatch({
+                        filename: getFileName, 
+                        fileType: getFileType, 
+                        accessType: getAccessType, 
+                        cid: CID, 
+                        date: date,
+                        holder1: data.holder1,
+                        holder2: data.holder2, 
+                        holder3: data.holder3,
+                    })
+                }
+                else if (data.accessType === "shared"){
+                    documentsDispatch({ 
+                        filename: getFileName, 
+                        fileType: getFileType, 
+                        accessType: getAccessType, 
+                        cid: CID, 
+                        date: date
+                    });
+                }
             })
-
-    }, [])
+            gunHandlerCall();
+    }, [folderContext])
 
     
     // Remove duplicated documents from the "documents" property in the documentListState and get only objects with access type of "shared".
@@ -105,12 +178,12 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     // Remove duplicated documents from the "documents" property in the documentListState and get only objects with access type of "secretShare".
     const filteredSecretSharedDocuments = () =>{
             console.log("filtered SECRET shared documents function called")
-            const filteredDocumentList = documentListState.documents.filter((value, index) => {
+            const filteredDocumentList = documentListStateSecretSharedState.documentsSecretSharedArrayState.filter((value, index) => {
                 console.log(value);
                 const _value = JSON.stringify(value);
                 return (
                     index ===
-                    documentListState.documents.findIndex(obj => {
+                    documentListStateSecretSharedState.documentsSecretSharedArrayState.findIndex(obj => {
                     return JSON.stringify(obj) === _value
                     }) && value.accessType === "secretShare"
                 )
@@ -153,7 +226,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
             console.log(SEAState);
             //Initialization Vector: Decrypt and Decode base64-encoded string back into Uint8Array type using the SEA.pair() of the team room
             let decryptedIVBase64 = await SEA.decrypt(data.iv, SEAState);
-            const decodedb64Uint8Array  = window.atob(decryptedIVBase64, decryptedIVBase64);
+            const decodedb64Uint8Array  = window.atob(decryptedIVBase64, decryptedIVBase64); //Decode base64-encoded string back into Uint8Array
             const buffer = new ArrayBuffer(decodedb64Uint8Array.length);
             const ivUint8Array = new Uint8Array(buffer);
             for (let i = 0; i < decodedb64Uint8Array.length; i++) {
@@ -197,159 +270,10 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
     }
 
-    async function HandleRequestShare(elem){
-        let holder1, holder2, holder3;
-        await gunInstance.get(elem.shareHoldersList).once(data => {
-            holder1 = data.holder1;
-            holder2 = data.holder2;
-            holder3 = data.holder3;
-        })
-        console.log(holder1);
-        console.log(holder2);
-        console.log(holder3);
 
-        //holder 1 node
-        let refNode1 = await gunInstance.get(holder1.concat("_shareRequestNode_").concat(myAlias)).put({
-            requestor: myAlias,
-            requestorEpub: userInstance._.sea.epub,
-            shareHolder: holder1,
-            filename: elem.filename
-        })
-        let refNode2 = await gunInstance.get(holder2.concat("_shareRequestNode_").concat(myAlias)).put({
-            requestor: myAlias,
-            requestorEpub: userInstance._.sea.epub,
-            shareHolder: holder2,
-            filename: elem.filename
-        })
-        let refNode3 = await gunInstance.get(holder3.concat("_shareRequestNode_").concat(myAlias)).put({
-            requestor: myAlias,
-            requestorEpub: userInstance._.sea.epub,
-            shareHolder: holder3,
-            filename: elem.filename
-        })
-
-        await gunInstance.get(holder1.concat("publicNodeRequestList")).set(refNode1);
-        await gunInstance.get(holder2.concat("publicNodeRequestList")).set(refNode2);
-        await gunInstance.get(holder3.concat("publicNodeRequestList")).set(refNode3);
-
-/*         await gunInstance.get(myAlias.concat("_").concat(holder1).concat("responseNode")).on(async data1 =>{
-            if(data1.isAuthorized){
-                await gunInstance.get(myAlias.concat("_").concat(holder2).concat("responseNode")).on(async data2 =>{
-                    if(data2.isAuthorized){
-                        await gunInstance.get(myAlias.concat("_").concat(holder3).concat("responseNode")).on(async data3 =>{
-                            if(data3.isAuthorized){
-                                
-                                let secreKey1 = await SEA.secret(data1.holderEpub, userInstance._.sea);
-                                let secreKey2 = await SEA.secret(data2.holderEpub, userInstance._.sea);
-                                let secreKey3 = await SEA.secret(data3.holderEpub, userInstance._.sea);
-                                
-                                let decrypt1 = await SEA.decrypt(data1.encryptedShare, secreKey1);
-                                let decrypt2 = await SEA.decrypt(data2.encryptedShare, secreKey2);
-                                let decrypt3 = await SEA.decrypt(data3.encryptedShare, secreKey3);
-
-                                console.log(decrypt1.concat(decrypt2).concat(decrypt3));
-                            }
-                        })
-                    }
-                })
-            }
-        }) */
-
-    }
 
     async function downloadSecretShared(elem){
-        let holder1, holder2, holder3;
-        await gunInstance.get(elem.shareHoldersList).once(data => {
-            holder1 = data.holder1;
-            holder2 = data.holder2;
-            holder3 = data.holder3;
-        })
-        let secreKey1, secreKey2, secreKey3, decrypt1, decrypt2, decrypt3;
-
-        await gunInstance.get(myAlias.concat("_").concat(holder1).concat("responseNode")).on(async data1 =>{
-            secreKey1 = await SEA.secret(data1.holderEpub, userInstance._.sea);
-            decrypt1 = await SEA.decrypt(data1.encryptedShare, secreKey1);
-
-        })
-        await gunInstance.get(myAlias.concat("_").concat(holder2).concat("responseNode")).on(async data2 =>{
-            secreKey2 = await SEA.secret(data2.holderEpub, userInstance._.sea);
-            decrypt2 = await SEA.decrypt(data2.encryptedShare, secreKey2);
-        })
-        await gunInstance.get(myAlias.concat("_").concat(holder3).concat("responseNode")).on(async data3 =>{
-            secreKey3 = await SEA.secret(data3.holderEpub, userInstance._.sea);
-            decrypt3 = await SEA.decrypt(data3.encryptedShare, secreKey3);
-        })
-
-        console.log(decrypt1.concat(decrypt2).concat(decrypt3));
-        let stringJSON = decrypt1.concat(decrypt2).concat(decrypt3);
-        let parsedSEA = JSON.parse(stringJSON);
-
-        await gunInstance.get(elem.filename.concat(roomUUIDObj.roomUUIDProperty)).once( async data =>{
-            console.log(data);
-            let filename = data.filenameProperty;
-            let filenameWithNoWhiteSpace = data.filenameWithNoWhiteSpace;
-            let CID = data.CID_prop;
-            let fileType = data.fileType;
-
-            //Initialization Vector: Decrypt and Decode base64-encoded string back into Uint8Array type using the SEA.pair() of the team room
-            let decryptedIVBase64 = await SEA.decrypt(data.iv, parsedSEA);
-            const decodedb64Uint8Array  = window.atob(decryptedIVBase64, decryptedIVBase64);
-            const buffer = new ArrayBuffer(decodedb64Uint8Array.length);
-            const ivUint8Array = new Uint8Array(buffer);
-            for (let i = 0; i < decodedb64Uint8Array.length; i++) {
-                ivUint8Array[i] = decodedb64Uint8Array.charCodeAt(i)
-            }
-
-            //Decrypt the parsedExportedKey using the SEA.pair() of the team room.
-            let decryptedKey = await SEA.decrypt(data.fileKey, parsedSEA);
-            console.log(decryptedKey);
-            //Idk why the fuck this line doesn't work but the decryption process works without it.
-            //The value of 'decryptedKey' was supposed to be a JSON string, but it wasn't for some reason.
-            //let jsonParseFileKey = await JSON.parse(decryptedJSON);
-
-            await crypto.subtle.importKey("jwk", decryptedKey, { 'name': 'AES-CBC' }, true, ['encrypt', 'decrypt']).then(async cryptoKeyImported =>{
-                fetch(`https://${CID}.ipfs.w3s.link/ipfs/${CID}/${filenameWithNoWhiteSpace}`).then(res => {
-                    let result = res.blob(); // Convert to blob() format
-                    console.log(result);
-                    return result;
-                }).then(async res => {
-            
-                    // Convert blob to arraybuffer
-                    const fileArrayBuffer = await new Response(res).arrayBuffer();
         
-                    await window.crypto.subtle.decrypt({name: 'AES-CBC', iv: ivUint8Array}, cryptoKeyImported, fileArrayBuffer).then(decrypted => {
-                        //Convert ArrayBuffer to Blob and Download
-                        const blob = new Blob([decrypted], {type: fileType} ) // convert decrypted arraybuffer to blob.
-                        const aElement = document.createElement('a');
-                        aElement.setAttribute('download', `${filename}`);
-                        const href = URL.createObjectURL(blob);
-                        aElement.href = href;
-                        aElement.setAttribute('target', '_blank');
-                        aElement.click();
-                        URL.revokeObjectURL(href);
-                        
-                        
-                    }).catch(console.error);
-                    
-                })
-
-                await gunInstance.get(myAlias.concat("_").concat(holder1).concat("responseNode")).put({
-                    isAuthorized: null,
-                    holderEpub: null,
-                    encryptedShare: null
-                })
-                await gunInstance.get(myAlias.concat("_").concat(holder2).concat("responseNode")).put({
-                    isAuthorized: null,
-                    holderEpub: null,
-                    encryptedShare: null
-                })
-                await gunInstance.get(myAlias.concat("_").concat(holder3).concat("responseNode")).put({
-                    isAuthorized: null,
-                    holderEpub: null,
-                    encryptedShare: null
-                })
-            })
-        })
     }
 
 async function queryVersion(){
@@ -387,11 +311,12 @@ const filteredVCList = () =>{
 }
     return (
         <div>
+            <RequestShareModalComponent secretSharedDocumentObj={holdSecretSharedObject} uuidRoomObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideShareRequestModal} show={isRequestShareModalViewed}/>
             <div className="top-toolbar-folder" >
                 <div className="top-toolbar-nav-folder">
-                    <button className="btn-navigate-folder" onClick={()=> navigate("/main/Teams")}><p>Team Rooms</p></button>
-                    <button className="btn-navigate-folder" onClick={()=> navigate("/main/Teams/room")}> <p className="btn-room-css">{roomUUIDObj.roomName}</p></button>
-                    <button className="btn-navigate-folder btn-selected"><p className="btn-room-css">{folderContext.folderName}</p></button>
+                    <button className="btn-navigate-folder" onClick={()=> navigate("/main")}><p>Team Rooms</p></button>
+                    <button className="btn-navigate-folder" onClick={()=> navigate("/main/room")}> <p className="btn-room-css">{roomUUIDObj.roomName}</p></button>
+                    <button className="btn-navigate-folder btn-selected"><p className="btn-room-css">{folderContext.folderNameClean}</p></button>
                 </div>
                 <div className={itemSelected.isSelected === true ? "top-toolbar-option-document" : "top-toolbar-option-document-hide"}>
                     <p className="label-item-selected"><b>{itemSelected.fileNameVar} - </b></p>
@@ -409,21 +334,21 @@ const filteredVCList = () =>{
                     <table className="table-container">
                         <thead className="table-row-container">
                         <tr>
-                            <th>File Name</th>
-                            <th>Content Identifier (CID)</th>
-                            <th>Date of Upload (Last modified)</th>
+                            <th><p className="table-header-label-css">Document Name</p></th>
+                            <th><p className="table-header-label-css">Content Identifier (CID)</p></th>
+                            <th><p className="table-header-label-css">Date of Upload (Last modified)</p></th>
                         </tr>
                         </thead>
                         <tbody>
                         {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                             {filteredSecretSharedDocuments().map((elem, index) =>
                             <tr className="table-row-css">
-                            <td>{elem.filename}</td>
-                            <td>{elem.cid}</td>
-                            <td><p className="date-label-table-css">{elem.date}</p></td>
-                            <td><button className="download-btn" onClick={() => HandleRequestShare(elem)}>Request for all shares</button></td>
-                            <td><button className="download-btn" onClick={() => downloadSecretShared(elem)}>Download Document</button></td>
-                            </tr>
+                            <td><p className="table-data-label-css">{elem.filename}</p></td>
+                            <td><p className="table-data-label-css cid-label-css">{elem.cid}</p></td>
+                            <td><p className="table-data-label-css">{elem.date}</p></td>
+                            <td><button className="download-btn" onClick={() => showShareRequestModal(elem)}>Request for all shares</button></td>
+{/*                             <td><button className="download-btn" onClick={() => downloadSecretShared(elem)}>Download Document</button></td>
+ */}                            </tr>
                         )}
                         </tbody>
                     </table>
@@ -444,16 +369,17 @@ const filteredVCList = () =>{
                 <div className="vc-container">
                     <h3>Version Control</h3>
                     <p className="vc-sidebar-subtitle">Click on a file to check</p>
+                    <br></br>
                     <table className="table-container-vc">
                         <thead className="table-row-container">
                         <tr>
-                            <th>File Name</th>
-                            <th>Content Identifier (CID)</th>
-                            <th>Date of Upload (Last modified)</th>
+                            <th><p className="table-header-label-css">Document Name</p></th>
+                            <th><p className="table-header-label-css">Content Identifier (CID)</p></th>
+                            <th><p className="table-header-label-css">Date of Upload (Last modified)</p></th>
                         </tr>
                         </thead>
                         <tbody>
-                                                        {filteredVCList.apply().map((elem, index)=>
+                            {filteredVCList.apply().map((elem, index)=>
                                     <tr className="table-row-css" key={index}>
                                         <td>{elem.filenameProperty}</td>
                                         <td>{elem.CID_prop}</td>

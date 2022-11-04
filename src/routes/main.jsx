@@ -59,8 +59,8 @@ function Main({gunInstance, userInstance, userSession}) {
           <div className="top-navbar">
             <NavLink onClick={()=>  setHomeActive(true) } className={()=> homeActive ? "navlink-component-active" : "navlink-component" } to="/main"> Team Rooms</NavLink>          
             <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="mydocs"> My Documents</NavLink>
-            <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="audit"> Version Control / Audit Trail</NavLink>
-          </div>
+{/*             <NavLink onClick={()=>  setHomeActive(false)} className={({isActive})=> isActive ? "navlink-component-active" : "navlink-component" } to="audit"> Version Control / Audit Trail</NavLink>
+ */}          </div>
           
       </div>
 

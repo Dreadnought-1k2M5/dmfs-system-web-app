@@ -116,7 +116,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                 }
             })
             console.log(folderContext.folderNameNodeFull);
-            gunInstance.get(folderContext.folderNameNodeFull).map().on(data =>{
+            gunInstance.get(folderContext.folderNameNodeFull).map().once(data =>{
                 //get the property name of the unique node containing the individual file's metadata
                 //let getFileNameRoomUUIDProperty = data.filenameProperty.concat(roomUUIDObj.roomUUIDProperty);
                 console.log(data);
@@ -139,9 +139,15 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                         accessType: getAccessType, 
                         cid: CID, 
                         date: date,
-                        holder1: data.holder1,
-                        holder2: data.holder2, 
-                        holder3: data.holder3,
+                        holder1Alias: data.holder1,
+                        holder2Alias: data.holder2, 
+                        holder3Alias: data.holder3,
+                        holder1Epub: data.holder1Epub,
+                        holder2Epub: data.holder2Epub,
+                        holder3Epub: data.holder3Epub,
+                        encShare1: data.encShare1,
+                        encShare2: data.encShare2,
+                        encShare3: data.encShare3,
                     })
                 }
                 else if (data.accessType === "shared"){
@@ -219,13 +225,13 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
             let filenameWithNoWhiteSpace = data.filenameWithNoWhiteSpace;
             let CID = data.CID_prop;
             let fileType = data.fileType;
+            
+            //Get the SEA pair of the team room
+            //SEAState value is in JSON format, parse it.
+            let parsedSEAState = JSON.parse(SEAState);
 
-            //Retrieve team room SEA pair
-
-
-            console.log(SEAState);
             //Initialization Vector: Decrypt and Decode base64-encoded string back into Uint8Array type using the SEA.pair() of the team room
-            let decryptedIVBase64 = await SEA.decrypt(data.iv, SEAState);
+            let decryptedIVBase64 = await SEA.decrypt(data.iv, parsedSEAState);
             const decodedb64Uint8Array  = window.atob(decryptedIVBase64, decryptedIVBase64); //Decode base64-encoded string back into Uint8Array
             const buffer = new ArrayBuffer(decodedb64Uint8Array.length);
             const ivUint8Array = new Uint8Array(buffer);
@@ -233,8 +239,9 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                 ivUint8Array[i] = decodedb64Uint8Array.charCodeAt(i)
             }
 
+
             //Decrypt the parsedExportedKey using the SEA.pair() of the team room.
-            let decryptedKey = await SEA.decrypt(data.fileKey, SEAState);
+            let decryptedKey = await SEA.decrypt(data.fileKey, parsedSEAState);
             console.log(decryptedKey);
             //Idk why the fuck this line doesn't work but the decryption process works without it.
             //The value of 'decryptedKey' was supposed to be a JSON string, but it wasn't for some reason.
@@ -311,7 +318,7 @@ const filteredVCList = () =>{
 }
     return (
         <div>
-            <RequestShareModalComponent secretSharedDocumentObj={holdSecretSharedObject} uuidRoomObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideShareRequestModal} show={isRequestShareModalViewed}/>
+            {isRequestShareModalViewed && <RequestShareModalComponent seaPairRoomProp={SEAState} secretSharedDocumentObj={holdSecretSharedObject} roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideShareRequestModal} show={isRequestShareModalViewed}/> }
             <div className="top-toolbar-folder" >
                 <div className="top-toolbar-nav-folder">
                     <button className="btn-navigate-folder" onClick={()=> navigate("/main")}><p>Team Rooms</p></button>

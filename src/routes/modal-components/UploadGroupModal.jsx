@@ -38,10 +38,6 @@ let currentStateFolderList = {
 
 
 function SubfolderRender({element, handleSelectedFolderItem}){
-    console.log(element);
-    element.map((data, index)=>{
-        console.log(data);
-    })
 
 /*     async function handleSelectedFolderItem(index, folder){
         setFolderItemChosen(folder.folderNameNodeFull);
@@ -109,7 +105,6 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
     useEffect(()=>{
         userInstance.get("alias").on(data => setMyAlias(data));
         gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).map().on(data => {
-            console.log(data);
             memberListDispatch({memberAlias: data.user_Alias, memberEpub: data.user_Epub});
         })
 
@@ -234,13 +229,15 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                 exportedKey = await crypto.subtle.exportKey("jwk", key);
                 let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
                 console.log(parsedExportedKey);
-
+                
+                //tempSEACopy is is JSON format, hence parse it.
+                let parsedSEARoom = JSON.parse(tempSEACopy);
                 //Encrypt parseExportedKey that can only be decrypted by members of the team room
-                let encJSONKey = await SEA.encrypt(parsedExportedKey, tempSEACopy);
+                let encJSONKey = await SEA.encrypt(parsedExportedKey, parsedSEARoom);
                 console.log(encJSONKey);
 
                 let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv));
-                let encIV = await SEA.encrypt(parsedInitializationVector, tempSEACopy);
+                let encIV = await SEA.encrypt(parsedInitializationVector, parsedSEARoom);
                 console.log(encIV);
 
                 alert("Folder: ".concat(inputFolderState));
@@ -311,24 +308,28 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
         });
 
     }
+
+    async function GenerateNotificationNode(alias, date, message){
+        await gunInstance.get(`${alias}_generalNotificationItem_${date}`).put({
+            message: message,
+            date: date
+        })
+        let notifNodeRef1 = await gunInstance.get(`${alias}_generalNotificationItem_${date}`);
+
+        await gunInstance.get(`${alias}_generalPublicNotificationNode`).set(notifNodeRef1);
+        
+    }
     
     async function secondOption(holder1, holder2, holder3){
-/*         Axios.post('http://localhost:6100/secret', {fileBlob: fileUploadGroup.current.files[0] }).then((Response)=>{
-            alert(Response.data.message);
-        }) */
-
-        //generate SEA.pair() to encrypt/decrypt parsedExportedKey and parsedIV
-        let TeamRoomSEACopy;
+        //Copy of the SEA pair of the current room
+        let seaPairTeamRoom;
         await userInstance.get("my_team_rooms").map().once(data => {
             delete data._;
             if(data.nameOfRoom === uuidRoomObj.roomName){
-                TeamRoomSEACopy = data.roomSEA;
+                seaPairTeamRoom = data.roomSEA;
             }
         });
 
-        TeamRoomSEACopy = JSON.stringify(TeamRoomSEACopy);
-
-         alert(typeof TeamRoomSEACopy);
          let fileName, fileNameNoWhiteSpace, lastModdifiedVar, CID, fileFormat, exportedKey, myAlias;
          await userInstance.get('alias').on(v => myAlias = v);
          const fr = new FileReader();
@@ -365,8 +366,12 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                  let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
 
                  let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv)); // convert the initialization vector into base64-encoded data to be inserted into the gun node graph
-                 let encIV = await SEA.encrypt(parsedInitializationVector, TeamRoomSEACopy); // encrypt the base64-encoded data (IV)
-
+                 //!!!!!!!!! - The seaPairTeamRoom is supposed to be a JSON string, but it's not for some reason.
+                 let jsonStringSEARoom = JSON.stringify(seaPairTeamRoom, null, " ");
+                 let encIV = await SEA.encrypt(parsedInitializationVector, seaPairTeamRoom); // encrypt the base64-encoded data (IV)
+                 alert(seaPairTeamRoom);
+                 alert("Next is sea room in json");
+                alert(jsonStringSEARoom);
                  console.log(parsedExportedKey);
                 let shareHolderObject = {
                     holder1: holder1,
@@ -374,19 +379,18 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                     holder3: holder3
                 }
                 let stringifiedShareHolderObject = JSON.stringify(shareHolderObject);
-                 Axios.post("https://boiling-spire-00043.herokuapp.com/gun", {
-                        JSONKey: parsedExportedKey,
-                        shareHolders: stringifiedShareHolderObject,
-                        teamRoomSEA: TeamRoomSEACopy,
-                        filename: fileName,
-                        fileNameNoWhiteSpace: fileNameNoWhiteSpace,
-                        teamRoomUUIDActual: uuidRoomObj.roomUUIDProperty
+                 Axios.post("http://localhost:3200/secret", {
+                        exportedKey: parsedExportedKey,
+                        seaPairTeamRoom: seaPairTeamRoom,
+                        shareHolders: shareHolderObject
                     } ).then(async (Response)=>{
-                            alert(Response.data.ResponseMessage);
+                            alert(Response.data.ResponseMessage[0]);
+                            alert(Response.data.ResponseMessage[1]);
+                            alert(Response.data.ResponseMessage[2]);
                             const res_CID = await client.put(fileInArray);
                             let CID = res_CID;
-/* 
-                            await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({                    
+
+/*                             await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({                    
                                 filenameProperty: fileName, 
                                 filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
                                 CID_prop: CID, 
@@ -396,15 +400,22 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                                 date: lastModdifiedVar,
                                 uploadedBy: myAlias
                             }) */
-            
+                            
+
                             //Individual UNIQUE node containing file metadata
-                            let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
+                             let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
                                 filenameProperty: fileName, 
                                 filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
                                 CID_prop: CID, 
                                 holder1: holder1.memberAlias,
                                 holder2: holder2.memberAlias, 
                                 holder3: holder3.memberAlias,
+                                holder1Epub: holder1.memberEpub,
+                                holder2Epub: holder2.memberEpub,
+                                holder3Epub: holder3.memberEpub,
+                                encShare1: Response.data.ResponseMessage[0],
+                                encShare2: Response.data.ResponseMessage[1],
+                                encShare3: Response.data.ResponseMessage[2],
                                 iv: encIV, 
                                 fileType: getFileType,
                                 date: lastModdifiedVar,
@@ -440,9 +451,15 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                                 //Inserting the reference of the folder node into groupUUID list of folder names
                                 await gunInstance.get(folderItemChosen.folderNameNodeFull).set(folderRef);
                             }
-        
-            
-            
+                            let dateJSON = new Date().toJSON();
+
+                            //Send Holder 1 notification
+                            await GenerateNotificationNode(holder1.memberAlias, dateJSON, `A secret share from ${myAlias} was assigned to you.`);
+                            //Send Holder 2 notification
+                            await GenerateNotificationNode(holder2.memberAlias, dateJSON, `A secret share from ${myAlias} was assigned to you.`);
+                            //Send Holder 3 notification
+                            await GenerateNotificationNode(holder3.memberAlias, dateJSON, `A secret share from ${myAlias} was assigned to you.`);
+
                             alert("FILE ADDED");
                             handleClose();
                             window.location.reload();

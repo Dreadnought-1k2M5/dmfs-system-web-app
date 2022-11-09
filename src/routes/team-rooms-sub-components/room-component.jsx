@@ -68,6 +68,25 @@ const currentNotificationListState ={
     }
   }
 
+
+
+/* //useReducer for the RequestShareModal
+const currentResponseListState = {
+    responses: []
+}
+
+const responseListStateUseReducer = (currentResponseListState, response)=>{
+    if(response.reset){
+        return {
+            responses: []
+        }
+    }
+    return {
+        responses: [...currentResponseListState.responses, response]
+    }
+} */
+
+
 function SubfolderRender({element, handleSelectedFolderItem}){
     //let [isSubFolderSelectedState, setIsSubFolderSelectedState] = useState({isSelected: false, indexProp: null})
 /* 
@@ -128,18 +147,38 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
     let [myAlias, setMyAlias] = useState(''); //Display my username
     let [textMessage, setTextMessage] = useState(''); //Holds the user text input
     
+
+    //state for clicking notification - the purpose is to rerender the component to update the frontend
+    let [renderComponentState, setRenderComponentState] = useState(false);
     
     useEffect(()=>{
 
         setRoomUUID(roomUUIDObj.roomUUIDProperty);
-        userInstance.get('alias').on(v => {
-            gunInstance.get(`${v}_requestSetNode`).map().on(data=>{
-                setNotification(true);
-                dispatchListShareRequestNotification(data);
+
+        userInstance.get('alias').on(async v => {
+            setMyAlias(v)
+            //Listen to notifications except for secret share request
+            console.log("HGHGHGHGHG")
+            await gunInstance.get(`${v}_generalPublicNotificationNode`).map().on(data =>{
+                console.log(data);
+                console.log("HGHGHGHGHG")
+                //filter out individual nodes that have null values
+                if(data.message != null && data.date != null){
+                    setNotification(true);
+                    dispatchNotification(data);
+                }
             })
+
+            await gunInstance.get(`${v}_requestSetNode`).map().on(data=>{
+                //filter out individual nodes that have null values
+                if(data.requestor != null){
+                    setNotification(true);
+                    dispatchListShareRequestNotification(data);
+                }
+
+            })
+            
             setMyAlias(v);
-            QueryNodeNetworkHandler(v);
-            QueryShareRequestHandler(v);
         });
 
         setRoomName(roomUUIDObj.roomName);
@@ -156,6 +195,26 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             }
         });
 
+/*         userInstance.get('alias').on(async myAlias =>{
+            console.log(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`);
+
+            userInstance.get("my_team_rooms").map(async data => {
+                if(data.nameOfRoom == roomUUIDObj.roomName){
+                    let seaPairRoomPropParsed = data.roomSEA;
+                    //console.log(seaRoomState);
+                    gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().on(async data =>{
+                        console.log(data);
+                        if(data.grantor != null && data.encryptedShare != null){
+                            //Reconstrucct the key and decrypt
+                            let decryptedShare = await SEA.decrypt(data.encryptedShare, await SEA.secret(seaPairRoomPropParsed.epub, userInstance._.sea));
+                            dispatchResponse({decryptedShare: decryptedShare, holderAlias: data.grantor});
+                        }
+                    })
+                }
+            })
+
+        }) */
+
 /*         let foldername;
         console.log("FOLDER");
         gunInstance.get("random folder 1".concat(roomUUIDObj.roomUUIDProperty)).map().once(async data =>{
@@ -168,7 +227,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         }) */
 
         gunInstance.get("memberList_".concat(roomUUIDObj.roomUUIDProperty)).map().on(data => {
-            console.log(data);
+
             memberListDispatch({memberAlias: data.user_Alias});
         })
 
@@ -183,42 +242,18 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
               folderNameClean: null,
               itemsProp: []
             }
-            console.log("QWERTY---------QWERY----------------");
-            console.log(data);
+
             dispatchFolderList(await traverseSubfolder(data, key, objectItem));
         })
 
     }, []);
 
 
-    async function QueryNodeNetworkHandler(myAlias){
 
-    }
-
-    async function QueryShareRequestHandler(myAliasArg){
-        
-        await gunInstance.get(`${myAlias}_shareListNodeSet`).map().on(async data => {
-            //Attempt to decrypt the encryptedShare
-
-            //Generate Diffie–Hellman key exchange using my user graph SEA pair 
-            //and the SEA pair of the team room.
-            let secretKey = await SEA.secret(seaRoomState.epub, userInstance._.sea);
-            let decryptedShare = await SEA.decrypt(data.encryptedShare, secretKey);
-            
-            setNotification(true);
-            dispatchListShareRequestNotification({
-                filename: data.filename,
-                teamRoomUUID: data.teamRoomUUID,
-                encryptedShare: data.encryptedShare1
-            });
-        })
-
-    } 
 
 
     //REMOVE DUPLICATED SHARED REQUESTS
     const filteredShareRequestList = () =>{
-        console.log("filtered share request list notifications handler called");
         const filteredSharedRequestfArray = listShareRequest.listShareRequestArray.filter((value, index) => {
             const _value = JSON.stringify(value);
             return (
@@ -234,7 +269,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
     
 
       
-    const filteredShareNotification = () =>{
+    const filteredNotificationHandler = () =>{
         const filteredNotifArray = notificationListState.notifications.filter((value, index) => {
             const _value = JSON.stringify(value);
             return (
@@ -249,35 +284,16 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
     }
 
   
-  async function decryptHandler(elemObj){
-    alert("Please wait for a few moments as the decryption happens on the background");
-
-    console.log(elemObj);
-    //generate secret key
-    let secretKey = await SEA.secret(elemObj.providerEpub, userInstance._.sea);
-    console.log(secretKey)
-    let decryptedShare = await SEA.decrypt(elemObj.share, secretKey);
-    let shareNodeReference = userInstance.get(elemObj.filename.concat(myAlias)).put({
-        fileName: elemObj.filename,
-        encShareFile: decryptedShare,
-        roomUUID: elemObj.roomUUID
+  async function RemoveNotificationHandler(elemObj){
+    await gunInstance.get(`${myAlias}_generalNotificationItem_${elemObj.date}`).put({
+        message: null,
+        date: null
     })
+    let index = notificationListState.notifications.indexOf(elemObj);
+    notificationListState.notifications.splice(index, 1);
+    setRenderComponentState(!renderComponentState);
+    setNotification(false);
 
-    //roomUUIDObj not elemObj.roomUUID
-    await userInstance.get("documentsWithShares".concat(roomUUIDObj.roomUUIDProperty)).set(shareNodeReference);
-    console.log("DECRYPTED SHARE");
-    console.log(decryptedShare);
-
-    //override data from public node queue
-    await gunInstance.get("publicShareQueue".concat(roomUUIDObj.roomUUIDProperty)).get(elemObj.filename.concat(elemObj.intendedUser).concat(roomUUIDObj.roomUUIDProperty)).put({
-        intendedUser: null,
-        providedBy: null,
-        providerEpub: null,
-        share: null,
-        filename: null,
-        roomUUID: null
-    })
-    alert("SUCCESSFULLY OBTAINED THE SHARE INTO YOUR USER GRAPH!");
   }
 
 
@@ -321,9 +337,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             content: textMessage,
             timestamp: Date().substring(16, 21)
         }
-        console.log(messageObject);
         let encryptedMessage = await SEA.encrypt(messageObject, seaRoomState);
-        console.log(roomUUIDState);
 
         await gunInstance.get("CHATROOM_".concat(roomUUIDState)).set(encryptedMessage);
   
@@ -332,7 +346,6 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
     // Remove duplicated messages from the "message" property in the currentMsgState.
     const filteredMessages = () => {
-        console.log("filteredMessages function called")
         const formattedMessages = stateMessages.messages.filter((value, index) => {
             const _value = JSON.stringify(value)
             return (
@@ -364,8 +377,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
     
     }
     async function traverseSubfolder(folderElemObj, key, objectItem){
-          console.log("-----------------------Traversed-----------------------");
-          console.log(key)
+
           objectItem.folderNameNodeFull = key;
           let substr1 = key.substring(0, key.indexOf("_sep_"));
           objectItem.folderNameClean = substr1.replaceAll('_', ' ');
@@ -389,25 +401,21 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
     async function showFoldersHandler(event){
         event.preventDefault();
-        console.log("----------------------------TEST SHOW FOLDER handler----------------------------");
         let arrayList = [];
           filteredFolderListHandler().map((element, index)=>{
-            console.log("-----------------------------ITERATION (OUTER) -----------------------------")
             arrayList.push(element);
   
           })
   
-          arrayList.forEach((data, index)=>{
+/*           arrayList.forEach((data, index)=>{
             console.log(data.itemsProp.length);
-          })
+          }) */
           setFolderListToRender(arrayList);
     }
         
 
     const filteredMemberList = () =>{
-        console.log("filtered members function called")
         const formattedMemberList = stateMemberList.membersArray.filter((value, index) => {
-            console.log(value);
             const _value = JSON.stringify(value);
             return (
                 index ===
@@ -420,41 +428,72 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         return formattedMemberList;
     }
 
-    async function authorizeShareHandler(elem1){
-        alert("ALERT")
-        await gunInstance.get(`${myAlias}_shareListNodeSet`).map().once(data =>{
-            console.log(data);
+    async function authorizeShareHandler(event, elemObjRequest){
+        //setRenderComponentState(!renderComponentState);
+
+        //event.preventDefault();
+        alert("Authorizing.");
+        await gunInstance.get(`${elemObjRequest.filename}_${myAlias}_requestItem_${elemObjRequest.date}`).once(async data =>{
+
+            console.log(seaRoomState);
+            console.log(typeof seaRoomState);
+            console.log(JSON.parse(seaRoomState));
+            console.log(typeof JSON.parse(seaRoomState));
+            console.log(elemObjRequest);
+            console.log(typeof elemObjRequest);
+            console.log(elemObjRequest.encShare);
+
+            let seaRoomStateParsed = JSON.parse(seaRoomState);
+
+            //reconstruct the correct secret key and decrypt the encrypted Share
+            let decryptedShare = await SEA.decrypt(elemObjRequest.encShare, await SEA.secret(seaRoomStateParsed.epub, userInstance._.sea));
+            console.log(decryptedShare);
+            
+            //Construct key and encrypt the share which can only be decypted by the requestor
+            let encryptedShare = await SEA.encrypt(decryptedShare, await SEA.secret(elemObjRequest.requestorEpub, seaRoomStateParsed));
+
+            //Individual node indicating a authorization response to the requestor
+            let dateJSON = new Date().toJSON();
+            await gunInstance.get(`${elemObjRequest.filename}_${elemObjRequest.requestor}_responseItem_${dateJSON}`).put({
+                grantor: myAlias,
+                encryptedShare: encryptedShare,
+                date: dateJSON,
+            })
+
+            //node reference
+            let nodeResponseRef = await gunInstance.get(`${elemObjRequest.filename}_${elemObjRequest.requestor}_responseItem_${dateJSON}`);
+
+            console.log(`responseNodeSet_${elemObjRequest.requestor}_${roomUUIDObj.roomUUIDProperty}`);
+            await gunInstance.get(`responseNodeSet_${elemObjRequest.requestor}_${roomUUIDObj.roomUUIDProperty}`).set(nodeResponseRef);
+
+            await gunInstance.get(`responseNodeSet_${elemObjRequest.requestor}_${roomUUIDObj.roomUUIDProperty}`).map().once(data =>{
+                console.log(data);
+            });
+
+            await gunInstance.get(`${elemObjRequest.filename}_${myAlias}_requestItem_${elemObjRequest.date}`).put({
+                requestor: null, 
+                filename: null,
+                requestorEpub: null,
+                encShare: null,
+                date: null
+            })
+
+            let index = listShareRequest.listShareRequestArray.indexOf(elemObjRequest);
+            listShareRequest.listShareRequestArray.splice(index, 1);
+            setRenderComponentState(!renderComponentState);
+            setNotification(false);
         })
 
-/*         userInstance.get(elem1.filename.concat(myAlias)).once(async data=>{
-            //generate diffie helman
-            let secretKey = await SEA.secret(elem1.requestorEpub, userInstance._.sea);
-            let encryptedShare = await SEA.encrypt(data.encShareFile, secretKey);
-
-            await gunInstance.get(elem1.requestor.concat("_").concat(myAlias).concat("responseNode")).put({
-                isAuthorized: true,
-                holderEpub: userInstance._.sea.epub,
-                encryptedShare: encryptedShare
-            })
-
-            await gunInstance.get(myAlias.concat("publicNodeRequestList")).put({
-                requestor: null,
-                requestorEpub: null,
-                shareHolder: null,
-                filename: null
-            })
-
-        }) */
 
     }
 
     async function denyRequestHandler(){
-        await gunInstance.get(myAlias.concat("publicNodeRequestList")).put({
+/*         await gunInstance.get(myAlias.concat("publicNodeRequestList")).put({
             requestor: null,
             requestorEpub: null,
             shareHolder: null,
             filename: null
-        })
+        }) */
     }
 
     async function handleSelectedFolderItem(event, folder){
@@ -492,21 +531,30 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 </div> */}
                 <div className={isNotificationClicked ? "notification-box" : "notification-box-hidden"}>
                     <h3>Notification</h3>
-                    {filteredShareNotification().map((elem, index)=>
-                    <div className="notif-item-flexbox" key={index}>
-                        <p className="p-notif-desc-css" >A secret share from {elem.providedBy} was assigned to you.</p>
-                        <button className="notif-btn" onClick={()=> decryptHandler(elem)}>Decrypt</button>
-                    </div>
-                    )}
-                    {filteredShareRequestList().map((elem1, index)=>                    
-                        <div className="notif-item-flexbox" key={index}>
-                            <p className="p-notif-desc-css" >{elem1.requestor} is requesting you provide the share for the document "{elem1.filename}"</p>
-                            <div className="btn-flexbox-css-notif">
-                                <button className="notif-btn" onClick={() => authorizeShareHandler(elem1)}>Authorize</button>
-                                <button className="notif-btn" onClick={() => denyRequestHandler}>Deny</button>
+                    {filteredNotificationHandler().map((elem, index)=>
+                    <div>
+                        {elem.message != null && 
+                            <div className="notif-item-flexbox" key={index}>
+                                <p className="p-notif-desc-css" >{elem.message}</p>
+                                <button className="notif-btn" onClick={()=> {RemoveNotificationHandler(elem); }}>Got it!</button>
                             </div>
-                        </div>)
-                    }
+                        }
+                    </div>
+
+                    )}
+                    {filteredShareRequestList().map((elem1, index)=> 
+                        <div>
+                            { elem1.requestor != null &&
+                                <div className="notif-item-flexbox" key={index}>
+                                    <p className="p-notif-desc-css" >{elem1.requestor} is requesting you provide the share for the document "{elem1.filename}"</p>
+                                    <div className="btn-flexbox-css-notif">
+                                        <button className="notif-btn" onClick={(e) => authorizeShareHandler(e, elem1)}>Authorize</button>
+                                        <button className="notif-btn" onClick={(e) => denyRequestHandler}>Deny</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>                  
+                    )}
                 </div>
                 <div className={viewRoomChat ? "chatroom-container" : "hide-chatroom-container"}>
                     <main className="flexbox-chatbox">

@@ -65,5 +65,10 @@
 }
 
 .list-shareholders-box{
-    margin-top: 50px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.list-item-holder{
+    color: rgba(153, 255, 153, 0.857);
 }

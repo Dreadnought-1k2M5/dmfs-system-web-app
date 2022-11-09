@@ -59,8 +59,6 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
         // Get new member's epub
         let epubKey = user.epub;
 
-        //Get the copy of the SEA.pair of the room in your own user graph
-        let copySEAPair;
 
         await userInstance.get("my_team_rooms").map(async data => {
             delete data._;
@@ -68,7 +66,10 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
             //Check if the current iteration's nameOfRoom property matches the room you are in
             if (data.nameOfRoom === uuidRoomObj.roomName){
                 console.log(data.roomSEA);
-                copySEAPair = data.roomSEA;
+                
+                //Get the copy of the SEA.pair of the room in your own user graph
+                let copySEAPair = data.roomSEA;
+                //let parsedSEARoom = JSON.parse(copySEAPair);
                 console.log("PRINT MEEE")
 
                 console.log(user.epub);

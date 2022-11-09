@@ -33,9 +33,9 @@ export default function JoinRoomModal({ roomUUIDObj, gunInstance, userInstance, 
     
                 friendEpub = data.friendEpub;
                 keyPairCopy = data.keyPairCopy;
-
                 console.log(friendEpub);
                 console.log(keyPairCopy);
+
                 // Still need to catch any possible error on this part
                 secretKey = await SEA.secret(friendEpub, userInstance._.sea);
                 console.log(secretKey);
@@ -44,7 +44,14 @@ export default function JoinRoomModal({ roomUUIDObj, gunInstance, userInstance, 
                 decryptedSEAPair = await SEA.decrypt(keyPairCopy, secretKey);
                 console.log(decryptedSEAPair);
 
-                await userInstance.get("my_team_rooms").set(roomUUIDState).put({nameOfRoom: roomName, uuidOfRoom: roomUUIDState, roomSEA: decryptedSEAPair});
+                //keyPairCopy is in JSON format so parse it.
+                //LINE BELOW DOESN"T WORK: 
+                //FOR SOME REASON: the decyptedSEAPair is already an object not a JSON string
+                //let parsedSEARoom = JSON.parse(decryptedSEAPair);
+
+                let teamRoomJSON = JSON.stringify(decryptedSEAPair);
+
+                await userInstance.get("my_team_rooms").set(roomUUIDState).put({nameOfRoom: roomName, uuidOfRoom: roomUUIDState, roomSEA: teamRoomJSON});
                 roomUUIDObj.roomUUIDProperty = roomUUIDState;
                 roomUUIDObj.roomName = roomName;
                 navigate("room");
@@ -53,8 +60,7 @@ export default function JoinRoomModal({ roomUUIDObj, gunInstance, userInstance, 
             
         })
 
-        console.log(friendEpub);
-        console.log(keyPairCopy);
+
         //Generate secret key
         
 

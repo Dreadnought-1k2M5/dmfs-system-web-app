@@ -27,6 +27,9 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
         setseaChatObj(await SEA.pair()); // SEA used to encrypt/decrypt messages (public-private keys)
     }
     async function handleCreateRoom(){
+        console.log("---HERE------------HERE------------HERE");
+        console.log(seaChatObj);
+        let stringifySEARoomObj = JSON.stringify(seaChatObj);
         if (groupName === ''){
             alert("PLEASE ENTER A NAME FOR THE ROOM");
             return;
@@ -62,7 +65,7 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
         //This block is to insert data into your my_team_rooms to indicate which room you have access to.
         let roomName;
         await gunInstance.get(groupUUID).get("room_name").once(data=> roomName = data)
-        await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID, roomSEA: seaChatObj});
+        await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID, roomSEA: stringifySEARoomObj});
         roomUUIDObj.roomUUIDProperty = groupUUID;
         roomUUIDObj.roomName = roomName;
         

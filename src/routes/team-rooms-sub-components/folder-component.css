@@ -3,7 +3,7 @@
     display: grid;
     height: 66vh;
     grid-template-rows: 2fr 2fr;
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: 5fr 5fr;
     grid-template-areas: 
         "secret-shared-folder-area vc"
         "shared-folder-area vc"
@@ -29,7 +29,7 @@
     /* height: 240px; */
     margin-left: 13px;
     border: 0.5px solid rgb(111, 209, 255);
-
+    overflow: auto;
  }
 
  .vc-sidebar-subtitle{
@@ -222,7 +222,7 @@
     background-color: rgba(58, 58, 58, 0.338);
     border-radius: 20px;
     padding: 10px;
-    overflow-y: auto;
+    overflow: auto;
     border: 0.5px solid rgb(111, 209, 255);
 
 }
@@ -238,14 +238,14 @@
     margin: auto;
 }
 .table-container-vc{
-    width: 100%;
     background-color: rgba(255, 255, 255, 0.086);
     text-align: center;
-    padding: 5px;
+    padding: 2px;
     border-radius: 5px;
     border: 0.2px solid rgba(255, 255, 255, 0.214);
     border-collapse: collapse;
     margin: auto;
+    width: 100%;
 }
 
 .table-row-container {
@@ -258,25 +258,28 @@
     padding: 2px;
 }
 .table-header-label-css{
-    font-size: 12px;
+    font-size: 10px;
 }
 
-.table-container td{
-    padding: 2px;
-    width: 20%;
-
+.table-container-vc td{
+    width: 5%;
 }
 
 .table-data-label-css{
-    font-size: 12px;
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .cid-label-css{
+    font-size: 11px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    width: 70%;
     margin: auto;
+    width: 60%;
+
 }
 .download-btn{
     background-color: rgba(111, 209, 255, 0.685);

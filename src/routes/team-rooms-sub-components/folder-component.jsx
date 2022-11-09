@@ -50,6 +50,11 @@ const currentVCState ={
 }
 
 const vcUseReducerHandler = (vcListState, version)=>{
+    if(version.reset){
+        return {
+            vcArray: []
+        }
+    }
     return {
         vcArray: [version, ...vcListState.vcArray]
     }
@@ -202,11 +207,13 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
         //Check if an item is currently selected or not.
         if(itemSelected.isSelected){
+
             setItemSelected({isSelected: false, index: -1, fileNameVar: elem.filename})
             setDocumentSelectedState({});
             //This part is for when a user tries to click a different item/document
             setDocumentSelectedState(elem); 
             setItemSelected({isSelected: true, index: index, fileNameVar: elem.filename})
+
 
         } else{
 
@@ -330,7 +337,7 @@ const filteredVCList = () =>{
                     <button className="btn-option-document-css" onClick={()=> handleDownloadSharedFile()}>Download</button>
                     <button className="btn-option-document-css" /* onClick={()=> navigate("/main/Teams/room")} */>Delete</button>
                     <button className="btn-option-document-css" onClick={()=> {setIsVcSidebarViews(!isVcSidebarViews); queryVersion()} }>Check Versions</button>
-                    <button className="btn-option-document-css" onClick={()=> setItemSelected({isSelected: false, index: -1})}>Cancel</button>
+                    <button className="btn-option-document-css" onClick={()=> { setItemSelected({isSelected: false, index: -1}); dispatchvcListState({reset: true}); }}>Cancel</button>
                     
                 </div>
             </div>
@@ -375,7 +382,7 @@ const filteredVCList = () =>{
                 </div>
                 <div className="vc-container">
                     <h3>Version Control</h3>
-                    <p className="vc-sidebar-subtitle">Click on a file to check</p>
+                    <p className="vc-sidebar-subtitle">Click on a file to check all of its different versions</p>
                     <br></br>
                     <table className="table-container-vc">
                         <thead className="table-row-container">
@@ -386,11 +393,11 @@ const filteredVCList = () =>{
                         </tr>
                         </thead>
                         <tbody>
-                            {filteredVCList.apply().map((elem, index)=>
+                            {filteredVCList().map((elem, index)=>
                                     <tr className="table-row-css" key={index}>
-                                        <td>{elem.filenameProperty}</td>
-                                        <td>{elem.CID_prop}</td>
-                                        <td><p className="date-label-table-css">{elem.date}</p></td>
+                                        <td><p className="table-data-label-css">{elem.filenameProperty}</p></td>
+                                        <td><p className="cid-label-css">{elem.CID_prop}</p></td>
+                                        <td><p className="table-data-label-css">{elem.date}</p></td>
                                         <td><button className="download-btn" onClick={() => handleDownloadSharedFile(elem)}>Download Document</button></td>
                                     </tr>
                                 )}

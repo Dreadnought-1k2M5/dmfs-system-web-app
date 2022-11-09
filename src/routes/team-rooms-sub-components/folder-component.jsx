@@ -232,7 +232,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
             //Initialization Vector: Decrypt and Decode base64-encoded string back into Uint8Array type using the SEA.pair() of the team room
             let decryptedIVBase64 = await SEA.decrypt(data.iv, parsedSEAState);
-            const decodedb64Uint8Array  = window.atob(decryptedIVBase64, decryptedIVBase64); //Decode base64-encoded string back into Uint8Array
+            const decodedb64Uint8Array  = window.atob(decryptedIVBase64); //Decode base64-encoded string back into Uint8Array
             const buffer = new ArrayBuffer(decodedb64Uint8Array.length);
             const ivUint8Array = new Uint8Array(buffer);
             for (let i = 0; i < decodedb64Uint8Array.length; i++) {
@@ -272,7 +272,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                     
                 })
             
-                })
+            })
         })
 
     }

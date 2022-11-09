@@ -41,18 +41,18 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
         userInstance.get('alias').on(async myAlias =>{
             console.log(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`);
 
-            userInstance.get("my_team_rooms").map().on(async data => {
-                if(data.nameOfRoom == roomUUIDObj.roomName){
-                    let seaPairRoomPropParsed = JSON.parse(data.roomSEA);
+            userInstance.get("my_team_rooms").map().on(async data0 => {
+                if(data0.nameOfRoom == roomUUIDObj.roomName){
                     //console.log(seaRoomState);
-                    gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data, index) =>{
-                        console.log(data);
+                    gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data1, index) =>{
+                        console.log(data1);
                         console.log(index);
-                        if(data.grantor != null && data.encryptedShare != null){
+                        if(data1.grantor != null && data1.encryptedShare != null){
                             //Reconstrucct the key and decrypt
-                            let decryptedShare = await SEA.decrypt(data.encryptedShare, await SEA.secret(seaPairRoomPropParsed.epub, userInstance._.sea));
+                            let parsedRoomSEA = JSON.parse(data0.roomSEA);
+                            let decryptedShare = await SEA.decrypt(data1.encryptedShare, await SEA.secret(parsedRoomSEA.epub, userInstance._.sea));
                             console.log(decryptedShare);
-                            dispatchResponse({decryptedShare: decryptedShare, holderAlias: data.grantor});
+                            dispatchResponse({decryptedShare: decryptedShare, holderAlias: data1.grantor});
                         }
                     })
                 }
@@ -92,8 +92,8 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
     }
 
     async function sendRequestHandler(){
-        let seaPairRoomPropParsed = JSON.parse(seaPairRoomProp);
-        console.log(seaPairRoomPropParsed);
+
+    
          await userInstance.get('alias').once(async myAlias =>{
             let dateJSON = new Date().toJSON();
 
@@ -125,9 +125,9 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
 
         Axios.post('http://localhost:3200/reconstruct', {
             shareListProperty: shareListArg
-        }).then(response =>{
+        }).then(async response =>{
+            
             alert(response.data.ResponseMessage);
-
             //Delete Response from holders
             let listOfResponseItemIndex = [];
             userInstance.get('alias').once(async myAlias =>{
@@ -141,20 +141,84 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                         date: null,
                     })
                 })
-                //Set all property values of each individual node to null
-/*                 listOfResponseItemIndex.forEach((data, index)=>{
-                    gunInstance.get(data).put({
-                        grantor: null,
-                        encryptedShare: null,
-                        date: null,
-                    })
-                }) */
 
             })
-            setTimeout(()=> { window.location.reload(); }, 3000);
+
+            //query individual component
+            await gunInstance.get(`${secretSharedDocumentState.filename}${roomUUIDObj.roomUUIDProperty}`).once(async data =>{
+                let filename = data.filenameProperty;
+                let filenameWithNoWhiteSpace = data.filenameWithNoWhiteSpace;
+                let CID = data.CID_prop;
+                let fileType = data.fileType;
+                console.log(seaPairRoomProp);
+                console.log(typeof seaPairRoomProp);
+                console.log(JSON.parse(seaPairRoomProp));
+                console.log(typeof JSON.parse(seaPairRoomProp));
+                
+                //Initialization Vector: Decrypt and Decode base64-encoded string back into Uint8Array type using the SEA.pair() of the team room
+                let decryptedIVBase64 = await SEA.decrypt(data.iv, JSON.parse(seaPairRoomProp));
+                console.log(decryptedIVBase64);
+                const decodedb64Uint8Array  = window.atob(decryptedIVBase64); //Decode base64-encoded string back into Uint8Array
+                console.log(decodedb64Uint8Array);
+                const buffer = new ArrayBuffer(decodedb64Uint8Array.length); 
+                console.log(buffer);
+
+                const ivUint8Array = new Uint8Array(buffer);
+                for (let i = 0; i < decodedb64Uint8Array.length; i++) {
+                    ivUint8Array[i] = decodedb64Uint8Array.charCodeAt(i)
+                }
+                console.log(ivUint8Array);
+                console.log(response.data.exportedKey);
+                console.log(typeof response.data.exportedKey);
+                let decryptedKey = JSON.parse(response.data.exportedKey);
+                console.log(decryptedKey);
+
+                await crypto.subtle.importKey("jwk", decryptedKey, { 'name': 'AES-CBC' }, true, ['encrypt', 'decrypt']).then(cryptoKeyImported =>{
+                    fetch(`https://${CID}.ipfs.w3s.link/ipfs/${CID}/${filenameWithNoWhiteSpace}`).then(res => {
+                        let result = res.blob(); // Convert to blob() format
+                        console.log(result);
+                        return result;
+                    }).then(async res => {
+                         // Convert blob to arraybuffer
+                        const fileArrayBuffer = await new Response(res).arrayBuffer();
+            
+                        await window.crypto.subtle.decrypt({name: 'AES-CBC', iv: ivUint8Array}, cryptoKeyImported, fileArrayBuffer).then(decrypted => {
+                            //Convert ArrayBuffer to Blob and Download
+                            const blob = new Blob([decrypted], {type: fileType} ) // convert decrypted arraybuffer to blob.
+                            const aElement = document.createElement('a');
+                            aElement.setAttribute('download', `${filename}`);
+                            const href = URL.createObjectURL(blob);
+                            aElement.href = href;
+                            aElement.setAttribute('target', '_blank');
+                            aElement.click();
+                            URL.revokeObjectURL(href);
+
+                            //Delete Response from holders
+                            let listOfResponseItemIndex = [];
+                            userInstance.get('alias').once(async myAlias =>{
+                                gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data, index) =>{
+                                    console.log(index);
+                                    console.log(data);
+                                    //listOfResponseItemIndex.push(index);
+                                    gunInstance.get(index).put({
+                                        grantor: null,
+                                        encryptedShare: null,
+                                        date: null,
+                                    })
+                                })
+
+                            })
+                            setTimeout(()=> { window.location.reload(); }, 6200);
+
+                        }).catch(console.error);
+                    });
+
+                })
+            })
         })
 
     }
+
 
 
     const toggleClassname = show ? "modal-request-share-group modal-request-share-container" : "modal-request-share-group display-none";  
@@ -190,14 +254,14 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                     </div>
                 </div>
                 <div>
-                <button onClick={(e) => accessHandler(e, filteredResponse())}>CLEAR ALL</button>
-
                     {filteredResponse().length === 3 && 
                         <div>
                             <button onClick={(e) => accessHandler(e, filteredResponse())}>Reconstruct Symmetric Key and Download Document</button>
                         </div>
                     }
                     
+                    <button onClick={(e) => accessHandler(e, filteredResponse())}>CLEAR ALL</button>
+
                 </div>
             </div>
         </div>    

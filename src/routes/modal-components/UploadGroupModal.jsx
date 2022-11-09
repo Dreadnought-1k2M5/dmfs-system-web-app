@@ -323,10 +323,17 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
     async function secondOption(holder1, holder2, holder3){
         //Copy of the SEA pair of the current room
         let seaPairTeamRoom;
+        let seaPairTeamRoomParsed;
         await userInstance.get("my_team_rooms").map().once(data => {
             delete data._;
             if(data.nameOfRoom === uuidRoomObj.roomName){
                 seaPairTeamRoom = data.roomSEA;
+                alert(seaPairTeamRoom);
+                console.log(typeof seaPairTeamRoom);
+
+                console.log(JSON.parse(seaPairTeamRoom));
+                console.log(typeof JSON.parse(seaPairTeamRoom));
+                seaPairTeamRoomParsed = JSON.parse(seaPairTeamRoom);
             }
         });
 
@@ -366,22 +373,23 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                  let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
 
                  let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv)); // convert the initialization vector into base64-encoded data to be inserted into the gun node graph
-                 //!!!!!!!!! - The seaPairTeamRoom is supposed to be a JSON string, but it's not for some reason.
-                 let jsonStringSEARoom = JSON.stringify(seaPairTeamRoom, null, " ");
-                 let encIV = await SEA.encrypt(parsedInitializationVector, seaPairTeamRoom); // encrypt the base64-encoded data (IV)
+                 let encIV = await SEA.encrypt(parsedInitializationVector, seaPairTeamRoomParsed); // encrypt the base64-encoded data (IV)
                  alert(seaPairTeamRoom);
-                 alert("Next is sea room in json");
-                alert(jsonStringSEARoom);
+                 //alert("Next is sea room in json");
+                //alert(jsonStringSEARoom);
                  console.log(parsedExportedKey);
                 let shareHolderObject = {
                     holder1: holder1,
                     holder2: holder2,
                     holder3: holder3
                 }
-                let stringifiedShareHolderObject = JSON.stringify(shareHolderObject);
+                //let seaPairTeamRoomJSON = JSON.stringify(seaPairTeamRoom);
+                //let stringifiedShareHolderObject = JSON.stringify(shareHolderObject);
+
+                
                  Axios.post("http://localhost:3200/secret", {
                         exportedKey: parsedExportedKey,
-                        seaPairTeamRoom: seaPairTeamRoom,
+                        seaPairTeamRoom: seaPairTeamRoomParsed,
                         shareHolders: shareHolderObject
                     } ).then(async (Response)=>{
                             alert(Response.data.ResponseMessage[0]);
@@ -389,7 +397,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                             alert(Response.data.ResponseMessage[2]);
                             const res_CID = await client.put(fileInArray);
                             let CID = res_CID;
-
+                            
 /*                             await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({                    
                                 filenameProperty: fileName, 
                                 filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 

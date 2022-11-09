@@ -185,11 +185,17 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
         userInstance.get("my_team_rooms").map(async data => {
             if(data.nameOfRoom == roomUUIDObj.roomName){
-                setSEAPairRoom(data.roomSEA);
-
+                setSEAPairRoom(JSON.parse(data.roomSEA));
+                console.log(data);
+                console.log(JSON.parse(data.roomSEA))
                 //Read all messages from the chatroom
                 gunInstance.get("CHATROOM_".concat(roomUUIDObj.roomUUIDProperty)).map().on(async encryptedMessage => {
-                    let decrypted = await SEA.decrypt(encryptedMessage, data.roomSEA);
+                    //For some reason
+                    console.log(data.roomSEA);
+                    console.log(typeof data.roomSEA);
+                    
+                    let decrypted = await SEA.decrypt(encryptedMessage, JSON.parse(data.roomSEA));
+                    console.log(decrypted);
                     msgDispatch( { name: decrypted.name, content: decrypted.content, timestamp: decrypted.timestamp } )
                 })
             }
@@ -337,6 +343,8 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             content: textMessage,
             timestamp: Date().substring(16, 21)
         }
+        console.log(seaRoomState);
+        console.log(typeof seaRoomState);
         let encryptedMessage = await SEA.encrypt(messageObject, seaRoomState);
 
         await gunInstance.get("CHATROOM_".concat(roomUUIDState)).set(encryptedMessage);
@@ -437,20 +445,16 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
             console.log(seaRoomState);
             console.log(typeof seaRoomState);
-            console.log(JSON.parse(seaRoomState));
-            console.log(typeof JSON.parse(seaRoomState));
             console.log(elemObjRequest);
             console.log(typeof elemObjRequest);
             console.log(elemObjRequest.encShare);
 
-            let seaRoomStateParsed = JSON.parse(seaRoomState);
-
             //reconstruct the correct secret key and decrypt the encrypted Share
-            let decryptedShare = await SEA.decrypt(elemObjRequest.encShare, await SEA.secret(seaRoomStateParsed.epub, userInstance._.sea));
+            let decryptedShare = await SEA.decrypt(elemObjRequest.encShare, await SEA.secret(seaRoomState.epub, userInstance._.sea));
             console.log(decryptedShare);
             
             //Construct key and encrypt the share which can only be decypted by the requestor
-            let encryptedShare = await SEA.encrypt(decryptedShare, await SEA.secret(elemObjRequest.requestorEpub, seaRoomStateParsed));
+            let encryptedShare = await SEA.encrypt(decryptedShare, await SEA.secret(elemObjRequest.requestorEpub, seaRoomState));
 
             //Individual node indicating a authorization response to the requestor
             let dateJSON = new Date().toJSON();

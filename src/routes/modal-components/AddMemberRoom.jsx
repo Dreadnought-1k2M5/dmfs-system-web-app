@@ -66,20 +66,17 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
             //Check if the current iteration's nameOfRoom property matches the room you are in
             if (data.nameOfRoom === uuidRoomObj.roomName){
                 console.log(data.roomSEA);
-                
-                //Get the copy of the SEA.pair of the room in your own user graph
-                let copySEAPair = data.roomSEA;
-                //let parsedSEARoom = JSON.parse(copySEAPair);
-                console.log("PRINT MEEE")
 
                 console.log(user.epub);
                 console.log(userInstance._.sea);
+
                 //Generate new key for the new member
                 const generateKey = await SEA.secret(user.epub, userInstance._.sea);
                 console.log(generateKey);
-                const encryptedSEAKey = await SEA.encrypt(copySEAPair, generateKey);
+                const encryptedSEAKey = await SEA.encrypt(JSON.parse(data.roomSEA), generateKey);//data.roomSEA is always string so parse and convert it.
                 console.log(typeof myEpub);
                 console.log(encryptedSEAKey);
+                console.log(typeof encryptedSEAKey);
                 
                 
                 //Create unique public node for user data
@@ -89,10 +86,6 @@ function AddMemberModal({uuidRoomObj, gunInstance, userInstance, handleClose, sh
                 gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).set(userPublicNodeRef);
                 
                 handleClose();
-                console.log("MEMBER LIST");
-                await gunInstance.get("memberList_".concat(uuidRoomObj.roomUUIDProperty)).map().on(data => {
-                    console.log(data);
-                })
             }
 
         });

@@ -138,7 +138,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
         })
 
         return; */
-        Axios.post('http://localhost:3200/reconstruct', {
+        Axios.post('https://node-secret-share.herokuapp.com/reconstruct', {
             shareListProperty: shareListArg
         }).then(async response =>{
             

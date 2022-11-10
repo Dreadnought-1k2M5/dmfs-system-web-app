@@ -20,7 +20,7 @@ require('gun/sea');
 require('gun/lib/open.js');
 require('gun/lib/unset') // Manually require gun.unset() to remove item(s) on gun
 
-const gundb = GUN({peers: ['http://localhost:6100/gun']});
+const gundb = GUN({peers: ['https://boiling-spire-00043.herokuapp.com/gun', 'http://localhost:6100/gun']});
 const user = gundb.user().recall({sessionStorage: true});
 
 let userSessionObj = {

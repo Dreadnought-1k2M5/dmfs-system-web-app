@@ -31,8 +31,8 @@
 
 .upload-group-modal-box{
     background-color: rgb(30, 30, 30);
-    width: 58%;
-    height: 65%;
+    width: 55%;
+    height: 75%;
     border-radius: 20px;
     backdrop-filter: blur(5px);
     padding: 10px;
@@ -58,11 +58,15 @@
 }
 
 .upload-group-input-box{
+    height: 90%;
     width: 90%;
     margin: auto;
     display: grid;
     grid-template-columns: 1fr 2fr;
-    grid-template-areas: "folderTree formUpload";
+    grid-template-rows: 3fr 4fr;
+    grid-template-areas: 
+        "folderTree formUpload"
+        "console console";
 
 }
 /* .upload-group-input-box > div{
@@ -75,9 +79,28 @@
     overflow-y: auto;
     overflow-x: auto;
 
+    font-size: 8px;
+    margin: 10px;
+
 }
 .form-upload-grid-cell{
     grid-area: formUpload;
+    font-size: 10px;
+    margin: 10px;
+}
+.console-container-cell{
+    grid-area: console;
+    background-color: rgba(0, 0, 0, 0.403);
+    padding: 10px;
+    overflow-y: auto;
+    margin: 10px;
+
+}
+
+.console-container-cell > textarea{
+    background-color: rgba(60, 60, 60, 0.282);
+    width: 100%;
+    display: block;
 }
 
 .radiobox-container{
@@ -101,6 +124,7 @@
 }
 
 .secret-share-holder-form{
+
     margin-left: 20px;
 }
 .secret-share-holder-form > div{
@@ -109,11 +133,11 @@
     align-items: center;
 }
 .secret-share-holder-form input[type="text"]{
-    height: 10px;
+    height: 5px;
 }
 .secret-share-holder-form label{
     width: 40%;
-    font-size: 13.5px;
+    font-size: 12px;
 }
 
 
@@ -148,11 +172,15 @@
 .foldername-textbox-box{
     display: flex;
     padding: 4px;
+    align-items: center;
+
 }
 
 .location-node-box .textbox-foldername{
-    height: 10px;
+    height: 5px;
     width: 60%;
+    margin-left: 20px;
+    font-size: 10px;
 }
 
 .upload-btn-box{
@@ -163,8 +191,8 @@
 .submit-btn-upload-group{
     background-color: rgb(221, 221, 221);
 
-    padding: 10px 20px 10px 20px;
-    font-size: 15px;
+    padding: 8px 17px 8px 17px;
+    font-size: 12px;
     border: none;
     border-radius: 10px;
     cursor: pointer;

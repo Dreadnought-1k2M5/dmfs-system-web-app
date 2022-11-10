@@ -52,24 +52,25 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
 
         // Get your own username string and encrypted public key (epub) and intialize them into alias
         let alias, epub;
-        await userInstance.get("alias").once((data)=> alias = data);
-
-        //Insert myself in the memberList node without needing to put the encrypted copy of the SEA.pair() of the room
-        let myEpub = await userInstance._.sea.epub; // Get my own encrypted public key (epub)
-
-        //Create unique public gun node
-        let userPublicNodeRef = await gunInstance.get(alias).put({ "user_Alias": alias, "user_Epub": myEpub, "keyPairCopy": encryptedSEAObj, "AddedByFriend": alias, "friendEpub": myEpub  })
-        await gunInstance.get(memberList).set(userPublicNodeRef);
-
-        // Insert UUID-Date property name into your own user graph
-        //This block is to insert data into your my_team_rooms to indicate which room you have access to.
-        let roomName;
-        await gunInstance.get(groupUUID).get("room_name").once(data=> roomName = data)
-        await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID, roomSEA: stringifySEARoomObj});
-        roomUUIDObj.roomUUIDProperty = groupUUID;
-        roomUUIDObj.roomName = roomName;
+        await userInstance.get("alias").once(async (data)=> {
+            alias = data;
+                
+            //Insert myself in the memberList node without needing to put the encrypted copy of the SEA.pair() of the room
+            let myEpub = userInstance._.sea.epub; // Get my own encrypted public key (epub)
+                    //Create unique public gun node
+            let userPublicNodeRef = await gunInstance.get(alias).put({ "user_Alias": alias, "user_Epub": myEpub, "keyPairCopy": encryptedSEAObj, "AddedByFriend": alias, "friendEpub": myEpub  })
+            await gunInstance.get(memberList).set(userPublicNodeRef);
+            // Insert UUID-Date property name into your own user graph
+            //This block is to insert data into your my_team_rooms to indicate which room you have access to.
+            let roomName;
+            await gunInstance.get(groupUUID).get("room_name").once(data=> roomName = data)
+            await userInstance.get("my_team_rooms").set(groupUUID).put({nameOfRoom: roomName, uuidOfRoom: groupUUID, roomSEA: stringifySEARoomObj});
+            roomUUIDObj.roomUUIDProperty = groupUUID;
+            roomUUIDObj.roomName = roomName;
+            
+            navigate('room');
+        });
         
-        navigate('room');
     }
 
     return(

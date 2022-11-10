@@ -20,49 +20,52 @@ export default function JoinRoomModal({ roomUUIDObj, gunInstance, userInstance, 
         console.log("Join room handler");
         console.log(roomUUIDState);
         let myAlias, myEpub = userInstance._.sea.epub, roomName;
-        await gunInstance.get(roomUUIDState).get("room_name").once(name =>{
+        await gunInstance.get(roomUUIDState).get("room_name").once(async name =>{
             roomName = name;
             console.log(name);
+            await userInstance.get("alias").once(async myAlias => {
+                let secretKey, decryptedSEAPair, friendEpub, keyPairCopy;
+                await gunInstance.get("memberList_".concat(roomUUIDState)).map().once( async (data) =>{
+                    if(myAlias == data.user_Alias && data.user_Epub == myEpub){
+            
+                        friendEpub = data.friendEpub;
+                        keyPairCopy = data.keyPairCopy;
+                        console.log(friendEpub);
+                        console.log(typeof friendEpub);
+        
+                        console.log(keyPairCopy);
+                        console.log(typeof keyPairCopy);
+        
+        
+                        // Still need to catch any possible error on this part
+                        secretKey = await SEA.secret(friendEpub, userInstance._.sea);
+                        console.log(secretKey);
+                        
+                        // Still need to catch any possible error on this part
+                        decryptedSEAPair = await SEA.decrypt(keyPairCopy, secretKey); // decrypteddSEAPair should be an object SEA.pair of the team room
+                        console.log(decryptedSEAPair);
+                        console.log(typeof decryptedSEAPair);
+                        console.log(JSON.stringify(decryptedSEAPair));
+                        let stringifySEARoomObj = JSON.stringify(decryptedSEAPair)
+                        
+        
+                        await userInstance.get("my_team_rooms").set(roomUUIDState).put({nameOfRoom: roomName, uuidOfRoom: roomUUIDState, roomSEA: JSON.stringify(decryptedSEAPair)});
+        
+                        roomUUIDObj.roomUUIDProperty = roomUUIDState;
+                        roomUUIDObj.roomName = roomName;
+        
+                        navigate("room");
+                        
+                    }
+                    
+                })
+        
+            });
         })
 
         await userInstance.get("alias").once(alias => myAlias = alias);
 
-        let secretKey, decryptedSEAPair, friendEpub, keyPairCopy;
-        await gunInstance.get("memberList_".concat(roomUUIDState)).map().once( async (data) =>{
-            if(myAlias == data.user_Alias && data.user_Epub == myEpub){
-    
-                friendEpub = data.friendEpub;
-                keyPairCopy = data.keyPairCopy;
-                console.log(friendEpub);
-                console.log(typeof friendEpub);
-
-                console.log(keyPairCopy);
-                console.log(typeof keyPairCopy);
-
-
-                // Still need to catch any possible error on this part
-                secretKey = await SEA.secret(friendEpub, userInstance._.sea);
-                console.log(secretKey);
-                
-                // Still need to catch any possible error on this part
-                decryptedSEAPair = await SEA.decrypt(keyPairCopy, secretKey); // decrypteddSEAPair should be an object SEA.pair of the team room
-                console.log(decryptedSEAPair);
-                console.log(typeof decryptedSEAPair);
-                console.log(JSON.stringify(decryptedSEAPair));
-                let stringifySEARoomObj = JSON.stringify(decryptedSEAPair)
-                
-
-                await userInstance.get("my_team_rooms").set(roomUUIDState).put({nameOfRoom: roomName, uuidOfRoom: roomUUIDState, roomSEA: JSON.stringify(decryptedSEAPair)});
-
-                roomUUIDObj.roomUUIDProperty = roomUUIDState;
-                roomUUIDObj.roomName = roomName;
-
-                navigate("room");
-                
-            }
-            
-        })
-
+       
 
         //Generate secret key
         

@@ -441,7 +441,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                 //let stringifiedShareHolderObject = JSON.stringify(shareHolderObject);
 
                 
-                 Axios.post("https://node-secret-share.herokuapp.com/secret", {
+                 Axios.post("https://floating-fjord-99601.herokuapp.com/secret", {
                         exportedKey: parsedExportedKey,
                         seaPairTeamRoom: seaPairTeamRoomParsed,
                         shareHolders: shareHolderObject

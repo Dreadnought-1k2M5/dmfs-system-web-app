@@ -762,10 +762,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                         <div className="upload-btn-box">
                             <button type="submit" className="submit-btn-upload-group" onClick={(e) => handleUploadGroup(e)}  >Upload Document</button>
                         </div>
-                    </div>
-                    <div className="console-container-cell">
-                        
-                    </div>
+                    </div> 
                 </div>
             </div>
         </div>

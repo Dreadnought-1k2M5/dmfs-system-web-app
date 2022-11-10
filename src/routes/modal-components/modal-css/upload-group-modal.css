@@ -63,10 +63,8 @@
     margin: auto;
     display: grid;
     grid-template-columns: 1fr 2fr;
-    grid-template-rows: 3fr 4fr;
     grid-template-areas: 
         "folderTree formUpload"
-        "console console";
 
 }
 /* .upload-group-input-box > div{
@@ -78,14 +76,12 @@
     background-color: rgba(45, 45, 45, 0.522);
     overflow-y: auto;
     overflow-x: auto;
-
-    font-size: 8px;
     margin: 10px;
 
 }
 .form-upload-grid-cell{
     grid-area: formUpload;
-    font-size: 10px;
+    font-size: 11px;
     margin: 10px;
 }
 .console-container-cell{
@@ -137,7 +133,7 @@
 }
 .secret-share-holder-form label{
     width: 40%;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 
@@ -160,7 +156,7 @@
     background-color: rgb(221, 221, 221);
 
     padding: 5px 17px 5px 17px;
-    font-size: 11px;
+    font-size: 13px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -180,7 +176,7 @@
     height: 5px;
     width: 60%;
     margin-left: 20px;
-    font-size: 10px;
+    font-size: 13px;
 }
 
 .upload-btn-box{
@@ -192,7 +188,7 @@
     background-color: rgb(221, 221, 221);
 
     padding: 8px 17px 8px 17px;
-    font-size: 12px;
+    font-size: 14px;
     border: none;
     border-radius: 10px;
     cursor: pointer;

@@ -270,7 +270,6 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                     uploadedBy: myAlias,
                     accessType: "shared"
                 });
-
                 if(folderItemChosen === null){
                     alert("No Folder selected");
                     let finalInputFolderState = inputFolderState.replaceAll(' ','_');

@@ -122,27 +122,27 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
     async function accessHandler(event, shareListArg){
         event.preventDefault();
         //let decryptedShare = await SEA.decrypt(encShareArg, await SEA.secret())
+/*         let listOfResponseItemIndex = [];
+        await userInstance.get('alias').once(async myAlias =>{
+            gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data, index) =>{
+                console.log(index);
+                console.log(data);
+                //listOfResponseItemIndex.push(index);
+                gunInstance.get(index).put({
+                    grantor: null,
+                    encryptedShare: null,
+                    date: null,
+                })
+            })
 
+        })
+
+        return; */
         Axios.post('http://localhost:3200/reconstruct', {
             shareListProperty: shareListArg
         }).then(async response =>{
             
             alert(response.data.ResponseMessage);
-            //Delete Response from holders
-            let listOfResponseItemIndex = [];
-            userInstance.get('alias').once(async myAlias =>{
-                gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data, index) =>{
-                    console.log(index);
-                    console.log(data);
-                    //listOfResponseItemIndex.push(index);
-                    gunInstance.get(index).put({
-                        grantor: null,
-                        encryptedShare: null,
-                        date: null,
-                    })
-                })
-
-            })
 
             //query individual component
             await gunInstance.get(`${secretSharedDocumentState.filename}${roomUUIDObj.roomUUIDProperty}`).once(async data =>{

@@ -281,14 +281,50 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                     
                     //Inserting the reference of the folder node into groupUUID list of folder names
                     await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(folderRef);
+
+                    //Creating an individual node as an item of another node for the search box
+                    let fileItemRef = await gunInstance.get(`${fileName}_${uuidRoomObj.roomUUIDProperty}_searchItem`).put({
+                        filenameProperty: fileName, 
+                        filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                        CID_prop: CID, 
+                        fileKey: encJSONKey, 
+                        iv: encIV, 
+                        fileType: getFileType,
+                        date: lastModdifiedVar,
+                        uploadedBy: myAlias,
+                        accessType: "shared",
+                        location: `${finalInputFolderState}`
+                    })
+
+                    await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
+
+
+
                 }else if(folderItemChosen != null && (inputFolderState === null || inputFolderState === undefined) ){
                     alert("Folder selected");
                     await gunInstance.get(folderItemChosen.folderNameNodeFull).set(fileRef);
 
+                    // For the search box
+                    let fileItemRef = await gunInstance.get(`${fileName}_${uuidRoomObj.roomUUIDProperty}_searchItem`).put({
+                        filenameProperty: fileName, 
+                        filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                        CID_prop: CID, 
+                        fileKey: encJSONKey, 
+                        iv: encIV, 
+                        fileType: getFileType,
+                        date: lastModdifiedVar,
+                        uploadedBy: myAlias,
+                        accessType: "shared",
+                        location: `${folderItemChosen.folderNameClean}`
+                    })
+
+                    await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
+                    
+
                 } else if (folderItemChosen != null && inputFolderState.length > 0){
                     alert("Folder selected");
                     let finalInputFolderState = inputFolderState.replaceAll(" ", "_");
-                        //Inserting unique node into an actual "folder" node
+                    //Inserting unique node into an actual "folder" node
                     await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
 
                     //reference of the folder node
@@ -296,6 +332,24 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
 
                     //Inserting the reference of the folder node into groupUUID list of folder names
                     await gunInstance.get(folderItemChosen.folderNameNodeFull).set(folderRef);
+
+                    // For the search box
+                    let fileItemRef = await gunInstance.get(`${fileName}_${uuidRoomObj.roomUUIDProperty}_searchItem`).put({
+                        filenameProperty: fileName, 
+                        filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                        CID_prop: CID, 
+                        fileKey: encJSONKey, 
+                        iv: encIV, 
+                        fileType: getFileType,
+                        date: lastModdifiedVar,
+                        uploadedBy: myAlias,
+                        accessType: "shared",
+                        location: `${finalInputFolderState}`
+                    })
+
+                    await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
+                    
+
                 }
 
 

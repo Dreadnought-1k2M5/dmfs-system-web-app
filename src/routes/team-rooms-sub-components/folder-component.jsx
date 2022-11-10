@@ -285,11 +285,6 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     }
 
 
-
-    async function downloadSecretShared(elem){
-        
-    }
-
 async function queryVersion(){
     let filenameX = documentSelectedState.filename;
     await gunInstance.get("vc_".concat(filenameX).concat(roomUUIDObj.roomUUIDProperty)).map().once(async data=>{

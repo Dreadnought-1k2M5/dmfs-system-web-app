@@ -14,6 +14,15 @@ import FolderComponent from "./folder-component";
 
 import { SEA } from "gun";
 
+import search from '../../icons/search-icon.png'
+
+import word from '../../ms-word.png'
+
+import pdf from '../../pdf.png'
+
+import file from '../../file.png'
+
+
 //Chat messages
 const currentMsgState = {
     messages: []
@@ -69,22 +78,16 @@ const currentNotificationListState ={
   }
 
 
-
-/* //useReducer for the RequestShareModal
-const currentResponseListState = {
-    responses: []
+    // useReducer for search list items
+const currentSearchListState ={
+    searchListState: []
 }
-
-const responseListStateUseReducer = (currentResponseListState, response)=>{
-    if(response.reset){
-        return {
-            responses: []
-        }
-    }
+    
+const searchListItemsHandler = (currentSearchListState, shareRequest)=>{
     return {
-        responses: [...currentResponseListState.responses, response]
+        searchListState: [shareRequest, ...currentSearchListState.searchListState]
     }
-} */
+}
 
 
 function SubfolderRender({element, handleSelectedFolderItem}){
@@ -141,16 +144,31 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
     let [folderListState, dispatchFolderList] = useReducer(folderListReducerHandler, currentStateFolderList);
     let [folderListToRender, setFolderListToRender] = useState([]);
 
+    //useReducer for a list of search items
+    let [searchItemsListState, dispatchSearchItemsListState] = useReducer(searchListItemsHandler, currentSearchListState);
+
+
     let [roomName, setRoomName] = useState(''); // Holds room name
     let [roomUUIDState, setRoomUUID] = useState(''); // Holds room uuid-date
     let [seaRoomState, setSEAPairRoom] = useState(''); // Holds the SEA pair of the team room
     let [myAlias, setMyAlias] = useState(''); //Display my username
     let [textMessage, setTextMessage] = useState(''); //Holds the user text input
+    let [selectedSearchItemState, setSelectedSearchItemState] = useState(null);
     
 
     //state for clicking notification - the purpose is to rerender the component to update the frontend
     let [renderComponentState, setRenderComponentState] = useState(false);
-    
+    //State to track if room chat should be displayed or not
+    let [viewRoomChat, setViewRoomChat] = useState(false);
+    //state for holding user input from the search bar
+    const [inputFilenameState, setinputFilenameState] = useState("");
+    //state to check if the upload modal component is being viewed 
+    let [isUploadGroupModalViewed, setIsUploadGroupModalViewed] = useState(false);
+    //Add user modal component view
+    let [isAddUserModalViewed, setIsAddUserModalViewed] = useState(false);
+
+
+
     useEffect(()=>{
 
         setRoomUUID(roomUUIDObj.roomUUIDProperty);
@@ -177,13 +195,31 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 }
 
             })
+            await gunInstance.get(`${roomUUIDObj.roomUUIDProperty}_nodeSearchItemsSet`).map().once(data => {
+                console.log(data);
+                if(data.filenameProperty != null || data.CID_prop != null || data.location != null || data.iv != null || data.fileKey != null){
+                    dispatchSearchItemsListState({
+                        filenameProperty: data.filenameProperty, 
+                        filenameWithNoWhiteSpace: data.filenameWithNoWhiteSpace,
+                        CID_prop: data.CID_prop, 
+                        fileKey: data.fileKey, 
+                        iv: data.iv, 
+                        fileType: data.fileType,
+                        date: data.date,
+                        uploadedBy: data.uploadedBy,
+                        accessType: data.accessType,
+                        location: data.location
+                    })
+                }
+
+            })
             
             setMyAlias(v);
         });
 
         setRoomName(roomUUIDObj.roomName);
 
-        userInstance.get("my_team_rooms").map(async data => {
+        userInstance.get("my_team_rooms").map().once(async data => {
             if(data.nameOfRoom == roomUUIDObj.roomName){
                 setSEAPairRoom(JSON.parse(data.roomSEA));
                 console.log(data);
@@ -254,10 +290,6 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
     }, []);
 
-
-
-
-
     //REMOVE DUPLICATED SHARED REQUESTS
     const filteredShareRequestList = () =>{
         const filteredSharedRequestfArray = listShareRequest.listShareRequestArray.filter((value, index) => {
@@ -269,12 +301,9 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 })
             )
         })
-
         return filteredSharedRequestfArray;
     } 
     
-
-      
     const filteredNotificationHandler = () =>{
         const filteredNotifArray = notificationListState.notifications.filter((value, index) => {
             const _value = JSON.stringify(value);
@@ -303,20 +332,15 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
   }
 
 
-    //State to track if room chat should be displayed or not
-    let [viewRoomChat, setViewRoomChat] = useState(false);
-
-    //Upload modal component
-    let [isUploadGroupModalViewed, setIsUploadGroupModalViewed] = useState(false);
     function showUploadGroupModal(){
         setIsUploadGroupModalViewed(true);
     }
+
     function hideUploadGroupModal(){
         setIsUploadGroupModalViewed(false);
     }
 
-    //Add user modal component view
-    let [isAddUserModalViewed, setIsAddUserModalViewed] = useState(false);
+
     function showModal(){
         setIsAddUserModalViewed(true);
     }
@@ -333,7 +357,6 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             sendMessage();
         }
     }   
-
     //save messages to gun
     async function sendMessage(){
 
@@ -350,7 +373,6 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         await gunInstance.get("CHATROOM_".concat(roomUUIDState)).set(encryptedMessage);
   
     }
-
 
     // Remove duplicated messages from the "message" property in the currentMsgState.
     const filteredMessages = () => {
@@ -515,7 +537,114 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         } */
     }
 
+    const filteredSearchItemsListHandler = () =>{
+        const filteredSearchListItemsArray = searchItemsListState.searchListState.filter((value, index) => {
+            console.log(value);
+            const _value = JSON.stringify(value);
+            return (
+                index ===
+                searchItemsListState.searchListState.findIndex(obj => {
+                return JSON.stringify(obj) === _value 
+                })
+            )
+        })
+        console.log(filteredSearchListItemsArray);
+        return filteredSearchListItemsArray;
+    }
+
+
+    async function inputFilenameHandler(e){
+        var lowerCase = e.target.value.toLowerCase();
+        setinputFilenameState(lowerCase);
+    }
+
+    //List Component to display search result
+    function List({prop}) {
+        //create a new array by filtering the original array
+        const filteredData = filteredSearchItemsListHandler().filter((elementObj) => {
+            //if no input the return the original
+            if (prop === '') {
+                return '';
+            }
+            //return the item which contains the user input
+            else {
+                return elementObj.filenameProperty.toLowerCase().includes(prop)
+            }
+        })
+        return (
+            <ul className="ul-suggestion-container">
+                {filteredData.map((item, index) => (
+                    <li className="search-item-li" key={index} onClick={() =>{ setSelectedSearchItemState(item); setinputFilenameState("") } }>
+                        {console.log(item)}
+                        <img className="icon-size-small" src={ (item.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (item.fileType === "application/pdf") ? pdf : file } />
+                        <p className="filename-item-css">{item.filenameProperty}</p>
+                    </li>
+                ))}
+            </ul>
+        )
+    }
    
+    async function handleDownloadShare(){
+        if(selectedSearchItemState == null){
+            return
+        }
+        await gunInstance.get(`${selectedSearchItemState.filenameProperty}${roomUUIDObj.roomUUIDProperty}`).once(async data =>{
+            let filename = data.filenameProperty;
+            let filenameWithNoWhiteSpace = data.filenameWithNoWhiteSpace;
+            let CID = data.CID_prop;
+            let fileType = data.fileType;
+            
+            //Get the SEA pair of the team room
+            //SEAState value is in JSON format, parse it.
+            let parsedSEAState = seaRoomState;
+
+            //Initialization Vector: Decrypt and Decode base64-encoded string back into Uint8Array type using the SEA.pair() of the team room
+            let decryptedIVBase64 = await SEA.decrypt(data.iv, parsedSEAState);
+            const decodedb64Uint8Array  = window.atob(decryptedIVBase64); //Decode base64-encoded string back into Uint8Array
+            const buffer = new ArrayBuffer(decodedb64Uint8Array.length);
+            const ivUint8Array = new Uint8Array(buffer);
+            for (let i = 0; i < decodedb64Uint8Array.length; i++) {
+                ivUint8Array[i] = decodedb64Uint8Array.charCodeAt(i)
+            }
+
+
+            //Decrypt the parsedExportedKey using the SEA.pair() of the team room.
+            let decryptedKey = await SEA.decrypt(data.fileKey, parsedSEAState);
+            console.log(decryptedKey);
+            //Idk why the fuck this line doesn't work but the decryption process works without it.
+            //The value of 'decryptedKey' was supposed to be a JSON string, but it wasn't for some reason.
+            //let jsonParseFileKey = await JSON.parse(decryptedJSON);
+
+            await crypto.subtle.importKey("jwk", decryptedKey, { 'name': 'AES-CBC' }, true, ['encrypt', 'decrypt']).then(cryptoKeyImported =>{
+                fetch(`https://${CID}.ipfs.w3s.link/ipfs/${CID}/${filenameWithNoWhiteSpace}`).then(res => {
+                    let result = res.blob(); // Convert to blob() format
+                    console.log(result);
+                    return result;
+                }).then(async res => {
+            
+                    // Convert blob to arraybuffer
+                    const fileArrayBuffer = await new Response(res).arrayBuffer();
+        
+                    await window.crypto.subtle.decrypt({name: 'AES-CBC', iv: ivUint8Array}, cryptoKeyImported, fileArrayBuffer).then(decrypted => {
+                        //Convert ArrayBuffer to Blob and Download
+                        const blob = new Blob([decrypted], {type: fileType} ) // convert decrypted arraybuffer to blob.
+                        const aElement = document.createElement('a');
+                        aElement.setAttribute('download', `${filename}`);
+                        const href = URL.createObjectURL(blob);
+                        aElement.href = href;
+                        aElement.setAttribute('target', '_blank');
+                        aElement.click();
+                        URL.revokeObjectURL(href);
+            
+                    }).catch(console.error);
+                    
+                })
+            
+            })
+        })
+
+    }
+
     return (
         <div>
             <AddMemberModal uuidRoomObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideModal} show={isAddUserModalViewed} handleCloseAfterMemberAdded={hideModalAfterCreatedRoom}></AddMemberModal>
@@ -589,6 +718,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                     <div className="header-box">
                         <h2>{roomName}</h2>
                     </div>
+
                     <div className="toolbar-upload-group-box">
                         <button className="btn-upload-group-css" onClick={()=> showUploadGroupModal() }>Upload a document</button>
                         <button className="btn-upload-group-css" onClick={(e)=> showFoldersHandler(e) }>Show Documents</button>
@@ -616,8 +746,54 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 <div className="room-right-side-grid">
                     <div className="right-side-container">
 
-                        {folderNameState != null && <FolderComponent gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderNameState}/>
-}
+                        {folderNameState != null && <FolderComponent gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderNameState}/>}
+                        {folderNameState == null && 
+                            <div className="top-nav-bar-right-side">
+                                <div className="search-box-room">
+                                        <input type="text" placeholder='Search Shared Documents' value={inputFilenameState} onChange={(e) => inputFilenameHandler(e)}/>
+                                        <img src= {search} alt="" className='search-icon-room'/>
+                                </div>
+
+                                <div className="suggestion-box-search" >
+                                    <List prop={inputFilenameState} />
+                                </div>
+
+                            </div>
+                        }
+                        {selectedSearchItemState != null && 
+                            <div className="selected-file-details-container">
+                                <div className="table-container-div-document-metadata">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <p>File Name: </p>
+                                            </td>
+                                            <td>
+                                                <p>{selectedSearchItemState.filenameProperty}</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Content Identifier (CID): </td>
+                                            <td>{selectedSearchItemState.CID_prop}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Created / Modified: </td>
+                                            <td>{selectedSearchItemState.date}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Folder / Archive: </td>
+                                            <td>{selectedSearchItemState.location}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div className="icon-download-btn-box">
+                                    <img className="icon-size-large" src={ (selectedSearchItemState.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (selectedSearchItemState.fileType === "application/pdf") ? pdf : file } />
+                                    <button className="download-btn-css-document-metadata" onClick={handleDownloadShare}>Download Shared Document</button>
+                                </div>
+
+                            </div>
+                        }
                     </div>
                 </div>
 

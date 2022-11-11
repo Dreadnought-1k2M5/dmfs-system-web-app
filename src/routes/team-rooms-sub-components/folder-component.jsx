@@ -112,7 +112,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                 setMyAlias(data);
             });
     
-             userInstance.get("my_team_rooms").map().once(data=>{
+             userInstance.get("my_team_rooms").map().on(data=>{
                 delete data._;
                 console.log(data);
                 if(data.uuidOfRoom === roomUUIDObj.roomUUIDProperty){
@@ -121,7 +121,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
                 }
             })
             console.log(folderContext.folderNameNodeFull);
-            gunInstance.get(folderContext.folderNameNodeFull).map().once(data =>{
+            gunInstance.get(folderContext.folderNameNodeFull).map().on(data =>{
                 //get the property name of the unique node containing the individual file's metadata
                 //let getFileNameRoomUUIDProperty = data.filenameProperty.concat(roomUUIDObj.roomUUIDProperty);
                 console.log(data);
@@ -287,7 +287,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
 async function queryVersion(){
     let filenameX = documentSelectedState.filename;
-    await gunInstance.get("vc_".concat(filenameX).concat(roomUUIDObj.roomUUIDProperty)).map().once(async data=>{
+    await gunInstance.get("vc_".concat(filenameX).concat(roomUUIDObj.roomUUIDProperty)).map().on(async data=>{
         console.log(data);
         dispatchvcListState({
             filenameProperty: data.filenameProperty, 

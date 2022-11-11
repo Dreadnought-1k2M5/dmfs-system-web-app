@@ -187,7 +187,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
         let tempSEACopy;
         await userInstance.get("my_team_rooms").map().on(async data => {
             delete data._;
-            if(data.nameOfRoom === uuidRoomObj.roomName){
+            if(data.nameOfRoom === uuidRoomObj.roomName && data.roomName != undefined){
                 tempSEACopy = data.roomSEA;
 
 
@@ -350,9 +350,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
         
         
                         alert("FILE ADDED");
-                        handleClose();
-                        window.location.reload();
-        
+                        handleClose();        
                     }).catch(console.error);
         
                 });

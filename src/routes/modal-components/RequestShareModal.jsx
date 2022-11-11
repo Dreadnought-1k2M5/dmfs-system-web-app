@@ -37,7 +37,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
             setSecretSharedDocumentState(secretSharedDocumentObj);
         }
         console.log("Use effect called");
-        dispatchResponse({reset: true});
+        //dispatchResponse({reset: true});
         userInstance.get('alias').on(async myAlias =>{
             console.log(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`);
 
@@ -260,8 +260,6 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                         </div>
                     }
                     
-                    <button onClick={(e) => accessHandler(e, filteredResponse())}>CLEAR ALL</button>
-
                 </div>
             </div>
         </div>    

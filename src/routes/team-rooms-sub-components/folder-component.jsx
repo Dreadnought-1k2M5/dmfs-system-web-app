@@ -330,7 +330,6 @@ const filteredVCList = () =>{
                 <div className={itemSelected.isSelected === true ? "top-toolbar-option-document" : "top-toolbar-option-document-hide"}>
                     <p className="label-item-selected"><b>{itemSelected.fileNameVar} - </b></p>
                     <button className="btn-option-document-css" onClick={()=> handleDownloadSharedFile()}>Download</button>
-                    <button className="btn-option-document-css" /* onClick={()=> navigate("/main/Teams/room")} */>Delete</button>
                     <button className="btn-option-document-css" onClick={()=> {setIsVcSidebarViews(!isVcSidebarViews); queryVersion()} }>Check Versions</button>
                     <button className="btn-option-document-css" onClick={()=> { setItemSelected({isSelected: false, index: -1}); dispatchvcListState({reset: true}); }}>Cancel</button>
                     

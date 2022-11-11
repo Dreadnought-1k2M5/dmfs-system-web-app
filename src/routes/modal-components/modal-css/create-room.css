@@ -30,13 +30,13 @@
 
 @keyframes create-room-container-animation{
     from { bottom: 90px;     background-color: rgba(255, 111, 181, 0); }
-    to { bottom: 40px;        background-color: rgba(111, 209, 255, 0.267);
-    }
+    to { bottom: 40px;            background-color: #1e1e1e; }
 }
 
 
 .create-room-container{
-    background-color: rgba(111, 209, 255, 0.267);
+    background-color: #1e1e1e;
+    border: 0.5px solid #6fd1ff;
     width: 35%;
     height: 28%;
     border-radius: 20px;

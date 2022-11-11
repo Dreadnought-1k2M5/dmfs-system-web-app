@@ -40,6 +40,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
             dispatchResponse({reset: true});        
         }
         console.log("Use effect called");
+        dispatchResponse({reset: true});        
 
         userInstance.get('alias').on(async myAlias =>{
             console.log(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`);
@@ -65,23 +66,6 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
 
         })
 
-        userInstance.get("my_team_rooms").map().on(async data0 => {
-            if(data0.nameOfRoom == roomUUIDObj.roomName){
-                //console.log(seaRoomState);
-                gunInstance.get(`responseNodeSet_${aliasState}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data1, index) =>{
-                    console.log(data1);
-                    console.log(index);
-                    if(data1.grantor != undefined  && data1.encryptedShare != undefined ){
-                        //Reconstrucct the key and decrypt
-                        let decryptedShare = await SEA.decrypt(data1.encryptedShare, await SEA.secret(seaRoomState1.epub, userInstance._.sea));
-                        console.log(decryptedShare);
-                        dispatchResponse({decryptedShare: decryptedShare, holderAlias: data1.grantor});
-                    }
-                })
-            }
-        })
-
-    
     }, [])
 
     const filteredResponse = () => {

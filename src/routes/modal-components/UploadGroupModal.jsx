@@ -193,177 +193,173 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
             if(data.nameOfRoom === uuidRoomObj.roomName){
                 tempSEACopy = data.roomSEA;
 
-
-                let fileName, fileNameNoWhiteSpace, lastModdifiedVar, CID, fileFormat, exportedKey, myAlias;
-                await userInstance.get('alias').once(v => myAlias = v);
-                const fr = new FileReader();
-        
-                const getFileType = fileUploadGroup.current.files[0].type; // get the blob type to pass it later at the Blob() constructor
-                fileName = fileUploadGroup.current.files[0].name;
-                fileNameNoWhiteSpace = fileUploadGroup.current.files[0].name.replaceAll(" ", "");
-                lastModdifiedVar = fileUploadGroup.current.files[0].lastModifiedDate;
-                lastModdifiedVar = lastModdifiedVar.toString(); // convert it to string because gun.js wouldn't accept it.
-        
-        
-                fr.readAsArrayBuffer(fileUploadGroup.current.files[0]);
-        
-                fr.addEventListener('load', async (e)=>{
-                    let data = e.target.result; // e.target.result is similar to fr.result
-                    let iv = crypto.getRandomValues(new Uint8Array(16));
-                    const key = await generateKeyFunction();
-                    console.log(data);
-                    console.log(iv);
-                
-                    crypto.subtle.encrypt({ 'name': 'AES-CBC', iv }, key, data)
-                    .then(async encrypted => {
-                        console.log(encrypted); // encrypted is an ArrayBuffer
-                        alert('The encrypted data is ' + encrypted.byteLength + ' bytes long'); // encrypted is an ArrayBuffer
-                        fileFormat = new File([encrypted], fileNameNoWhiteSpace, {type: getFileType, lastModified: lastModdifiedVar} ) // convert encrypted arraybuffer to blob.
-                        console.log("ENCRYPTED:");
-                        console.log(fileFormat);
-                        console.log("KEY USED TO ENCRYPT FILE");
-                        console.log(key);
-                        const fileInArray = [fileFormat];
-        
-                        //Export CryptoKey in a JSON web key format
-                        exportedKey = await crypto.subtle.exportKey("jwk", key);
-                        let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
-                        console.log(parsedExportedKey);
-                        
-                        //tempSEACopy is is JSON format, hence parse it.
-                        let parsedSEARoom = JSON.parse(tempSEACopy);
-                        //Encrypt parseExportedKey that can only be decrypted by members of the team room
-                        let encJSONKey = await SEA.encrypt(parsedExportedKey, parsedSEARoom);
-                        console.log(encJSONKey);
-        
-                        let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv));
-                        let encIV = await SEA.encrypt(parsedInitializationVector, parsedSEARoom);
-                        console.log(encIV);
-        
-                        alert("Folder: ".concat(inputFolderState));
-                        const res_CID = await client.put(fileInArray);
-                        let CID = res_CID;
-                        console.log(CID);
-                        
-                        //Version 
-                        await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({                    
-                            filenameProperty: fileName, 
-                            filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                            CID_prop: CID, 
-                            fileKey: encJSONKey, 
-                            iv: encIV, 
-                            fileType: getFileType,
-                            date: lastModdifiedVar,
-                            uploadedBy: myAlias
-                        })
-        
-        
-                        //Individual UNIQUE node containing file metadata
-                        let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
-                            filenameProperty: fileName, 
-                            filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                            CID_prop: CID, 
-                            fileKey: encJSONKey, 
-                            iv: encIV, 
-                            fileType: getFileType,
-                            date: lastModdifiedVar,
-                            uploadedBy: myAlias,
-                            accessType: "shared"
-                        });
-                        if(folderItemChosen === null){
-                            alert("No Folder selected");
-                            let finalInputFolderState = inputFolderState.replaceAll(' ','_');
-                            await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
-                            
-                            //reference of the folder node
-                            let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty))
-                            
-                            //Inserting the reference of the folder node into groupUUID list of folder names
-                            await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(folderRef);
-        
-                            //Creating an individual node as an item of another node for the search box
-                            let fileItemRef = await gunInstance.get(`${fileName}_${uuidRoomObj.roomUUIDProperty}_searchItem`).put({
-                                filenameProperty: fileName, 
-                                filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                                CID_prop: CID, 
-                                fileKey: encJSONKey, 
-                                iv: encIV, 
-                                fileType: getFileType,
-                                date: lastModdifiedVar,
-                                uploadedBy: myAlias,
-                                accessType: "shared",
-                                location: `${finalInputFolderState}`
-                            })
-        
-                            await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
-        
-        
-        
-                        }else if(folderItemChosen != null && (inputFolderState === null || inputFolderState === undefined) ){
-                            alert("Folder selected");
-                            await gunInstance.get(folderItemChosen.folderNameNodeFull).set(fileRef);
-        
-                            // For the search box
-                            let fileItemRef = await gunInstance.get(`${fileName}_${uuidRoomObj.roomUUIDProperty}_searchItem`).put({
-                                filenameProperty: fileName, 
-                                filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                                CID_prop: CID, 
-                                fileKey: encJSONKey, 
-                                iv: encIV, 
-                                fileType: getFileType,
-                                date: lastModdifiedVar,
-                                uploadedBy: myAlias,
-                                accessType: "shared",
-                                location: `${folderItemChosen.folderNameClean}`
-                            })
-        
-                            await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
-                            
-        
-                        } else if (folderItemChosen != null && inputFolderState.length > 0){
-                            alert("Folder selected");
-                            let finalInputFolderState = inputFolderState.replaceAll(" ", "_");
-                            //Inserting unique node into an actual "folder" node
-                            await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
-        
-                            //reference of the folder node
-                            let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty));
-        
-                            //Inserting the reference of the folder node into groupUUID list of folder names
-                            await gunInstance.get(folderItemChosen.folderNameNodeFull).set(folderRef);
-        
-                            // For the search box
-                            let fileItemRef = await gunInstance.get(`${fileName}_${uuidRoomObj.roomUUIDProperty}_searchItem`).put({
-                                filenameProperty: fileName, 
-                                filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                                CID_prop: CID, 
-                                fileKey: encJSONKey, 
-                                iv: encIV, 
-                                fileType: getFileType,
-                                date: lastModdifiedVar,
-                                uploadedBy: myAlias,
-                                accessType: "shared",
-                                location: `${finalInputFolderState}`
-                            })
-        
-                            await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
-                            
-        
-                        }
-        
-        
-                        alert("FILE ADDED");
-                        handleClose();        
-                    }).catch(console.error);
-        
-                });
-        
-
-
-
-
-
             }
+        });
+
+        
+
+        let fileName, fileNameNoWhiteSpace, lastModdifiedVar, CID, fileFormat, exportedKey, myAlias;
+        await userInstance.get('alias').once(v => myAlias = v);
+        const fr = new FileReader();
+
+        const getFileType = fileUploadGroup.current.files[0].type; // get the blob type to pass it later at the Blob() constructor
+        fileName = fileUploadGroup.current.files[0].name;
+        fileNameNoWhiteSpace = fileUploadGroup.current.files[0].name.replaceAll(" ", "");
+        lastModdifiedVar = fileUploadGroup.current.files[0].lastModifiedDate;
+        lastModdifiedVar = lastModdifiedVar.toString(); // convert it to string because gun.js wouldn't accept it.
+
+
+        fr.readAsArrayBuffer(fileUploadGroup.current.files[0]);
+
+        fr.addEventListener('load', async (e)=>{
+            let data = e.target.result; // e.target.result is similar to fr.result
+            let iv = crypto.getRandomValues(new Uint8Array(16));
+            const key = await generateKeyFunction();
+            console.log(data);
+            console.log(iv);
+        
+            crypto.subtle.encrypt({ 'name': 'AES-CBC', iv }, key, data)
+            .then(async encrypted => {
+                console.log(encrypted); // encrypted is an ArrayBuffer
+                alert('The encrypted data is ' + encrypted.byteLength + ' bytes long'); // encrypted is an ArrayBuffer
+                fileFormat = new File([encrypted], fileNameNoWhiteSpace, {type: getFileType, lastModified: lastModdifiedVar} ) // convert encrypted arraybuffer to blob.
+                console.log("ENCRYPTED:");
+                console.log(fileFormat);
+                console.log("KEY USED TO ENCRYPT FILE");
+                console.log(key);
+                const fileInArray = [fileFormat];
+
+                //Export CryptoKey in a JSON web key format
+                exportedKey = await crypto.subtle.exportKey("jwk", key);
+                let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
+                console.log(parsedExportedKey);
+                
+                //tempSEACopy is is JSON format, hence parse it.
+                let parsedSEARoom = JSON.parse(tempSEACopy);
+                //Encrypt parseExportedKey that can only be decrypted by members of the team room
+                let encJSONKey = await SEA.encrypt(parsedExportedKey, parsedSEARoom);
+                console.log(encJSONKey);
+
+                let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv));
+                let encIV = await SEA.encrypt(parsedInitializationVector, parsedSEARoom);
+                console.log(encIV);
+
+                alert("Folder: ".concat(inputFolderState));
+                const res_CID = await client.put(fileInArray);
+                let CID = res_CID;
+                console.log(CID);
+                
+                //Version 
+                await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({                    
+                    filenameProperty: fileName, 
+                    filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                    CID_prop: CID, 
+                    fileKey: encJSONKey, 
+                    iv: encIV, 
+                    fileType: getFileType,
+                    date: lastModdifiedVar,
+                    uploadedBy: myAlias
+                })
+
+
+                //Individual UNIQUE node containing file metadata
+                let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
+                    filenameProperty: fileName, 
+                    filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                    CID_prop: CID, 
+                    fileKey: encJSONKey, 
+                    iv: encIV, 
+                    fileType: getFileType,
+                    date: lastModdifiedVar,
+                    uploadedBy: myAlias,
+                    accessType: "shared"
+                });
+                if(folderItemChosen === null){
+                    alert("No Folder selected");
+                    let finalInputFolderState = inputFolderState.replaceAll(' ','_');
+                    await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
+                    
+                    //reference of the folder node
+                    let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty))
+                    
+                    //Inserting the reference of the folder node into groupUUID list of folder names
+                    await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(folderRef);
+
+                    //Creating an individual node as an item of another node for the search box
+                    let fileItemRef = await gunInstance.get(`${fileName}_${uuidRoomObj.roomUUIDProperty}_searchItem`).put({
+                        filenameProperty: fileName, 
+                        filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                        CID_prop: CID, 
+                        fileKey: encJSONKey, 
+                        iv: encIV, 
+                        fileType: getFileType,
+                        date: lastModdifiedVar,
+                        uploadedBy: myAlias,
+                        accessType: "shared",
+                        location: `${finalInputFolderState}`
+                    })
+
+                    await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
+
+
+
+                }else if(folderItemChosen != null && (inputFolderState === null || inputFolderState === undefined) ){
+                    alert("Folder selected");
+                    await gunInstance.get(folderItemChosen.folderNameNodeFull).set(fileRef);
+
+                    // For the search box
+                    let fileItemRef = await gunInstance.get(`${fileName}_${uuidRoomObj.roomUUIDProperty}_searchItem`).put({
+                        filenameProperty: fileName, 
+                        filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                        CID_prop: CID, 
+                        fileKey: encJSONKey, 
+                        iv: encIV, 
+                        fileType: getFileType,
+                        date: lastModdifiedVar,
+                        uploadedBy: myAlias,
+                        accessType: "shared",
+                        location: `${folderItemChosen.folderNameClean}`
+                    })
+
+                    await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
+                    
+
+                } else if (folderItemChosen != null && inputFolderState.length > 0){
+                    alert("Folder selected");
+                    let finalInputFolderState = inputFolderState.replaceAll(" ", "_");
+                    //Inserting unique node into an actual "folder" node
+                    await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
+
+                    //reference of the folder node
+                    let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty));
+
+                    //Inserting the reference of the folder node into groupUUID list of folder names
+                    await gunInstance.get(folderItemChosen.folderNameNodeFull).set(folderRef);
+
+                    // For the search box
+                    let fileItemRef = await gunInstance.get(`${fileName}_${uuidRoomObj.roomUUIDProperty}_searchItem`).put({
+                        filenameProperty: fileName, 
+                        filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                        CID_prop: CID, 
+                        fileKey: encJSONKey, 
+                        iv: encIV, 
+                        fileType: getFileType,
+                        date: lastModdifiedVar,
+                        uploadedBy: myAlias,
+                        accessType: "shared",
+                        location: `${finalInputFolderState}`
+                    })
+
+                    await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
+                    
+
+                }
+
+
+                alert("FILE ADDED");
+                handleClose();        
+            }).catch(console.error);
+
         });
 
         
@@ -394,208 +390,206 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                 console.log(JSON.parse(seaPairTeamRoom));
                 console.log(typeof JSON.parse(seaPairTeamRoom));
                 seaPairTeamRoomParsed = JSON.parse(seaPairTeamRoom);
-
-                let fileName, fileNameNoWhiteSpace, lastModdifiedVar, CID, fileFormat, exportedKey, myAlias;
-                await userInstance.get('alias').on(v => myAlias = v);
-                const fr = new FileReader();
-        
-                const getFileType = fileUploadGroup.current.files[0].type; // get the blob type to pass it later at the Blob() constructor
-                fileName = fileUploadGroup.current.files[0].name;
-                fileNameNoWhiteSpace = fileUploadGroup.current.files[0].name.replaceAll(" ", "");
-                lastModdifiedVar = fileUploadGroup.current.files[0].lastModifiedDate;
-                lastModdifiedVar = lastModdifiedVar.toString(); // convert it to string because gun.js wouldn't accept it.
-       
-                fr.readAsArrayBuffer(fileUploadGroup.current.files[0]); // convert file blob into ArrayBuffer
-        
-                fr.addEventListener('load', async (e)=>{
-       
-                   //Result of fr.readAsArrayBuffer
-                    let data = e.target.result; // e.target.result is similar to fr.result
-                    let iv = crypto.getRandomValues(new Uint8Array(16));
-                    const key = await generateKeyFunction();
-                   
-                    //Actual encryption of the raw ArrayBuffer
-                    crypto.subtle.encrypt({ 'name': 'AES-CBC', iv }, key, data)
-                    .then(async encrypted => {
-                        console.log(encrypted); // "encrypted" is an encrypted ArrayBuffer
-                        alert('The encrypted data is ' + encrypted.byteLength + ' bytes long'); // encrypted is an ArrayBuffer
-                        fileFormat = new File([encrypted], fileNameNoWhiteSpace, {type: getFileType, lastModified: lastModdifiedVar} ) // convert encrypted arraybuffer to blob.
-                        console.log("ENCRYPTED:");
-                        console.log(fileFormat);
-                        console.log("KEY USED TO ENCRYPT FILE");
-                        console.log(key);
-                        const fileInArray = [fileFormat]; // put fileFormat inside an array for web3storage API to accept the file blob
-       
-                        //Export CryptoKey in a JSON web key format
-                        exportedKey = await crypto.subtle.exportKey("jwk", key);
-                        let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
-       
-                        let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv)); // convert the initialization vector into base64-encoded data to be inserted into the gun node graph
-                        let encIV = await SEA.encrypt(parsedInitializationVector, seaPairTeamRoomParsed); // encrypt the base64-encoded data (IV)
-                        alert(seaPairTeamRoom);
-                        //alert("Next is sea room in json");
-                       //alert(jsonStringSEARoom);
-                        console.log(parsedExportedKey);
-                       let shareHolderObject = {
-                           holder1: holder1,
-                           holder2: holder2,
-                           holder3: holder3
-                       }
-                       //let seaPairTeamRoomJSON = JSON.stringify(seaPairTeamRoom);
-                       //let stringifiedShareHolderObject = JSON.stringify(shareHolderObject);
-       
-                       
-                        Axios.post("https://floating-fjord-99601.herokuapp.com/secret", {
-                               exportedKey: parsedExportedKey,
-                               seaPairTeamRoom: seaPairTeamRoomParsed,
-                               shareHolders: shareHolderObject
-                           } ).then(async (Response)=>{
-                                   alert(Response.data.ResponseMessage[0]);
-                                   alert(Response.data.ResponseMessage[1]);
-                                   alert(Response.data.ResponseMessage[2]);
-                                   const res_CID = await client.put(fileInArray);
-                                   let CID = res_CID;
-                                   
-       /*                             await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({                    
-                                       filenameProperty: fileName, 
-                                       filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                                       CID_prop: CID, 
-                                       fileKey: encJSONKey, 
-                                       iv: encIV, 
-                                       fileType: getFileType,
-                                       date: lastModdifiedVar,
-                                       uploadedBy: myAlias
-                                   }) */
-                                   
-       
-                                   //Individual UNIQUE node containing file metadata
-                                    let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
-                                       filenameProperty: fileName, 
-                                       filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                                       CID_prop: CID, 
-                                       holder1: holder1.memberAlias,
-                                       holder2: holder2.memberAlias, 
-                                       holder3: holder3.memberAlias,
-                                       holder1Epub: holder1.memberEpub,
-                                       holder2Epub: holder2.memberEpub,
-                                       holder3Epub: holder3.memberEpub,
-                                       encShare1: Response.data.ResponseMessage[0],
-                                       encShare2: Response.data.ResponseMessage[1],
-                                       encShare3: Response.data.ResponseMessage[2],
-                                       iv: encIV, 
-                                       fileType: getFileType,
-                                       date: lastModdifiedVar,
-                                       uploadedBy: myAlias,
-                                       accessType: "secretShare"
-                                   });
-       
-                                   if(folderItemChosen === null){
-                                       alert("No Folder selected");
-                                       let finalInputFolderState = inputFolderState.replaceAll(' ','_');
-                                       await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
-                                       
-                                       //reference of the folder node
-                                       let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty))
-                                       
-                                       //Inserting the reference of the folder node into groupUUID list of folder names
-                                       await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(folderRef);
-                                   }
-       
-                                   else if(folderItemChosen != null && (inputFolderState === null || inputFolderState === undefined)){
-                                       alert("Folder selected");
-                                       await gunInstance.get(folderItemChosen.folderNameNodeFull).set(fileRef);
-                   
-                                   } else if (folderItemChosen != null && inputFolderState.length > 0){
-                                       alert("Folder selected");
-                                       let finalInputFolderState = inputFolderState.replaceAll(" ", "_");
-                                           //Inserting unique node into an actual "folder" node
-                                       await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
-                   
-                                       //reference of the folder node
-                                       let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty));
-                   
-                                       //Inserting the reference of the folder node into groupUUID list of folder names
-                                       await gunInstance.get(folderItemChosen.folderNameNodeFull).set(folderRef);
-                                   }
-                                   let dateJSON = new Date().toJSON();
-       
-                                   //Send Holder 1 notification
-                                   await GenerateNotificationNode(holder1.memberAlias, dateJSON, `A secret share from ${myAlias} was assigned to you.`);
-                                   //Send Holder 2 notification
-                                   await GenerateNotificationNode(holder2.memberAlias, dateJSON, `A secret share from ${myAlias} was assigned to you.`);
-                                   //Send Holder 3 notification
-                                   await GenerateNotificationNode(holder3.memberAlias, dateJSON, `A secret share from ${myAlias} was assigned to you.`);
-       
-                                   alert("FILE ADDED");
-                                   handleClose();
-                                   window.location.reload();
-                        });
-       
-                       /*  //Export CryptoKey in a JSON web key format
-                        exportedKey = await crypto.subtle.exportKey("jwk", key);
-                        let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
-                        console.log(parsedExportedKey);
-        
-                        //Encrypt parseExportedKey that can only be decrypted by members of the team room
-                        let encJSONKey = await SEA.encrypt(parsedExportedKey, fileSEA);
-                        console.log(encJSONKey);
-        
-                        let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv)); // convert the initialization vector into base64-encoded data to be inserted into the gun node graph
-                        let encIV = await SEA.encrypt(parsedInitializationVector, fileSEA); // encrypt the base64-encoded data (IV)
-                        console.log(encIV);
-        
-                        alert("Folder: ".concat(inputFolderState));
-                        
-                        //const res_CID = await client.put(fileInArray);
-                        let CID = "res_CID_TEST1234";
-       
-                        //Version 
-                        await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({
-                            filenameProperty: fileName, 
-                            filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                            CID_prop: CID, 
-                            fileKey: encJSONKey, 
-                            iv: encIV, 
-                            fileType: getFileType,
-                            date: lastModdifiedVar,
-                            uploadedBy: myAlias,
-                            accessType: "secretShare",
-                        })
-        
-                        //Insert Folder
-        
-                        //Individual UNIQUE node containing file metadata
-                        let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
-                            filenameProperty: fileName, 
-                            filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                            CID_prop: CID, 
-                            fileKey: encJSONKey, 
-                            iv: encIV, 
-                            fileType: getFileType,
-                            date: lastModdifiedVar,
-                            uploadedBy: myAlias,
-                            accessType: "secretShare",
-                        });
-        
-                        //Inserting unique node into a unique "folder" node
-                        await gunInstance.get(inputFolderState.concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
-                        
-                        //Inserting the string name of the folder into groupUUID list of folder names
-                        await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(inputFolderState);
-        */
-       
-       /*                  alert("FILE ADDED");
-                        handleClose(); */
-                        //window.location.reload();
-        
-                    }).catch(console.error);
-        
-                });
-
-
-
             }
         });
+
+        let fileName, fileNameNoWhiteSpace, lastModdifiedVar, CID, fileFormat, exportedKey, myAlias;
+        await userInstance.get('alias').on(v => myAlias = v);
+        const fr = new FileReader();
+
+        const getFileType = fileUploadGroup.current.files[0].type; // get the blob type to pass it later at the Blob() constructor
+        fileName = fileUploadGroup.current.files[0].name;
+        fileNameNoWhiteSpace = fileUploadGroup.current.files[0].name.replaceAll(" ", "");
+        lastModdifiedVar = fileUploadGroup.current.files[0].lastModifiedDate;
+        lastModdifiedVar = lastModdifiedVar.toString(); // convert it to string because gun.js wouldn't accept it.
+
+        fr.readAsArrayBuffer(fileUploadGroup.current.files[0]); // convert file blob into ArrayBuffer
+
+        fr.addEventListener('load', async (e)=>{
+
+           //Result of fr.readAsArrayBuffer
+            let data = e.target.result; // e.target.result is similar to fr.result
+            let iv = crypto.getRandomValues(new Uint8Array(16));
+            const key = await generateKeyFunction();
+           
+            //Actual encryption of the raw ArrayBuffer
+            crypto.subtle.encrypt({ 'name': 'AES-CBC', iv }, key, data)
+            .then(async encrypted => {
+                console.log(encrypted); // "encrypted" is an encrypted ArrayBuffer
+                alert('The encrypted data is ' + encrypted.byteLength + ' bytes long'); // encrypted is an ArrayBuffer
+                fileFormat = new File([encrypted], fileNameNoWhiteSpace, {type: getFileType, lastModified: lastModdifiedVar} ) // convert encrypted arraybuffer to blob.
+                console.log("ENCRYPTED:");
+                console.log(fileFormat);
+                console.log("KEY USED TO ENCRYPT FILE");
+                console.log(key);
+                const fileInArray = [fileFormat]; // put fileFormat inside an array for web3storage API to accept the file blob
+
+                //Export CryptoKey in a JSON web key format
+                exportedKey = await crypto.subtle.exportKey("jwk", key);
+                let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
+
+                let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv)); // convert the initialization vector into base64-encoded data to be inserted into the gun node graph
+                let encIV = await SEA.encrypt(parsedInitializationVector, seaPairTeamRoomParsed); // encrypt the base64-encoded data (IV)
+                alert(seaPairTeamRoom);
+                //alert("Next is sea room in json");
+               //alert(jsonStringSEARoom);
+                console.log(parsedExportedKey);
+               let shareHolderObject = {
+                   holder1: holder1,
+                   holder2: holder2,
+                   holder3: holder3
+               }
+               //let seaPairTeamRoomJSON = JSON.stringify(seaPairTeamRoom);
+               //let stringifiedShareHolderObject = JSON.stringify(shareHolderObject);
+
+               
+                Axios.post("https://floating-fjord-99601.herokuapp.com/secret", {
+                       exportedKey: parsedExportedKey,
+                       seaPairTeamRoom: seaPairTeamRoomParsed,
+                       shareHolders: shareHolderObject
+                   } ).then(async (Response)=>{
+                           alert(Response.data.ResponseMessage[0]);
+                           alert(Response.data.ResponseMessage[1]);
+                           alert(Response.data.ResponseMessage[2]);
+                           const res_CID = await client.put(fileInArray);
+                           let CID = res_CID;
+                           
+/*                             await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({                    
+                               filenameProperty: fileName, 
+                               filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                               CID_prop: CID, 
+                               fileKey: encJSONKey, 
+                               iv: encIV, 
+                               fileType: getFileType,
+                               date: lastModdifiedVar,
+                               uploadedBy: myAlias
+                           }) */
+                           
+
+                           //Individual UNIQUE node containing file metadata
+                            let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
+                               filenameProperty: fileName, 
+                               filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                               CID_prop: CID, 
+                               holder1: holder1.memberAlias,
+                               holder2: holder2.memberAlias, 
+                               holder3: holder3.memberAlias,
+                               holder1Epub: holder1.memberEpub,
+                               holder2Epub: holder2.memberEpub,
+                               holder3Epub: holder3.memberEpub,
+                               encShare1: Response.data.ResponseMessage[0],
+                               encShare2: Response.data.ResponseMessage[1],
+                               encShare3: Response.data.ResponseMessage[2],
+                               iv: encIV, 
+                               fileType: getFileType,
+                               date: lastModdifiedVar,
+                               uploadedBy: myAlias,
+                               accessType: "secretShare"
+                           });
+
+                           if(folderItemChosen === null){
+                               alert("No Folder selected");
+                               let finalInputFolderState = inputFolderState.replaceAll(' ','_');
+                               await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
+                               
+                               //reference of the folder node
+                               let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty))
+                               
+                               //Inserting the reference of the folder node into groupUUID list of folder names
+                               await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(folderRef);
+                           }
+
+                           else if(folderItemChosen != null && (inputFolderState === null || inputFolderState === undefined)){
+                               alert("Folder selected");
+                               await gunInstance.get(folderItemChosen.folderNameNodeFull).set(fileRef);
+           
+                           } else if (folderItemChosen != null && inputFolderState.length > 0){
+                               alert("Folder selected");
+                               let finalInputFolderState = inputFolderState.replaceAll(" ", "_");
+                                   //Inserting unique node into an actual "folder" node
+                               await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
+           
+                               //reference of the folder node
+                               let folderRef = await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty));
+           
+                               //Inserting the reference of the folder node into groupUUID list of folder names
+                               await gunInstance.get(folderItemChosen.folderNameNodeFull).set(folderRef);
+                           }
+                           let dateJSON = new Date().toJSON();
+
+                           //Send Holder 1 notification
+                           await GenerateNotificationNode(holder1.memberAlias, dateJSON, `A secret share from ${myAlias} was assigned to you.`);
+                           //Send Holder 2 notification
+                           await GenerateNotificationNode(holder2.memberAlias, dateJSON, `A secret share from ${myAlias} was assigned to you.`);
+                           //Send Holder 3 notification
+                           await GenerateNotificationNode(holder3.memberAlias, dateJSON, `A secret share from ${myAlias} was assigned to you.`);
+
+                           alert("FILE ADDED");
+                           handleClose();
+                           window.location.reload();
+                });
+
+               /*  //Export CryptoKey in a JSON web key format
+                exportedKey = await crypto.subtle.exportKey("jwk", key);
+                let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
+                console.log(parsedExportedKey);
+
+                //Encrypt parseExportedKey that can only be decrypted by members of the team room
+                let encJSONKey = await SEA.encrypt(parsedExportedKey, fileSEA);
+                console.log(encJSONKey);
+
+                let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv)); // convert the initialization vector into base64-encoded data to be inserted into the gun node graph
+                let encIV = await SEA.encrypt(parsedInitializationVector, fileSEA); // encrypt the base64-encoded data (IV)
+                console.log(encIV);
+
+                alert("Folder: ".concat(inputFolderState));
+                
+                //const res_CID = await client.put(fileInArray);
+                let CID = "res_CID_TEST1234";
+
+                //Version 
+                await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({
+                    filenameProperty: fileName, 
+                    filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                    CID_prop: CID, 
+                    fileKey: encJSONKey, 
+                    iv: encIV, 
+                    fileType: getFileType,
+                    date: lastModdifiedVar,
+                    uploadedBy: myAlias,
+                    accessType: "secretShare",
+                })
+
+                //Insert Folder
+
+                //Individual UNIQUE node containing file metadata
+                let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
+                    filenameProperty: fileName, 
+                    filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                    CID_prop: CID, 
+                    fileKey: encJSONKey, 
+                    iv: encIV, 
+                    fileType: getFileType,
+                    date: lastModdifiedVar,
+                    uploadedBy: myAlias,
+                    accessType: "secretShare",
+                });
+
+                //Inserting unique node into a unique "folder" node
+                await gunInstance.get(inputFolderState.concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
+                
+                //Inserting the string name of the folder into groupUUID list of folder names
+                await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(inputFolderState);
+*/
+
+/*                  alert("FILE ADDED");
+                handleClose(); */
+                //window.location.reload();
+
+            }).catch(console.error);
+
+        });
+
 
         
  // END LINE

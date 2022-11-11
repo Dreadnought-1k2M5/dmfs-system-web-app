@@ -36,9 +36,10 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
     useEffect(()=>{
         if(show){
             setSecretSharedDocumentState(secretSharedDocumentObj);
+            dispatchResponse({reset: true});        
         }
         console.log("Use effect called");
-        //dispatchResponse({reset: true});
+
         userInstance.get('alias').on(async myAlias =>{
             console.log(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`);
             setAliasState(myAlias);
@@ -49,7 +50,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                     gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data1, index) =>{
                         console.log(data1);
                         console.log(index);
-                        if(data1.grantor != null && data1.encryptedShare != null){
+                        if(data1.grantor != undefined  && data1.encryptedShare != undefined ){
                             //Reconstrucct the key and decrypt
                             let parsedRoomSEA = JSON.parse(data0.roomSEA);
                             let decryptedShare = await SEA.decrypt(data1.encryptedShare, await SEA.secret(parsedRoomSEA.epub, userInstance._.sea));
@@ -68,7 +69,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                 gunInstance.get(`responseNodeSet_${aliasState}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data1, index) =>{
                     console.log(data1);
                     console.log(index);
-                    if(data1.grantor != null && data1.encryptedShare != null){
+                    if(data1.grantor != undefined  && data1.encryptedShare != undefined ){
                         //Reconstrucct the key and decrypt
                         let parsedRoomSEA = JSON.parse(data0.roomSEA);
                         let decryptedShare = await SEA.decrypt(data1.encryptedShare, await SEA.secret(parsedRoomSEA.epub, userInstance._.sea));

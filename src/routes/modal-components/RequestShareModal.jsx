@@ -32,6 +32,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
     //useState for holding all 3 decrypted shares in order
     let [listShareState, setListShareState] = useState([]);
     let [aliasState, setAliasState] = useState(null);
+    let [seaRoomState1, setSeaRoomState1] = useState({});
 
     useEffect(()=>{
         if(show){
@@ -53,6 +54,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                         if(data1.grantor != undefined  && data1.encryptedShare != undefined ){
                             //Reconstrucct the key and decrypt
                             let parsedRoomSEA = JSON.parse(data0.roomSEA);
+                            setSeaRoomState1(parsedRoomSEA);
                             let decryptedShare = await SEA.decrypt(data1.encryptedShare, await SEA.secret(parsedRoomSEA.epub, userInstance._.sea));
                             console.log(decryptedShare);
                             dispatchResponse({decryptedShare: decryptedShare, holderAlias: data1.grantor});
@@ -71,8 +73,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                     console.log(index);
                     if(data1.grantor != undefined  && data1.encryptedShare != undefined ){
                         //Reconstrucct the key and decrypt
-                        let parsedRoomSEA = JSON.parse(data0.roomSEA);
-                        let decryptedShare = await SEA.decrypt(data1.encryptedShare, await SEA.secret(parsedRoomSEA.epub, userInstance._.sea));
+                        let decryptedShare = await SEA.decrypt(data1.encryptedShare, await SEA.secret(seaRoomState1.epub, userInstance._.sea));
                         console.log(decryptedShare);
                         dispatchResponse({decryptedShare: decryptedShare, holderAlias: data1.grantor});
                     }
@@ -202,7 +203,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                          // Convert blob to arraybuffer
                         const fileArrayBuffer = await new Response(res).arrayBuffer();
             
-                        await window.crypto.subtle.decrypt({name: 'AES-CBC', iv: ivUint8Array}, cryptoKeyImported, fileArrayBuffer).then(decrypted => {
+                        await window.crypto.subtle.decrypt({name: 'AES-CBC', iv: ivUint8Array}, cryptoKeyImported, fileArrayBuffer).then(async decrypted => {
                             //Convert ArrayBuffer to Blob and Download
                             const blob = new Blob([decrypted], {type: fileType} ) // convert decrypted arraybuffer to blob.
                             const aElement = document.createElement('a');
@@ -215,8 +216,8 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
 
                             //Delete Response from holders
                             let listOfResponseItemIndex = [];
-                            userInstance.get('alias').once(async myAlias =>{
-                                gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data, index) =>{
+                            await userInstance.get('alias').once(async myAlias =>{
+                                await gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data, index) =>{
                                     console.log(index);
                                     console.log(data);
                                     //listOfResponseItemIndex.push(index);
@@ -228,7 +229,9 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                                 })
 
                             })
-                            setTimeout(()=> { window.location.reload(); }, 6200);
+                            dispatchResponse({reset: true});
+
+                            setTimeout(()=> { window.location.reload(); }, 4800);
 
                         }).catch(console.error);
                     });

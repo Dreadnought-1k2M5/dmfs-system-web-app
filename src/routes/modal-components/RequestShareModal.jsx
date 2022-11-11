@@ -36,7 +36,8 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
 
     useEffect(()=>{
         if(show){
-            setSecretSharedDocumentState(secretSharedDocumentObj);    
+            setSecretSharedDocumentState(secretSharedDocumentObj);
+            dispatchResponse({reset: true});
         }
         console.log("Use effect called");    
 
@@ -47,7 +48,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
             userInstance.get("my_team_rooms").map().on(async data0 => {
                 if(data0.nameOfRoom == roomUUIDObj.roomName){
                     //console.log(seaRoomState);
-                    gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data1, index) =>{
+                    gunInstance.get(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`).map().on(async (data1, index) =>{
                         console.log(data1);
                         console.log(index);
                         if(data1.grantor != undefined  && data1.encryptedShare != undefined ){

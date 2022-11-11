@@ -173,7 +173,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
         setRoomUUID(roomUUIDObj.roomUUIDProperty);
 
-        userInstance.get('alias').on(async v => {
+        userInstance.get('alias').once(async v => {
             setMyAlias(v)
             //Listen to notifications except for secret share request
             console.log("HGHGHGHGHG")
@@ -195,7 +195,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 }
 
             })
-            await gunInstance.get(`${roomUUIDObj.roomUUIDProperty}_nodeSearchItemsSet`).map().once(data => {
+            await gunInstance.get(`${roomUUIDObj.roomUUIDProperty}_nodeSearchItemsSet`).map().on(data => {
                 console.log(data);
                 if(data.filenameProperty != null || data.CID_prop != null || data.location != null || data.iv != null || data.fileKey != null){
                     dispatchSearchItemsListState({
@@ -219,7 +219,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
         setRoomName(roomUUIDObj.roomName);
 
-        userInstance.get("my_team_rooms").map().once(async data => {
+        userInstance.get("my_team_rooms").map().on(async data => {
             if(data.nameOfRoom == roomUUIDObj.roomName){
                 setSEAPairRoom(JSON.parse(data.roomSEA));
                 console.log(data);
@@ -278,7 +278,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             folderDispatch(data);
         }) */
 
-        gunInstance.get("foldersMetadata_".concat(roomUUIDObj.roomUUIDProperty)).map().once(async (data, key) =>{
+        gunInstance.get("foldersMetadata_".concat(roomUUIDObj.roomUUIDProperty)).map().on(async (data, key) =>{
             let objectItem = {
               folderNameNodeFull: null,
               folderNameClean: null,
@@ -420,7 +420,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
               }
         
         /*       console.log(key1) */
-              await gunInstance.get(key1).once(async (data, key) =>{
+              await gunInstance.get(key1).on(async (data, key) =>{
                 objectItem.itemsProp.push(await traverseSubfolder(data, key, itemPropObject));
               })
         
@@ -463,7 +463,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
         //event.preventDefault();
         alert("Authorizing.");
-        await gunInstance.get(`${elemObjRequest.filename}_${myAlias}_requestItem_${elemObjRequest.date}`).once(async data =>{
+        await gunInstance.get(`${elemObjRequest.filename}_${myAlias}_requestItem_${elemObjRequest.date}`).on(async data =>{
 
             console.log(seaRoomState);
             console.log(typeof seaRoomState);
@@ -492,9 +492,6 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             console.log(`responseNodeSet_${elemObjRequest.requestor}_${roomUUIDObj.roomUUIDProperty}`);
             await gunInstance.get(`responseNodeSet_${elemObjRequest.requestor}_${roomUUIDObj.roomUUIDProperty}`).set(nodeResponseRef);
 
-            await gunInstance.get(`responseNodeSet_${elemObjRequest.requestor}_${roomUUIDObj.roomUUIDProperty}`).map().once(data =>{
-                console.log(data);
-            });
 
             await gunInstance.get(`${elemObjRequest.filename}_${myAlias}_requestItem_${elemObjRequest.date}`).put({
                 requestor: null, 

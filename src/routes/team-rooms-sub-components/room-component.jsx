@@ -195,28 +195,29 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 }
 
             })
-            await gunInstance.get(`${roomUUIDObj.roomUUIDProperty}_nodeSearchItemsSet`).map().on(data => {
-                console.log(data);
-                if(data.filenameProperty != null || data.CID_prop != null || data.location != null || data.iv != null || data.fileKey != null){
-                    dispatchSearchItemsListState({
-                        filenameProperty: data.filenameProperty, 
-                        filenameWithNoWhiteSpace: data.filenameWithNoWhiteSpace,
-                        CID_prop: data.CID_prop, 
-                        fileKey: data.fileKey, 
-                        iv: data.iv, 
-                        fileType: data.fileType,
-                        date: data.date,
-                        uploadedBy: data.uploadedBy,
-                        accessType: data.accessType,
-                        location: data.location
-                    })
-                }
-
-            })
             
             setMyAlias(v);
         });
 
+        gunInstance.get(`${roomUUIDObj.roomUUIDProperty}_nodeSearchItemsSet`).map().on(data => {
+            console.log(data);
+            if(data.filenameProperty != null || data.CID_prop != null || data.location != null || data.iv != null || data.fileKey != null){
+                dispatchSearchItemsListState({
+                    filenameProperty: data.filenameProperty, 
+                    filenameWithNoWhiteSpace: data.filenameWithNoWhiteSpace,
+                    CID_prop: data.CID_prop, 
+                    fileKey: data.fileKey, 
+                    iv: data.iv, 
+                    fileType: data.fileType,
+                    date: data.date,
+                    uploadedBy: data.uploadedBy,
+                    accessType: data.accessType,
+                    location: data.location
+                })
+            }
+
+        })
+        
         setRoomName(roomUUIDObj.roomName);
 
         userInstance.get("my_team_rooms").map().on(async data => {

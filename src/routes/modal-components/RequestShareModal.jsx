@@ -31,6 +31,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
 
     //useState for holding all 3 decrypted shares in order
     let [listShareState, setListShareState] = useState([]);
+    let [aliasState, setAliasState] = useState(null);
 
     useEffect(()=>{
         if(show){
@@ -40,7 +41,8 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
         //dispatchResponse({reset: true});
         userInstance.get('alias').on(async myAlias =>{
             console.log(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`);
-
+            setAliasState(myAlias);
+            
             userInstance.get("my_team_rooms").map().on(async data0 => {
                 if(data0.nameOfRoom == roomUUIDObj.roomName){
                     //console.log(seaRoomState);
@@ -58,6 +60,23 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                 }
             })
 
+        })
+
+        userInstance.get("my_team_rooms").map().on(async data0 => {
+            if(data0.nameOfRoom == roomUUIDObj.roomName){
+                //console.log(seaRoomState);
+                gunInstance.get(`responseNodeSet_${aliasState}_${roomUUIDObj.roomUUIDProperty}`).map().once(async (data1, index) =>{
+                    console.log(data1);
+                    console.log(index);
+                    if(data1.grantor != null && data1.encryptedShare != null){
+                        //Reconstrucct the key and decrypt
+                        let parsedRoomSEA = JSON.parse(data0.roomSEA);
+                        let decryptedShare = await SEA.decrypt(data1.encryptedShare, await SEA.secret(parsedRoomSEA.epub, userInstance._.sea));
+                        console.log(decryptedShare);
+                        dispatchResponse({decryptedShare: decryptedShare, holderAlias: data1.grantor});
+                    }
+                })
+            }
         })
 
     

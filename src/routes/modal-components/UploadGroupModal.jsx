@@ -185,7 +185,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
     async function firstOption(){
         //Get the SEA.pair() of the team room you are in.
         let tempSEACopy;
-        await userInstance.get("my_team_rooms").map().on(async data => {
+        await userInstance.get("my_team_rooms").map().once(async data => {
             delete data._;
             if(data.nameOfRoom === uuidRoomObj.roomName && data.roomName != undefined){
                 tempSEACopy = data.roomSEA;
@@ -381,7 +381,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
         //Copy of the SEA pair of the current room
         let seaPairTeamRoom;
         let seaPairTeamRoomParsed;
-        await userInstance.get("my_team_rooms").map().on(async data => {
+        await userInstance.get("my_team_rooms").map().once(async data => {
             delete data._;
             if(data.nameOfRoom === uuidRoomObj.roomName){
                 seaPairTeamRoom = data.roomSEA;

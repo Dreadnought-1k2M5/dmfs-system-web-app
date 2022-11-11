@@ -423,22 +423,26 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                 console.log("KEY USED TO ENCRYPT FILE");
                 console.log(key);
                 const fileInArray = [fileFormat]; // put fileFormat inside an array for web3storage API to accept the file blob
-
+                console.log(fileInArray);
                 //Export CryptoKey in a JSON web key format
                 exportedKey = await crypto.subtle.exportKey("jwk", key);
                 let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
 
                 let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv)); // convert the initialization vector into base64-encoded data to be inserted into the gun node graph
+                console.log(parsedInitializationVector);
                 let encIV = await SEA.encrypt(parsedInitializationVector, seaPairTeamRoomParsed); // encrypt the base64-encoded data (IV)
-                alert(seaPairTeamRoom);
-                //alert("Next is sea room in json");
-               //alert(jsonStringSEARoom);
+                console.log(encIV);
+
                 console.log(parsedExportedKey);
+                
                let shareHolderObject = {
                    holder1: holder1,
                    holder2: holder2,
                    holder3: holder3
                }
+               console.log(shareHolderObject);
+               alert("The next alert is the stringified of shareHolderObj");
+               alert(JSON.stringify(shareHolderObject));
                //let seaPairTeamRoomJSON = JSON.stringify(seaPairTeamRoom);
                //let stringifiedShareHolderObject = JSON.stringify(shareHolderObject);
 
@@ -448,6 +452,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                        seaPairTeamRoom: seaPairTeamRoomParsed,
                        shareHolders: shareHolderObject
                    } ).then(async (Response)=>{
+                    alert("FOLLOWING ALERT ARE RESPONSES");
                            alert(Response.data.ResponseMessage[0]);
                            alert(Response.data.ResponseMessage[1]);
                            alert(Response.data.ResponseMessage[2]);
@@ -529,62 +534,6 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                            window.location.reload();
                 });
 
-               /*  //Export CryptoKey in a JSON web key format
-                exportedKey = await crypto.subtle.exportKey("jwk", key);
-                let parsedExportedKey = JSON.stringify(exportedKey, null, " ");
-                console.log(parsedExportedKey);
-
-                //Encrypt parseExportedKey that can only be decrypted by members of the team room
-                let encJSONKey = await SEA.encrypt(parsedExportedKey, fileSEA);
-                console.log(encJSONKey);
-
-                let parsedInitializationVector = window.btoa(String.fromCharCode.apply(null, iv)); // convert the initialization vector into base64-encoded data to be inserted into the gun node graph
-                let encIV = await SEA.encrypt(parsedInitializationVector, fileSEA); // encrypt the base64-encoded data (IV)
-                console.log(encIV);
-
-                alert("Folder: ".concat(inputFolderState));
-                
-                //const res_CID = await client.put(fileInArray);
-                let CID = "res_CID_TEST1234";
-
-                //Version 
-                await gunInstance.get("vc_".concat(fileName).concat(uuidRoomObj.roomUUIDProperty)).set({
-                    filenameProperty: fileName, 
-                    filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                    CID_prop: CID, 
-                    fileKey: encJSONKey, 
-                    iv: encIV, 
-                    fileType: getFileType,
-                    date: lastModdifiedVar,
-                    uploadedBy: myAlias,
-                    accessType: "secretShare",
-                })
-
-                //Insert Folder
-
-                //Individual UNIQUE node containing file metadata
-                let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
-                    filenameProperty: fileName, 
-                    filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
-                    CID_prop: CID, 
-                    fileKey: encJSONKey, 
-                    iv: encIV, 
-                    fileType: getFileType,
-                    date: lastModdifiedVar,
-                    uploadedBy: myAlias,
-                    accessType: "secretShare",
-                });
-
-                //Inserting unique node into a unique "folder" node
-                await gunInstance.get(inputFolderState.concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
-                
-                //Inserting the string name of the folder into groupUUID list of folder names
-                await gunInstance.get("foldersMetadata_".concat(uuidRoomObj.roomUUIDProperty)).set(inputFolderState);
-*/
-
-/*                  alert("FILE ADDED");
-                handleClose(); */
-                //window.location.reload();
 
             }).catch(console.error);
 

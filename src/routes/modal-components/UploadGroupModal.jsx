@@ -190,7 +190,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
         await userInstance.get("my_team_rooms").map().once(async data => {
             console.log(data);
             delete data._;
-            if(data.nameOfRoom === uuidRoomObj.roomName && data.roomName != undefined){
+            if(data.nameOfRoom === uuidRoomObj.roomName){
                 tempSEACopy = data.roomSEA;
 
 

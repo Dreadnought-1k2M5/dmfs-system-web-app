@@ -184,8 +184,11 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
     
     async function firstOption(){
         //Get the SEA.pair() of the team room you are in.
+        console.log("FIRST OPTION");
+        alert("FIRST OPTION");
         let tempSEACopy;
         await userInstance.get("my_team_rooms").map().once(async data => {
+            console.log(data);
             delete data._;
             if(data.nameOfRoom === uuidRoomObj.roomName && data.roomName != undefined){
                 tempSEACopy = data.roomSEA;

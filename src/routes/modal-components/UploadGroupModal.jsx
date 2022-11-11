@@ -303,7 +303,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
 
 
 
-                }else if(folderItemChosen != null && (inputFolderState === null || inputFolderState === undefined) ){
+                }else if(folderItemChosen != null && inputFolderState === null) {
                     alert("Folder selected");
                     await gunInstance.get(folderItemChosen.folderNameNodeFull).set(fileRef);
 

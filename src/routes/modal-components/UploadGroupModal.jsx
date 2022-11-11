@@ -406,7 +406,8 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
         fr.readAsArrayBuffer(fileUploadGroup.current.files[0]); // convert file blob into ArrayBuffer
 
         fr.addEventListener('load', async (e)=>{
-
+            alert(JSON.stringify(seaPairTeamRoomParsed));
+            
            //Result of fr.readAsArrayBuffer
             let data = e.target.result; // e.target.result is similar to fr.result
             let iv = crypto.getRandomValues(new Uint8Array(16));
@@ -434,7 +435,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                 console.log(encIV);
 
                 console.log(parsedExportedKey);
-                
+
                let shareHolderObject = {
                    holder1: holder1,
                    holder2: holder2,

@@ -36,11 +36,9 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
 
     useEffect(()=>{
         if(show){
-            setSecretSharedDocumentState(secretSharedDocumentObj);
-            dispatchResponse({reset: true});        
+            setSecretSharedDocumentState(secretSharedDocumentObj);    
         }
-        console.log("Use effect called");
-        dispatchResponse({reset: true});        
+        console.log("Use effect called");    
 
         userInstance.get('alias').on(async myAlias =>{
             console.log(`responseNodeSet_${myAlias}_${roomUUIDObj.roomUUIDProperty}`);

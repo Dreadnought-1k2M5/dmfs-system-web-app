@@ -260,7 +260,7 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                     </div>
                 </div>
                 <div>
-                    {filteredResponse().length === 3 && 
+                    {filteredResponse().length >= 3 && 
                         <div>
                             <button onClick={(e) => accessHandler(e, filteredResponse())}>Reconstruct Symmetric Key and Download Document</button>
                         </div>

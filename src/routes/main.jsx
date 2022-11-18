@@ -39,8 +39,7 @@ function Main({gunInstance, userInstance, userSession}) {
         <div className="top-navbar">
             <div className="flex-item-1">
                 <div className="title-subtitle-box">
-                      <h1>Project MINERVA</h1>
-                      <p>Decentralized Document Management and File-Sharing System</p>
+                      <h1>Project MINERVA</h1>                    
                 </div>
                 <div className="navlink-flexbox">
                     <NavLink onClick={()=>  setHomeActive(true) } className={()=> homeActive ? "navlink-component-active" : "navlink-component" } to="/main"> Team Rooms</NavLink>          

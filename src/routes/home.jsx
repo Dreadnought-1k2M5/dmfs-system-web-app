@@ -12,6 +12,8 @@ import file from '../file.png'
 
 import Menu from './Menu.jsx'
 
+import upload from '../upload-icon.png';
+
 const currentItemListState = {
   items: []
 }
@@ -85,6 +87,7 @@ function Home({userInstance}) {
   return (
     <div className="home-parent-container"  onClick={hideMenu} >
       <div className="top-toolbar-home">
+        <img src={upload} alt="" className="UploadIcon"/>
         <button className="toolbar-upload-btn" onClick={showModal}>Upload</button>
         <UploadFile userInstance={userInstance} handleClose={hideModal} show={isModalViewed}/>
       </div>

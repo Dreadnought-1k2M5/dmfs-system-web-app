@@ -37,7 +37,11 @@
 }
 
 .title-subtitle-box > h1{
-    font-size: 15px;
+    font-size: 21px;
+    margin-left: 22px;
+    margin-top: 6px;
+    margin-right: 22px;
+    
     
 }
 .title-subtitle-box > p{
@@ -131,7 +135,7 @@
 }
 
 .top-navbar{
-    background-color: rgba(33, 33, 33, 0.323);
+    background-color: #152238;
     backdrop-filter: blur(10px);
     color: rgb(255, 255, 255);
     width: 100%;
@@ -207,6 +211,7 @@
     height: 30px;
     cursor: pointer;
     transition: background-color 0.1s;
+    margin-right: 10px;
    }
 
 .logout-btn:hover {

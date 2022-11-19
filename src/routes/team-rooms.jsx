@@ -8,6 +8,9 @@ import JoinRoomModal from "./modal-components/JoinRoomModal";
 
 import './routes-css/team-rooms.css';
 
+import createIcon from '../add-icon.png'
+import joinIcon from '../join-icon.png'
+
 
 /* function reducerHandler(currentState, newRoom){
     return { rooms: [...currentState.rooms, newRoom ] }
@@ -41,8 +44,22 @@ function TeamRoomComponent({roomUUIDObj, gunInstance, userInstance}){
     return (
         <div>
             <div className="top-toolbar">
-                <button className="toolbar-btn-create-room" onClick={showCreateRoomModal}>Create New Team</button>
-                <button className="toolbar-btn-create-room" onClick={showJoinRoomModal}>Join Room</button>
+
+                <div className="create-join-container">
+                    <div className="create-new-team-container">
+                        <img src={createIcon} alt="" className="TbIcon"/>
+                        <button className="toolbar-btn-create-room" onClick={showCreateRoomModal}>Create New Team</button>
+                    </div>
+                    <div className="join-team-container">
+                        <img src={joinIcon} alt="" className="TbIcon"/>
+                        <button className="toolbar-btn-create-room" onClick={showJoinRoomModal}>Join Room</button>
+                    </div>
+                    
+                </div>
+
+                
+                                     
+
                 <CreateRoom roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideCreateRoomModal} show={isModalCreateRoomViewed} />
                 <JoinRoomModal roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideJoinRoomModal} show={isModalJoinRoomViewed} />
             </div>

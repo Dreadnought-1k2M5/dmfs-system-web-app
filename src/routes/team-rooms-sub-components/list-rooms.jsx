@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 
 import './list-rooms.css'
+import groupIcon from '../../group-icon.png'
 
 function reducerHandler(currentState, newRoom){
     return {  rooms: [newRoom, ...currentState.rooms]  }
@@ -11,6 +12,7 @@ function reducerHandler(currentState, newRoom){
 const initialRoomListState = {
     rooms: []
 }
+
 
 function ListRoomsComponent({roomUUIDObj, gunInstance, userInstance}){
     let [roomList, dispatch] = useReducer(reducerHandler, initialRoomListState);    
@@ -52,7 +54,9 @@ function ListRoomsComponent({roomUUIDObj, gunInstance, userInstance}){
                     <div className="room-box" key={index}>
                         <div className="navlink-css" onClick={(e) => {e.preventDefault(); event(elem)} }>
                             <h2>{elem.roomName}</h2>
+                            <img src={groupIcon} alt="" className="groupIcon"/>
                         </div>
+                            
                         <div>
                             <p>UUID-Date: <b>{elem.roomUUID}</b></p>
                         </div>  

@@ -29,6 +29,7 @@ import addUser from "../../icons/add-user-icon.png";
 import notification from "../../icons/notification-icon.png";
 
 import groupChat from "../../icons/group-chat-icon.png";
+import CollaborativePanelComponent from "./collaborative-panel-component";
 
 
 //Chat messages
@@ -133,6 +134,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
     //to track which folder item or node to be rendered
     let [folderNameState, setFolderNameState] = useState(null);
+    let [collaborativePanelState, setCollaborativePanelState] = useState(null);
 
     //useReducer for queued encrypted shares
     let [isTheresNotification, setNotification] = useState(false);
@@ -186,8 +188,8 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             //Listen to notifications except for secret share request
             console.log("HGHGHGHGHG")
             await gunInstance.get(`${v}_generalPublicNotificationNode`).map().on(data =>{
-                console.log(data);
-                console.log("HGHGHGHGHG")
+                //console.log(data);
+                //console.log("HGHGHGHGHG")
                 //filter out individual nodes that have null values
                 if(data.message != null && data.date != null){
                     setNotification(true);
@@ -208,7 +210,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         });
 
         gunInstance.get(`${roomUUIDObj.roomUUIDProperty}_nodeSearchItemsSet`).map().on(data => {
-            console.log(data);
+            //console.log(data);
             if(data.filenameProperty != null || data.CID_prop != null || data.location != null || data.iv != null || data.fileKey != null){
                 dispatchSearchItemsListState({
                     filenameProperty: data.filenameProperty, 
@@ -231,8 +233,8 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         userInstance.get("my_team_rooms").map().on(async data => {
             if(data.nameOfRoom == roomUUIDObj.roomName){
                 setSEAPairRoom(JSON.parse(data.roomSEA));
-                console.log(data);
-                console.log(JSON.parse(data.roomSEA))
+                //console.log(data);
+                //console.log(JSON.parse(data.roomSEA))
                 //Read all messages from the chatroom
                 gunInstance.get("CHATROOM_".concat(roomUUIDObj.roomUUIDProperty)).map().on(async encryptedMessage => {
                     //For some reason
@@ -429,7 +431,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
               }
         
         /*       console.log(key1) */
-              await gunInstance.get(key1).on(async (data, key) =>{
+              await gunInstance.get(key1).once(async (data, key) =>{
                 objectItem.itemsProp.push(await traverseSubfolder(data, key, itemPropObject));
               })
         
@@ -441,6 +443,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
     async function showFoldersHandler(event){
         event.preventDefault();
         let arrayList = [];
+        console.log(filteredFolderListHandler());
           filteredFolderListHandler().map((element, index)=>{
             arrayList.push(element);
   
@@ -449,6 +452,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 /*           arrayList.forEach((data, index)=>{
             console.log(data.itemsProp.length);
           }) */
+          console.log(arrayList);
           setFolderListToRender(arrayList);
     }
         
@@ -530,7 +534,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
     async function handleSelectedFolderItem(event, folder){
         event.preventDefault();
-
+        setSelectedSearchItemState(null);
         setFolderNameState(folder);
 
 /*         if(isFolderSelectedState.isSelected){
@@ -545,16 +549,16 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
     const filteredSearchItemsListHandler = () =>{
         const filteredSearchListItemsArray = searchItemsListState.searchListState.filter((value, index) => {
-            console.log(value);
+            //console.log(value);
             const _value = JSON.stringify(value);
             return (
                 index ===
                 searchItemsListState.searchListState.findIndex(obj => {
-                return JSON.stringify(obj) === _value 
+                    return JSON.stringify(obj) === _value && value.location != undefined && value.uploadedBy != undefined
                 })
             )
         })
-        console.log(filteredSearchListItemsArray);
+        //console.log(filteredSearchListItemsArray);
         return filteredSearchListItemsArray;
     }
 
@@ -580,7 +584,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         return (
             <ul className="ul-suggestion-container">
                 {filteredData.map((item, index) => (
-                    <li className="search-item-li" key={index} onClick={() =>{ setSelectedSearchItemState(item); setinputFilenameState("") } }>
+                    <li className="search-item-li" key={index} onClick={() =>{ setSelectedSearchItemState(item); setinputFilenameState(""); setFolderNameState(null); } }>
                         {console.log(item)}
                         <img className="icon-size-small" src={ (item.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (item.fileType === "application/pdf") ? pdf : file } />
                         <p className="filename-item-css">{item.filenameProperty}</p>
@@ -760,8 +764,6 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                                             <p>{elem.folderNameClean}</p>
                                         </div>
                                         
-                                        {console.log("parent index")}
-                                        {console.log(index)}
                                         {elem.itemsProp.length > 0 && <SubfolderRender element={elem.itemsProp} handleSelectedFolderItem={handleSelectedFolderItem} />}
 
                                     </li>
@@ -773,7 +775,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 <div className="room-right-side-grid">
                     <div className="right-side-container">
 
-                        {folderNameState != null && <FolderComponent gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderNameState}/>}
+                        {folderNameState != null && <FolderComponent collaborativePanelState={collaborativePanelState} gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderNameState}/>}
                         {folderNameState == null && 
                             <div className="top-nav-bar-right-side">
                                 {/* <div className="upload-document-room">
@@ -799,6 +801,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
                             </div>
                         }
+
                         {selectedSearchItemState != null && 
                             <div className="selected-file-details-container">
                                 <div className="table-container-div-document-metadata">
@@ -832,6 +835,16 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                                 </div>
 
                             </div>
+                        }
+                        {
+                            collaborativePanelState != null &&
+                            <CollaborativePanelComponent 
+                                gunInstance={gunInstance} 
+                                userInstance={userInstance} 
+                                roomUUIDObj={roomUUIDObj} 
+                                folderContext={folderNameState} 
+                                setCollaborativePanelState={setCollaborativePanelState}
+                            />
                         }
                     </div>
                 </div>

@@ -61,7 +61,7 @@ const vcUseReducerHandler = (vcListState, version)=>{
 }
 
 
-export default function FolderComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
+export default function FolderComponent({gunInstance, userInstance, roomUUIDObj, folderContext, setCollaborativePanelState}){
     let [SEAState, setSEA] = useState('');
     let [myAlias, setMyAlias] = useState('');
 
@@ -171,9 +171,9 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     
     // Remove duplicated documents from the "documents" property in the documentListState and get only objects with access type of "shared".
     const filteredSharedDocumentsList = () =>{
-        console.log("filtered shared documents function called")
+        //console.log("filtered shared documents function called")
         const filteredDocumentList = documentListState.documents.filter((value, index) => {
-            console.log(value);
+            //console.log(value);
             const _value = JSON.stringify(value);
             return (
                 index ===
@@ -188,9 +188,9 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
     // Remove duplicated documents from the "documents" property in the documentListState and get only objects with access type of "secretShare".
     const filteredSecretSharedDocuments = () =>{
-            console.log("filtered SECRET shared documents function called")
+            //console.log("filtered SECRET shared documents function called")
             const filteredDocumentList = documentListStateSecretSharedState.documentsSecretSharedArrayState.filter((value, index) => {
-                console.log(value);
+                //console.log(value);
                 const _value = JSON.stringify(value);
                 return (
                     index ===
@@ -287,6 +287,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
 async function queryVersion(){
     let filenameX = documentSelectedState.filename;
+    
     await gunInstance.get("vc_".concat(filenameX).concat(roomUUIDObj.roomUUIDProperty)).map().on(async data=>{
         console.log(data);
         dispatchvcListState({

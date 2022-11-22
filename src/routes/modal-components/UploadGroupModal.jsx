@@ -296,7 +296,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                         date: lastModdifiedVar,
                         uploadedBy: myAlias,
                         accessType: "shared",
-                        location: `${finalInputFolderState}`
+                        location: `${inputFolderState}`
                     })
 
                     await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
@@ -347,7 +347,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                         date: lastModdifiedVar,
                         uploadedBy: myAlias,
                         accessType: "shared",
-                        location: `${finalInputFolderState}`
+                        location: `${inputFolderState}`
                     })
 
                     await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
@@ -357,7 +357,8 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
 
 
                 alert("FILE ADDED");
-                handleClose();        
+                window.location.reload();
+      
             }).catch(console.error);
 
         });
@@ -607,12 +608,14 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
     async function showFoldersHandler(){
         console.log("Test handler");
         let arrayList = [];
+        console.log(filteredFolderListHandler());
           filteredFolderListHandler().map((element, index)=>{
             console.log("-----------------------------ITERATION (OUTER) -----------------------------")
             arrayList.push(element);
   
           })
-  
+          console.log(arrayList);
+
           setFolderListToRender(arrayList);
     }
     return (
@@ -690,7 +693,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                                     </div>}
 
                             </div>
-                            <div className="radiobox-item">
+{/*                             <div className="radiobox-item">
                                 <div>
                                     <input type="radio" id="option3" name="age" value="2" onChange={(e) => setRadioBoxSelected(e.target.value)}/>
                                 </div>
@@ -698,7 +701,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                                     <label htmlFor="option3"><b>Custom Permission</b></label>
                                     <p className="ss-option-description-css">(Specify which user can decrypt the file later on)</p>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="location-node-box">
 {/*                             <div className="foldername-textbox-box">

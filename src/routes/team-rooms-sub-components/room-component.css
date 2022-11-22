@@ -15,7 +15,7 @@
     width:100%;
     justify-content: space-between;
     align-items: center;
-    background-color: rgb(48, 48, 48);
+    background-color: rgb(34, 34, 34);
     
 }
 
@@ -155,7 +155,7 @@
     transition: 0.3s;  
     text-overflow: ellipsis;
     backdrop-filter: 5px;
-
+    cursor: pointer;
 }
 
 .header-box > h2{

@@ -660,7 +660,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 <div className="top-toolbar-nav-room-flex-container-one">
                     
                     <div className="group-name-room">
-                                <div className="header-box">
+                                <div className="header-box" onClick={() => setFolderNameState(null)}>
                                      <h2>{roomName}</h2>
                                 </div>
                                 </div>

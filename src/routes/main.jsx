@@ -55,13 +55,13 @@ function Main({gunInstance, userInstance, userSession}) {
           
       </div>
 
-      <div className="right-component">
+      
 
 
         <div className="outlet-container">
           <Outlet />
         </div>
-      </div>
+      
     </div>
   );
 }

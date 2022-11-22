@@ -22,6 +22,14 @@ import pdf from '../../pdf.png'
 
 import file from '../../file.png'
 
+import uploadIcon from '../../upload-icon.png'
+
+import addUser from "../../icons/add-user-icon.png";
+
+import notification from "../../icons/notification-icon.png";
+
+import groupChat from "../../icons/group-chat-icon.png";
+
 
 //Chat messages
 const currentMsgState = {
@@ -650,16 +658,37 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             <div className="top-toolbar-room">
 
                 <div className="top-toolbar-nav-room-flex-container-one">
-                    <button className="btn-navigate-room" onClick={() => navigate("/main")}>Team Rooms</button>
-                    <button className="btn-navigate-room" onClick={(e)=> {e.preventDefault(); showModal();}}>Add a user</button>
-                    <button className={ isTheresNotification ? "show-notif-css btn-navigate-room-selected" : "btn-navigate-room" }  onClick={() => setIsNotificationClicked(!isNotificationClicked)}>
-                        Notification!
-                    </button>
-                    <button className={viewRoomChat ? "btn-navigate-room-selected" : "btn-navigate-room"} onClick={()=> setViewRoomChat(!viewRoomChat) }>Group Chat</button>
+                    
+                    <div className="group-name-room">
+                                <div className="header-box">
+                                     <h2>{roomName}</h2>
+                                </div>
+                                </div>
+                                <button className="btn-upload-file-room" onClick={()=> showUploadGroupModal() }><img src={uploadIcon}></img> Upload File</button>
+                                
+                                <div className="search-box-room">
+                                        <input type="text" placeholder='Search Shared Documents' value={inputFilenameState} onChange={(e) => inputFilenameHandler(e)}/>
+                                        <img src= {search} alt="" className='search-icon-room'/>
+                                </div>
+
+                                <div className="suggestion-box-search" >
+                                    <List prop={inputFilenameState} />
+                                </div>
+
+                                <div className="right-side">
+                                <button className="btn-navigate-room" onClick={(e)=> {e.preventDefault(); showModal();}}> <img src={addUser}></img> </button> 
+                                <button className={viewRoomChat ? "btn-navigate-room-selected" : "btn-navigate-room"} onClick={()=> setViewRoomChat(!viewRoomChat) }><img src={groupChat}></img></button><p className="group-chat-text">GroupChat</p>
+                                <button className={ isTheresNotification ? "show-notif-css btn-navigate-room-selected" : "btn-navigate-room" }  onClick={() => setIsNotificationClicked(!isNotificationClicked)}>
+                                    <img src={notification}></img>
+                                     
+                                    </button>                               
+                                </div>
+                    
                 </div>
 {/*                 <div className="top-toolbar-nav-room-flex-container-two">
                     
                 </div> */}
+
                 <div className={isNotificationClicked ? "notification-box" : "notification-box-hidden"}>
                     <h3>Notification</h3>
                     {filteredNotificationHandler().map((elem, index)=>
@@ -713,13 +742,13 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
             
             <div className="room-top-container">
                 <div className="documents-list-sidebar">
-                    <div className="header-box">
+                    {/* <div className="header-box">
                         <h2>{roomName}</h2>
-                    </div>
+                    </div> */}
 
                     <div className="toolbar-upload-group-box">
-                        <button className="btn-upload-group-css" onClick={()=> showUploadGroupModal() }>Upload a document</button>
-                        <button className="btn-upload-group-css" onClick={(e)=> showFoldersHandler(e) }>Show Documents</button>
+                        
+                        <button className="btn-upload-group-css" onClick={(e)=> showFoldersHandler(e) }>Show Documents ⬇️</button>
 
                     </div>
                     <div className="folder-list-tree-container">
@@ -740,21 +769,33 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                         </ul>
                     </div>
                 </div>
-
+                
                 <div className="room-right-side-grid">
                     <div className="right-side-container">
 
                         {folderNameState != null && <FolderComponent gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderNameState}/>}
                         {folderNameState == null && 
                             <div className="top-nav-bar-right-side">
-                                <div className="search-box-room">
+                                {/* <div className="upload-document-room">
+                                <button className="btn-upload-file-room" onClick={()=> showUploadGroupModal() }><img src={uploadIcon}></img> Upload File</button>
+                                </div> */}
+                                {/* <div className="search-box-room">
                                         <input type="text" placeholder='Search Shared Documents' value={inputFilenameState} onChange={(e) => inputFilenameHandler(e)}/>
                                         <img src= {search} alt="" className='search-icon-room'/>
                                 </div>
 
                                 <div className="suggestion-box-search" >
                                     <List prop={inputFilenameState} />
-                                </div>
+                                </div> */}
+
+                                {/* <div className="right-side">
+                                <button className="btn-navigate-room" onClick={(e)=> {e.preventDefault(); showModal();}}> <img src={addUser}></img> </button> 
+                                <button className={viewRoomChat ? "btn-navigate-room-selected" : "btn-navigate-room"} onClick={()=> setViewRoomChat(!viewRoomChat) }><img src={groupChat}></img></button><p className="group-chat-text">GroupChat</p>
+                                <button className={ isTheresNotification ? "show-notif-css btn-navigate-room-selected" : "btn-navigate-room" }  onClick={() => setIsNotificationClicked(!isNotificationClicked)}>
+                                    <img src={notification}></img>
+                                     
+                                    </button>                               
+                                </div> */}
 
                             </div>
                         }

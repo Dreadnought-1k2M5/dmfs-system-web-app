@@ -78,7 +78,7 @@ export default function CreateRoom({ roomUUIDObj, gunInstance, userInstance, han
         <div className={toggleClassname}>
             <div className="create-room-container">
                 <div className="create-room-box-exit">
-                    <button onClick={handleClose}>X</button>
+                    <button onClick={handleClose} className="closeButton">X</button>
                 </div>
 
                 <div className="create-room-form">

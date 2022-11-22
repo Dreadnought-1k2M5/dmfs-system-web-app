@@ -1,19 +1,22 @@
 
 .home-container{
-    padding: 50px;
+    padding: 5px 50px 20px 50px;
     overflow-y: scroll;
     height: 82vh;   
 }
 
 .top-toolbar-home{
     background-color: rgba(53, 52, 52, 0.4);
-    height: 45px;
+    height: 40px;
     padding: 3px 7px 3px 7px;
-    padding-top: 20px;
     display: flex;
     margin-left: 50px;
     align-items: center;
-    width: 77px;
+    width: 80px;
+    margin-top: 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    
 
 }
 
@@ -25,7 +28,9 @@
     color: white;
     font-size: 15px;
     padding: 3px 7px 3px 7px;
-    border-radius: 6px;
+    
+   
+    
     
 }
 .UploadIcon {
@@ -34,8 +39,9 @@
 }
 
 
-.toolbar-upload-btn:hover{
-    background-color: rgba(178, 177, 177, 0.116);
+.toolbar-upload-btn:hover,
+.top-toolbar-home:hover{
+   background-color: #1c2e4a;
 
 }
 

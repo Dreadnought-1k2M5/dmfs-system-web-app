@@ -90,6 +90,10 @@
     padding: 10px;
     flex-grow: 1;
 }
+.closeButton {
+    border-top-right-radius: 3px;
+    
+}
 
 
 .create-room-button{
@@ -97,11 +101,18 @@
     font-size: 15px;
     border-radius: 8px;
     cursor: pointer;
-    color: rgb(41, 41, 41);
+    color: rgb(216, 216, 216);
     text-decoration: none;
     display: block;
-    background-color: rgb(218, 218, 218);
+    background-color: rgba(82, 82, 82, 0.438);  
+    padding: 10px 14px 10px 14px;
+    border-radius: 6px;
+    transition: background-color 0.1s;
 }
+.create-room-button:hover {
+    background-color: #1c2e4a;
+}
+
 .UUID-label-css{
     margin-top: 20px;
     font-size: 13px;

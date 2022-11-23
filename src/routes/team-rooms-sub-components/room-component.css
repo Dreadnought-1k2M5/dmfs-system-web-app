@@ -156,6 +156,9 @@
     text-overflow: ellipsis;
     backdrop-filter: 5px;
     cursor: pointer;
+    background-color: rgb(20, 100, 137);
+    width: 100%;
+    text-align: center;
 }
 
 .header-box > h2{
@@ -202,7 +205,6 @@
 }
 .group-name-room {
     display: flex;
-    background-color: rgb(20, 100, 137);
     width: 13.95%;
     
 }
@@ -458,18 +460,21 @@
 .selected-file-details-container{
     background-color: rgba(42, 42, 42, 0.8);
     margin: 20px;
-    border-radius: 14px 0px 0px 14px;
+    border-radius: 0px 14px 14px 0px;
     font-size: 14px;
     border: 0.5px solid rgb(111, 209, 255);
+
+}
+.container-div-document-metadata{
+    align-items: center;
+    width: 60%;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+
 }
-.table-container-div-document-metadata{
-    align-self: center;
-}
-.table-container-div-document-metadata > table td{
+.container-div-document-metadata > table td{
     padding-left: 25px;
+    padding-right: 25px;
+    text-align: center;
 }
 
 .icon-download-btn-box{
@@ -482,10 +487,11 @@
     width: 12%;
 }
 .icon-size-large{
-    width: 50px;
+    width: 40px;
     justify-self: center;
     align-self: center;
-    margin-top: 10px;
+    margin: 10px;
+    margin-left: 20px;
     
 }
 .download-btn-css-document-metadata{

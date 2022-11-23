@@ -1,83 +1,28 @@
-.vc-container{
-    grid-area: vc;
-    background-color: rgba(58, 58, 58, 0.338);
-    padding: 10px;
-    border-radius: 13px;
-    /* height: 240px; */
+.title-component-collab-panel{
     margin-left: 13px;
-    border: 0.5px solid rgb(111, 209, 255);
-    overflow: auto;
- }
- .vc-sidebar-subtitle{
-    margin-top: 5px;
-    font-size: 13px;
- }
-
- .table-container{
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.086);
-    text-align: center;
-    padding: 2px;
-    border-radius: 5px;
-    border: 0.2px solid rgba(255, 255, 255, 0.257);
-    border-collapse: collapse;
-    margin: auto;
-}
-.table-container-vc{
-    background-color: rgba(255, 255, 255, 0.086);
-    text-align: center;
-    padding: 2px;
-    border-radius: 5px;
-    border: 0.2px solid rgba(255, 255, 255, 0.214);
-    border-collapse: collapse;
-    margin: auto;
+    margin-top: 10px;
     width: 100%;
 }
 
-.table-row-container {
-    border: 0.2px solid rgba(255, 255, 255, 0.446);
-}
-.table-row-css:hover{
-    background-color: rgba(255, 255, 255, 0.149);
-}
-.table-row-container > tr > th{
-    padding: 2px;
-}
-.table-header-label-css{
-    font-size: 10px;
+.navbar-box-collab{
+    display: flex;
+    margin-top: 20px;
 }
 
-.table-container-vc td{
-    width: 5%;
-}
-
-.table-data-label-css{
-    font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.cid-label-css{
-    font-size: 11px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    margin: auto;
-    width: 60%;
-
-}
-.download-btn{
-    background-color: rgba(111, 209, 255, 0.685);
-    border: 1px solid white;
-    border-radius: 7px;
+.btn-nav-collab{
+    padding: 7px 20px 7px 20px;
+    background-color: rgb(111, 209, 255);
+    color: rgb(29, 29, 29);
     cursor: pointer;
-    width: 90%;
-    height: 18%;
-    z-index: 5;
-    font-size: 60%;
-}
-.download-btn:hover{
-    background-color: rgba(111, 209, 255, 0.938);
 }
 
+.btn-nav-collab-active{
+    background-color: rgb(29, 29, 29);
+    color: white;
+    border-top: 0.5px solid rgb(111, 209, 255);
+    border-left: 0.5px solid rgb(111, 209, 255);
+    border-right: 0.5px solid rgb(111, 209, 255);
+    border-bottom: 0.5px solid rgba(111, 209, 255, 0);
+    padding: 7px 20px 7px 20px;
+
+}

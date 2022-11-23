@@ -1,0 +1,44 @@
+.document-collab-parent-container{
+    background-color: rgba(58, 58, 58, 0.338);
+    padding: 10px;
+    border-radius: 0px 0px 13px 13px;
+    /* height: 240px; */
+    margin-left: 13px;
+
+    border-top: 0.5px solid rgb(111, 209, 255);
+    border-left: 0.5px solid rgb(111, 209, 255);
+    border-bottom: 0.5px solid rgb(111, 209, 255);
+    border-right: 0.5px solid rgb(111, 209, 255);
+    overflow: auto;
+    height: 60vh;
+    display: grid;
+    grid-template-areas: "box1 . . ."
+                        "box2 box2 box2 box2"
+                        ". . . .";
+}
+
+.icon-size-large-collab{
+    width: 40px;
+}
+
+.div-box1{
+    grid-area: box1;
+    display: flex;
+    align-items: flex-start;
+}
+.div-box-1-info{
+    margin: 10px;
+}
+
+
+.div-box2{
+    grid-area: box2;
+}
+.item-box-flex-container{
+    display: flex;
+    align-items: center;
+    
+}
+.icon-item-collab{
+    width: 25px;
+}

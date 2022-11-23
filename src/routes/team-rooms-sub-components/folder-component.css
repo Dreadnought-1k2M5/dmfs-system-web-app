@@ -2,18 +2,18 @@
     padding: 20px;
     display: grid;
     height: 66vh;
-    grid-template-rows: 2fr 2fr;
+
     grid-template-columns: 5fr 5fr;
     grid-template-areas: 
-        "secret-shared-folder-area vc"
-        "shared-folder-area vc"
+        "shared-folder-area secret-shared-folder-area"
+        "shared-folder-area secret-shared-folder-area"
         ;
     overflow-y: auto;
 }
 
 .icon-document {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     animation-name: documentIconAnimation;
     animation-duration: 0.3s;
     animation-timing-function: ease-out;
@@ -21,21 +21,6 @@
     z-index: 0;
  }
 
- .vc-container{
-    grid-area: vc;
-    background-color: rgba(58, 58, 58, 0.338);
-    padding: 10px;
-    border-radius: 13px;
-    /* height: 240px; */
-    margin-left: 13px;
-    border: 0.5px solid rgb(111, 209, 255);
-    overflow: auto;
- }
-
- .vc-sidebar-subtitle{
-    margin-top: 5px;
-    font-size: 13px;
- }
 
 
 
@@ -45,8 +30,8 @@
         height: 0px;
      }
      to{
-        width: 80px;
-        height: 80px;
+        width: 50px;
+        height: 50px;
      }
  }
 
@@ -69,18 +54,20 @@
 
  .document-item{
     cursor: pointer;
-    padding: 10px;
+    padding: 3px;
     width: 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
     margin: 24px;
+    
 }
 .document-item > p{
     text-align: center;
     font-size: 13px;
     margin-top: 10px;
+    
 }
 
 .document-item:hover{
@@ -90,7 +77,7 @@
 .item-selected{
     background-color: rgba(0, 67, 114, 0.999);
     cursor: pointer;
-    padding: 10px;
+    padding: 3px;
     width: 100px;
     display: flex;
     flex-direction: column;
@@ -119,7 +106,7 @@
 .top-toolbar-nav-folder{
     display: flex;
     margin-left: 20px;
-    width: 40%;
+    width: 27%;
     justify-content: space-between;
 /*     background-color: red;
  */}
@@ -127,11 +114,11 @@
     display: flex;
     margin-left: 20px;
     justify-content: space-around;
-    width: 40%;
+    width: 45%;
     animation-name: topToolbarOptionAnimation;
     animation-duration: 0.9s;
     animation-timing-function: ease-out;
-    background-color: rgba(0, 109, 128, 0.286);
+    background-color: rgba(64, 239, 255, 0.432);
 
 }
 
@@ -163,6 +150,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 12px;
 }
 
 
@@ -197,9 +185,11 @@
 
 }
 
+.btn-navigate-folder{
+    font-size: 12px;
+}
 .btn-navigate-folder:hover{
     background-color: rgba(255, 255, 255, 0.13);
-
 }
 
 
@@ -210,14 +200,14 @@
     overflow-y: auto;
     /* height: 240px; */
     grid-area: shared-folder-area;
-    margin-top: 13px;
+    margin: 13px;
     overflow-y: auto;
     border: 0.5px solid rgb(111, 209, 255);
 
 
 }
 .secret-share-docs-container{
-    margin-top: 10px;
+    margin: 10px;
     grid-area: secret-shared-folder-area;
     background-color: rgba(58, 58, 58, 0.338);
     border-radius: 20px;
@@ -226,75 +216,6 @@
     border: 0.5px solid rgb(111, 209, 255);
 
 }
-
-.table-container{
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.086);
-    text-align: center;
-    padding: 2px;
-    border-radius: 5px;
-    border: 0.2px solid rgba(255, 255, 255, 0.257);
-    border-collapse: collapse;
-    margin: auto;
-}
-.table-container-vc{
-    background-color: rgba(255, 255, 255, 0.086);
-    text-align: center;
-    padding: 2px;
-    border-radius: 5px;
-    border: 0.2px solid rgba(255, 255, 255, 0.214);
-    border-collapse: collapse;
-    margin: auto;
-    width: 100%;
-}
-
-.table-row-container {
-    border: 0.2px solid rgba(255, 255, 255, 0.446);
-}
-.table-row-css:hover{
-    background-color: rgba(255, 255, 255, 0.149);
-}
-.table-row-container > tr > th{
-    padding: 2px;
-}
-.table-header-label-css{
-    font-size: 10px;
-}
-
-.table-container-vc td{
-    width: 5%;
-}
-
-.table-data-label-css{
-    font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.cid-label-css{
-    font-size: 11px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    margin: auto;
-    width: 60%;
-
-}
-.download-btn{
-    background-color: rgba(111, 209, 255, 0.685);
-    border: 1px solid white;
-    border-radius: 7px;
-    cursor: pointer;
-    width: 90%;
-    height: 18%;
-    z-index: 5;
-    font-size: 60%;
-}
-.download-btn:hover{
-    background-color: rgba(111, 209, 255, 0.938);
-}
-
 
 @media only screen and (max-width: 1470px){
     .btn-navigate-folder{

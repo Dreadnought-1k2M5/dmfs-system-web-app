@@ -10,36 +10,77 @@ import { SEA } from "gun";
 
 import './collaborative-panel-component-css.css';
 
-export default function CollaborativePanelComponent({}){
-        //Get the metadata of the selected document
-        let [documentSelectedState, setDocumentSelectedState] = useState({});
-    
+import VersionControlComponent from "./collaborative-panel-subcomponents/version-control-component";
+import DocumentCollaborationComponent from "./collaborative-panel-subcomponents/document-collaboration-component";
+
+
+
+export default function CollaborativePanelComponent({gunInstance, userInstance, roomUUIDObj, folderContext, collaborativePanelState, setCollaborativePanelState}){
+
+        let [nav1, setNav1] = useState(true);
+        let [nav2, setNav2] = useState(false);
+        let [nav3, setNav3] = useState(false);
+
+
+        useEffect(()=>{
+           
+
+        }, [])
+
+
+
+        function SwitchTabs(e, optionStr){
+            e.preventDefault(); 
+
+            switch(optionStr){
+                case "btn1":
+                    setNav1(true);
+                    setNav2(false);
+                    setNav3(false);
+                    break;
+                case "btn2":
+                    setNav1(false);
+                    setNav2(true);
+                    setNav3(false);
+                    break;
+                
+                case "btn3":
+                    setNav1(false);
+                    setNav2(false);
+                    setNav3(true);
+                    break;
+                        
+            }
+        }   
+
     return (
         <div>
-            <div className="vc-container">
-                        <h3>Version Control</h3>
-                        <p className="vc-sidebar-subtitle">Click on a file to check all of its different versions</p>
-                        <br></br>
-                        <table className="table-container-vc">
-                            <thead className="table-row-container">
-                            <tr>
-                                <th><p className="table-header-label-css">Document Name</p></th>
-                                <th><p className="table-header-label-css">Content Identifier (CID)</p></th>
-                                <th><p className="table-header-label-css">Date of Upload (Last modified)</p></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-{/*                                 {filteredVCList().map((elem, index)=>
-                                        <tr className="table-row-css" key={index}>
-                                            <td><p className="table-data-label-css">{elem.filenameProperty}</p></td>
-                                            <td><p className="cid-label-css">{elem.CID_prop}</p></td>
-                                            <td><p className="table-data-label-css">{elem.date}</p></td>
-                                            <td><button className="download-btn" onClick={() => handleDownloadSharedFile(elem)}>Download Document</button></td>
-                                        </tr>
-                                    )} */}
-                            </tbody>
-                        </table>
+            <div className="title-component-collab-panel">
+                <h2>Collaborative Panel</h2>
+                <div className="navbar-box-collab">
+                    <button className={ nav1 ? "btn-nav-collab-active" : "btn-nav-collab" } onClick={(e) =>{ SwitchTabs(e, "btn1") } }>Document Collaboration</button>
+                    <button className={ nav2 ? "btn-nav-collab-active" : "btn-nav-collab" } onClick={(e) =>{ SwitchTabs(e, "btn2") } }>Version Control</button>
+                    <button className={ nav3 ? "btn-nav-collab-active" : "btn-nav-collab" } onClick={(e) =>{ SwitchTabs(e, "btn3") } }>Audit Trail</button>
+
+                </div>
             </div>
+            {nav1 && <DocumentCollaborationComponent 
+                gunInstance={gunInstance} 
+                userInstance={userInstance} 
+                roomUUIDObj={roomUUIDObj} 
+                folderContext={folderContext}
+                collaborativePanelState={collaborativePanelState} 
+                setCollaborativePanelState={setCollaborativePanelState}
+            />}
+            {nav2 && <VersionControlComponent 
+                gunInstance={gunInstance} 
+                userInstance={userInstance} 
+                roomUUIDObj={roomUUIDObj} 
+                folderContext={folderContext}
+                collaborativePanelState={collaborativePanelState} 
+                setCollaborativePanelState={setCollaborativePanelState}
+            />}
+            
         </div>
 
     )

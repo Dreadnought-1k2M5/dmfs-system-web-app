@@ -536,6 +536,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         event.preventDefault();
         setSelectedSearchItemState(null);
         setFolderNameState(folder);
+        setCollaborativePanelState(null);
 
 /*         if(isFolderSelectedState.isSelected){
             setIsFolderSelectedState({isSelected: false, indexProp: null}); 
@@ -584,7 +585,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         return (
             <ul className="ul-suggestion-container">
                 {filteredData.map((item, index) => (
-                    <li className="search-item-li" key={index} onClick={() =>{ setSelectedSearchItemState(item); setinputFilenameState(""); setFolderNameState(null); } }>
+                    <li className="search-item-li" key={index} onClick={() =>{ setSelectedSearchItemState(item); setinputFilenameState(""); setFolderNameState(null); setCollaborativePanelState(null)} }>
                         {console.log(item)}
                         <img className="icon-size-small" src={ (item.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (item.fileType === "application/pdf") ? pdf : file } />
                         <p className="filename-item-css">{item.filenameProperty}</p>
@@ -667,6 +668,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                                 <div className="header-box" onClick={() => setFolderNameState(null)}>
                                      <h2>{roomName}</h2>
                                 </div>
+                                
                                 </div>
                                 <button className="btn-upload-file-room" onClick={()=> showUploadGroupModal() }><img src={uploadIcon}></img> Upload File</button>
                                 
@@ -775,7 +777,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 <div className="room-right-side-grid">
                     <div className="right-side-container">
 
-                        {folderNameState != null && <FolderComponent collaborativePanelState={collaborativePanelState} gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderNameState}/>}
+                        {folderNameState != null && <FolderComponent setFolderNameState={setFolderNameState} setCollaborativePanelState={setCollaborativePanelState} gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderNameState}/>}
                         {folderNameState == null && 
                             <div className="top-nav-bar-right-side">
                                 {/* <div className="upload-document-room">
@@ -804,6 +806,10 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
                         {selectedSearchItemState != null && 
                             <div className="selected-file-details-container">
+{/*                                 <div className="icon-download-btn-box">
+                                    <img className="icon-size-large" src={ (selectedSearchItemState.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (selectedSearchItemState.fileType === "application/pdf") ? pdf : file } />
+                                    <button className="download-btn-css-document-metadata" onClick={handleDownloadShare}>Download Shared Document</button>
+                                </div>
                                 <div className="table-container-div-document-metadata">
                                     <table>
                                         <tr>
@@ -827,11 +833,29 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                                             <td>{selectedSearchItemState.location}</td>
                                         </tr>
                                     </table>
-                                </div>
-
-                                <div className="icon-download-btn-box">
+                                </div> */}
+                                <div className="container-div-document-metadata">
                                     <img className="icon-size-large" src={ (selectedSearchItemState.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (selectedSearchItemState.fileType === "application/pdf") ? pdf : file } />
-                                    <button className="download-btn-css-document-metadata" onClick={handleDownloadShare}>Download Shared Document</button>
+                                    <table>
+                                        <tr>
+                                            <td>Document Name</td>
+                                            <td>Date created/last modified</td>
+                                            <td>Folder name</td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <h4>{selectedSearchItemState.filenameProperty}</h4>
+                                            </td>
+                                            <td>
+                                                <h4>{selectedSearchItemState.date}</h4>
+                                            </td>
+                                            <td>
+                                                <h4>{selectedSearchItemState.location}</h4>
+                                            </td>
+                                        </tr>
+                                    </table>
+
+
                                 </div>
 
                             </div>
@@ -842,7 +866,8 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                                 gunInstance={gunInstance} 
                                 userInstance={userInstance} 
                                 roomUUIDObj={roomUUIDObj} 
-                                folderContext={folderNameState} 
+                                folderContext={folderNameState}
+                                collaborativePanelState={collaborativePanelState} 
                                 setCollaborativePanelState={setCollaborativePanelState}
                             />
                         }

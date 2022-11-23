@@ -61,7 +61,7 @@ const vcUseReducerHandler = (vcListState, version)=>{
 }
 
 
-export default function FolderComponent({gunInstance, userInstance, roomUUIDObj, folderContext, setCollaborativePanelState}){
+export default function FolderComponent({gunInstance, userInstance, roomUUIDObj, folderContext, setCollaborativePanelState, setFolderNameState}){
     let [SEAState, setSEA] = useState('');
     let [myAlias, setMyAlias] = useState('');
 
@@ -286,9 +286,9 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
 
 async function queryVersion(){
-    let filenameX = documentSelectedState.filename;
-    
-    await gunInstance.get("vc_".concat(filenameX).concat(roomUUIDObj.roomUUIDProperty)).map().on(async data=>{
+    //let filenameX = documentSelectedState.filename;
+    setCollaborativePanelState(documentListState);
+/*     await gunInstance.get("vc_".concat(filenameX).concat(roomUUIDObj.roomUUIDProperty)).map().on(async data=>{
         console.log(data);
         dispatchvcListState({
             filenameProperty: data.filenameProperty, 
@@ -300,7 +300,7 @@ async function queryVersion(){
             date: data.date,
             uploadedBy: data.uploadedBy
         })
-    })
+    }) */
 
 }
 
@@ -331,7 +331,7 @@ const filteredVCList = () =>{
                 <div className={itemSelected.isSelected === true ? "top-toolbar-option-document" : "top-toolbar-option-document-hide"}>
                     <p className="label-item-selected"><b>{itemSelected.fileNameVar} - </b></p>
                     <button className="btn-option-document-css" onClick={()=> handleDownloadSharedFile()}>Download</button>
-                    <button className="btn-option-document-css" onClick={()=> {setIsVcSidebarViews(!isVcSidebarViews); queryVersion()} }>Check Versions</button>
+                    <button className="btn-option-document-css" onClick={()=> {setIsVcSidebarViews(!isVcSidebarViews); setCollaborativePanelState(documentListState); setFolderNameState(null);/* queryVersion() */} }>Open Collaborative Panel</button>
                     <button className="btn-option-document-css" onClick={()=> { setItemSelected({isSelected: false, index: -1}); dispatchvcListState({reset: true}); }}>Cancel</button>
                     
                 </div>
@@ -375,30 +375,7 @@ const filteredVCList = () =>{
 
                         </div>
                 </div>
-                <div className="vc-container">
-                    <h3>Version Control</h3>
-                    <p className="vc-sidebar-subtitle">Click on a file to check all of its different versions</p>
-                    <br></br>
-                    <table className="table-container-vc">
-                        <thead className="table-row-container">
-                        <tr>
-                            <th><p className="table-header-label-css">Document Name</p></th>
-                            <th><p className="table-header-label-css">Content Identifier (CID)</p></th>
-                            <th><p className="table-header-label-css">Date of Upload (Last modified)</p></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {filteredVCList().map((elem, index)=>
-                                    <tr className="table-row-css" key={index}>
-                                        <td><p className="table-data-label-css">{elem.filenameProperty}</p></td>
-                                        <td><p className="cid-label-css">{elem.CID_prop}</p></td>
-                                        <td><p className="table-data-label-css">{elem.date}</p></td>
-                                        <td><button className="download-btn" onClick={() => handleDownloadSharedFile(elem)}>Download Document</button></td>
-                                    </tr>
-                                )}
-                        </tbody>
-                    </table>
-                </div>
+
             </div>
 
 

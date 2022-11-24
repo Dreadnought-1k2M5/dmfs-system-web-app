@@ -1,9 +1,8 @@
 .vc-container{
     background-color: rgba(58, 58, 58, 0.338);
-    padding: 10px;
+    height: 65vh;
     border-radius: 0px 0px 13px 13px;
     /* height: 240px; */
-    margin-left: 13px;
 
     border-top: 0.5px solid rgb(111, 209, 255);
     border-left: 0.5px solid rgb(111, 209, 255);
@@ -20,7 +19,6 @@
     width: 100%;
     background-color: rgba(255, 255, 255, 0.086);
     text-align: center;
-    padding: 2px;
     border-radius: 5px;
     border: 0.2px solid rgba(255, 255, 255, 0.257);
     border-collapse: collapse;
@@ -29,7 +27,6 @@
 .table-container-vc{
     background-color: rgba(255, 255, 255, 0.086);
     text-align: center;
-    padding: 2px;
     border-radius: 5px;
     border: 0.2px solid rgba(255, 255, 255, 0.214);
     border-collapse: collapse;
@@ -40,6 +37,12 @@
 .table-row-container {
     border: 0.2px solid rgba(255, 255, 255, 0.446);
 }
+.table-row-css{
+}
+.table-row-css > td{
+    padding-left: 10px;
+    padding-right: 10px;
+} 
 .table-row-css:hover{
     background-color: rgba(255, 255, 255, 0.149);
 }
@@ -47,7 +50,7 @@
     padding: 2px;
 }
 .table-header-label-css{
-    font-size: 10px;
+    font-size: 13px;
 }
 
 .table-container-vc td{
@@ -56,9 +59,8 @@
 
 .table-data-label-css{
     font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: wrap;
+    text-align: center;
 }
 
 .cid-label-css{
@@ -76,7 +78,8 @@
     border-radius: 7px;
     cursor: pointer;
     width: 90%;
-    height: 18%;
+    height: 30px;
+    font-size: 10px;
     z-index: 5;
     font-size: 60%;
 }

@@ -467,14 +467,23 @@
 }
 .container-div-document-metadata{
     align-items: center;
-    width: 60%;
+    width: 90%;
     display: flex;
 
+}
+.container-div-document-metadata > table > thead{
+    width: 100%;
+    border: 0.5px solid white;  
+
+}
+.table-head-css{
+    border: 0.5px solid white;
 }
 .container-div-document-metadata > table td{
     padding-left: 25px;
     padding-right: 25px;
     text-align: center;
+    
 }
 
 .icon-download-btn-box{

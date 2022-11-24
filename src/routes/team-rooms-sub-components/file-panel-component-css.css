@@ -1,10 +1,12 @@
 .title-component-collab-panel{
-    margin-left: 13px;
     margin-top: 10px;
     width: 100%;
 }
+.title-component-collab-panel > h2{
+    margin: 15px;
+}
 
-.navbar-box-collab{
+.navbar-box-switch{
     display: flex;
     margin-top: 20px;
 }
@@ -26,3 +28,4 @@
     padding: 7px 20px 7px 20px;
 
 }
+

@@ -29,7 +29,7 @@ import addUser from "../../icons/add-user-icon.png";
 import notification from "../../icons/notification-icon.png";
 
 import groupChat from "../../icons/group-chat-icon.png";
-import CollaborativePanelComponent from "./collaborative-panel-component";
+import FilePanelComponent from "./file-panel-component";
 
 
 //Chat messages
@@ -134,7 +134,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
 
     //to track which folder item or node to be rendered
     let [folderNameState, setFolderNameState] = useState(null);
-    let [collaborativePanelState, setCollaborativePanelState] = useState(null);
+    let [filePanelState, setFilePanelState] = useState(null);
 
     //useReducer for queued encrypted shares
     let [isTheresNotification, setNotification] = useState(false);
@@ -536,7 +536,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         event.preventDefault();
         setSelectedSearchItemState(null);
         setFolderNameState(folder);
-        setCollaborativePanelState(null);
+        setFilePanelState(null);
 
 /*         if(isFolderSelectedState.isSelected){
             setIsFolderSelectedState({isSelected: false, indexProp: null}); 
@@ -585,7 +585,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
         return (
             <ul className="ul-suggestion-container">
                 {filteredData.map((item, index) => (
-                    <li className="search-item-li" key={index} onClick={() =>{ setSelectedSearchItemState(item); setinputFilenameState(""); setFolderNameState(null); setCollaborativePanelState(null)} }>
+                    <li className="search-item-li" key={index} onClick={() =>{ setSelectedSearchItemState(item); setinputFilenameState(""); setFolderNameState(null); setFilePanelState(null)} }>
                         {console.log(item)}
                         <img className="icon-size-small" src={ (item.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (item.fileType === "application/pdf") ? pdf : file } />
                         <p className="filename-item-css">{item.filenameProperty}</p>
@@ -777,7 +777,7 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                 <div className="room-right-side-grid">
                     <div className="right-side-container">
 
-                        {folderNameState != null && <FolderComponent setFolderNameState={setFolderNameState} setCollaborativePanelState={setCollaborativePanelState} gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderNameState}/>}
+                        {folderNameState != null && <FolderComponent setFolderNameState={setFolderNameState} setFilePanelState={setFilePanelState} gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderNameState}/>}
                         {folderNameState == null && 
                             <div className="top-nav-bar-right-side">
                                 {/* <div className="upload-document-room">
@@ -837,22 +837,30 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                                 <div className="container-div-document-metadata">
                                     <img className="icon-size-large" src={ (selectedSearchItemState.fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ? word : (selectedSearchItemState.fileType === "application/pdf") ? pdf : file } />
                                     <table>
-                                        <tr>
-                                            <td>Document Name</td>
-                                            <td>Date created/last modified</td>
-                                            <td>Folder name</td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <h4>{selectedSearchItemState.filenameProperty}</h4>
-                                            </td>
-                                            <td>
-                                                <h4>{selectedSearchItemState.date}</h4>
-                                            </td>
-                                            <td>
-                                                <h4>{selectedSearchItemState.location}</h4>
-                                            </td>
-                                        </tr>
+                                        <thead>
+                                            <tr>
+                                                <td>Document Name</td>
+                                                <td>Date created/last modified</td>
+                                                <td>Folder name</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <h4>{selectedSearchItemState.filenameProperty}</h4>
+                                                </td>
+                                                <td>
+                                                    <h4>{selectedSearchItemState.date}</h4>
+                                                </td>
+                                                <td>
+                                                    <h4>{selectedSearchItemState.location}</h4>
+                                                </td>
+                                                <td>
+                                                    <button className="download-btn-css-document-metadata" onClick={handleDownloadShare}>Download</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
                                     </table>
 
 
@@ -861,14 +869,14 @@ function RoomComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
                             </div>
                         }
                         {
-                            collaborativePanelState != null &&
-                            <CollaborativePanelComponent 
+                            filePanelState != null &&
+                            <FilePanelComponent 
                                 gunInstance={gunInstance} 
                                 userInstance={userInstance} 
                                 roomUUIDObj={roomUUIDObj} 
                                 folderContext={folderNameState}
-                                collaborativePanelState={collaborativePanelState} 
-                                setCollaborativePanelState={setCollaborativePanelState}
+                                filePanelState={filePanelState} 
+                                setFilePanelState={setFilePanelState}
                             />
                         }
                     </div>

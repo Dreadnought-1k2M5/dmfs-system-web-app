@@ -1,0 +1,99 @@
+.modal-create-task-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: rgb(255, 255, 255);
+}
+@keyframes modal-animation {
+    from { background-color: rgba(19, 19, 19, 0); } /* background color from outlet-container at main.css */
+    to { background-color: rgba(30, 30, 30, 0.6); }
+}   
+
+.modal-create-task {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
+    background-color: rgba(30, 30, 30, 0.6);
+    backdrop-filter: blur(5px);
+    animation-name: modal-animation;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+}
+
+.display-none{
+
+    display: none;
+}
+
+@keyframes create-task-container-animation{
+    from { bottom: 90px;     background-color: rgba(255, 111, 181, 0); }
+    to { bottom: 40px;            background-color: #1e1e1e; }
+}
+
+
+.create-task-container{
+    background-color: #1e1e1e;
+    border: 0.5px solid #6fd1ff;
+    width: 30%;
+    height: 29%;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    position: relative;
+    animation-name: create-room-container-animation;
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    color: rgb(255, 255, 255);
+
+    display: flex;
+    flex-direction: column;
+
+    bottom: 40px;
+}
+
+
+.create-task-container > .create-task-box-exit{
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+
+
+.create-task-form{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.task-textbox-css{
+    background-color: rgba(0, 0, 0, 0.562) !important ;
+    color: white  !important;
+    width: 85% !important;
+    height: 6%  !important;
+    margin: 15px !important;
+    border: 0.5px solid white !important;
+}
+
+.p-versionIndex-css{
+    font-size: 12px;
+}
+.p-versionIndex-green{
+    color: rgb(169, 255, 112);
+}
+.add-task-btn-css{
+    font-size: 13px;
+    padding: 7px;
+    border-radius: 5px;
+    width: 40%;
+    background-color: rgb(50, 50, 50);
+    color: rgb(234, 234, 234);
+    cursor: pointer;
+    align-self: center;
+}
+
+.add-task-btn-css:hover{
+    background-color: rgb(72, 72, 72);
+}

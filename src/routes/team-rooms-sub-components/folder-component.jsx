@@ -11,6 +11,9 @@ import { SEA } from "gun";
 import './folder-component.css';
 
 import RequestShareModalComponent from "../modal-components/RequestShareModal";
+import SharedDocumentComponent from "./folder-subcomponents/shared-documents";
+import SecretSHaredComponent from "./folder-subcomponents/secret-shared-component";
+import AuditComponent from "./folder-subcomponents/audit-component";
 
 // useReducer for shared documents
 const currentDocumentListState = {
@@ -28,7 +31,7 @@ const documentsUseReducerHandler = (documentListState, document)=>{
     }
 }
 
-// useReducer for shared documents
+// useReducer for secret shared documents
 const currentDocumentSecretSharedListState = {
     documentsSecretSharedArrayState: []
 }
@@ -61,9 +64,15 @@ const vcUseReducerHandler = (vcListState, version)=>{
 }
 
 
-export default function FolderComponent({gunInstance, userInstance, roomUUIDObj, folderContext}){
+export default function FolderComponent({gunInstance, userInstance, roomUUIDObj, folderContext, setFilePanelState, setFolderNameState}){
     let [SEAState, setSEA] = useState('');
     let [myAlias, setMyAlias] = useState('');
+    
+    let [nav1, setNav1] = useState(true);
+    let [nav2, setNav2] = useState(false);
+    let [nav3, setNav3] = useState(false);
+
+
 
     let [isVcSidebarViews, setIsVcSidebarViews] = useState(false);
 
@@ -108,6 +117,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     useEffect(()=>{
             documentsDispatch({reset: true});
             documentsSecretSharedDispatch({reset: true});
+
             userInstance.get("alias").on(async data => {
                 setMyAlias(data);
             });
@@ -171,9 +181,9 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
     
     // Remove duplicated documents from the "documents" property in the documentListState and get only objects with access type of "shared".
     const filteredSharedDocumentsList = () =>{
-        console.log("filtered shared documents function called")
+        //console.log("filtered shared documents function called")
         const filteredDocumentList = documentListState.documents.filter((value, index) => {
-            console.log(value);
+            //console.log(value);
             const _value = JSON.stringify(value);
             return (
                 index ===
@@ -188,9 +198,9 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
     // Remove duplicated documents from the "documents" property in the documentListState and get only objects with access type of "secretShare".
     const filteredSecretSharedDocuments = () =>{
-            console.log("filtered SECRET shared documents function called")
+            //console.log("filtered SECRET shared documents function called")
             const filteredDocumentList = documentListStateSecretSharedState.documentsSecretSharedArrayState.filter((value, index) => {
-                console.log(value);
+                //console.log(value);
                 const _value = JSON.stringify(value);
                 return (
                     index ===
@@ -203,7 +213,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
             return filteredDocumentList;
         }
 
-    function handleItemSelected(elem, index, fileNameVar){
+/*     function handleItemSelected(elem, index, fileNameVar){
 
         //Check if an item is currently selected or not.
         if(itemSelected.isSelected){
@@ -220,7 +230,7 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
             setDocumentSelectedState(elem); 
             setItemSelected({isSelected: true, index: index,  fileNameVar: elem.filename})
         }
-    }
+    } */
 
 
     async function handleDownloadSharedFile(){
@@ -277,6 +287,17 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
             
                     }).catch(console.error);
                     
+                    let identifier = `logItem_${new Date().toString().replaceAll(' ', '_')}_node`;
+                    await gunInstance.get(identifier).put({
+                        dateOccured: new Date().toString(),
+                        content: `Document downloaded: ${filename}`,
+                        user: myAlias,
+                        sampleProp: "ABBBBBB NO FOLDER LOLOLO"
+                    });
+                    let logItemRef = await gunInstance.get(identifier);
+                    
+                    console.log(folderContext);
+                    await gunInstance.get(`log_${folderContext.folderNameClean}_${roomUUIDObj.roomUUIDProperty}`).set(logItemRef);
                 })
             
             })
@@ -286,8 +307,9 @@ export default function FolderComponent({gunInstance, userInstance, roomUUIDObj,
 
 
 async function queryVersion(){
-    let filenameX = documentSelectedState.filename;
-    await gunInstance.get("vc_".concat(filenameX).concat(roomUUIDObj.roomUUIDProperty)).map().on(async data=>{
+    //let filenameX = documentSelectedState.filename;
+    setFilePanelState(documentListState);
+/*     await gunInstance.get("vc_".concat(filenameX).concat(roomUUIDObj.roomUUIDProperty)).map().on(async data=>{
         console.log(data);
         dispatchvcListState({
             filenameProperty: data.filenameProperty, 
@@ -299,7 +321,7 @@ async function queryVersion(){
             date: data.date,
             uploadedBy: data.uploadedBy
         })
-    })
+    }) */
 
 }
 
@@ -318,9 +340,32 @@ const filteredVCList = () =>{
 
     return filteredVC;
 }
+
+    function SwitchTabs(e, optionStr){
+        e.preventDefault(); 
+
+        switch(optionStr){
+            case "btn1":
+                setNav1(true);
+                setNav2(false);
+                setNav3(false);
+                break;
+            case "btn2":
+                setNav1(false);
+                setNav2(true);
+                setNav3(false);
+                break;
+            case "btn3":
+                setNav1(false);
+                setNav2(false);
+                setNav3(true);
+                break;
+                    
+        }
+    }   
+
     return (
         <div>
-            {isRequestShareModalViewed && <RequestShareModalComponent seaPairRoomProp={SEAState} secretSharedDocumentObj={holdSecretSharedObject} roomUUIDObj={roomUUIDObj} gunInstance={gunInstance} userInstance={userInstance} handleClose={hideShareRequestModal} show={isRequestShareModalViewed}/> }
             <div className="top-toolbar-folder" >
                 <div className="top-toolbar-nav-folder">
                     <button className="btn-navigate-folder" onClick={()=> navigate("/main")}><p>Team Rooms</p></button>
@@ -330,12 +375,26 @@ const filteredVCList = () =>{
                 <div className={itemSelected.isSelected === true ? "top-toolbar-option-document" : "top-toolbar-option-document-hide"}>
                     <p className="label-item-selected"><b>{itemSelected.fileNameVar} - </b></p>
                     <button className="btn-option-document-css" onClick={()=> handleDownloadSharedFile()}>Download</button>
-                    <button className="btn-option-document-css" onClick={()=> {setIsVcSidebarViews(!isVcSidebarViews); queryVersion()} }>Check Versions</button>
+                    <button className="btn-option-document-css" onClick={()=> {setIsVcSidebarViews(!isVcSidebarViews); setFilePanelState(documentListState); setFolderNameState(null);/* queryVersion() */} }>Check Versions</button>
                     <button className="btn-option-document-css" onClick={()=> { setItemSelected({isSelected: false, index: -1}); dispatchvcListState({reset: true}); }}>Cancel</button>
                     
                 </div>
             </div>
             <div className="top-folder-container" >
+                <div className="title-component-switch-panel">
+                    <div className="navbar-box-switch">
+                        <button className={ nav1 ? "btn-nav-switch-active" : "btn-nav-switch" } onClick={(e) =>{ SwitchTabs(e, "btn1") } }>Shared Documents</button>
+                        <button className={ nav2 ? "btn-nav-switch-active" : "btn-nav-switch" } onClick={(e) =>{ SwitchTabs(e, "btn2") } }>Protected Documents: Secret Sharing Security</button>
+                        <button className={ nav3 ? "btn-nav-switch-active" : "btn-nav-switch" } onClick={(e) =>{ SwitchTabs(e, "btn3") } }>Folder Audit Trail</button>
+
+                    </div>
+                    
+                    {nav1 && <SharedDocumentComponent setDocumentSelectedState={setDocumentSelectedState}itemSelected={itemSelected} setItemSelected={setItemSelected} setFolderNameState={setFolderNameState} setFilePanelState={setFilePanelState} gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderContext}/> }
+                    {nav2 && <SecretSHaredComponent  itemSelected={itemSelected} setItemSelected={setItemSelected} setFolderNameState={setFolderNameState} setFilePanelState={setFilePanelState} gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderContext} />} 
+                    {nav3 && <AuditComponent itemSelected={itemSelected} setItemSelected={setItemSelected} setFolderNameState={setFolderNameState} setFilePanelState={setFilePanelState} gunInstance={gunInstance} userInstance={userInstance} roomUUIDObj={roomUUIDObj} folderContext={folderContext} />} 
+
+                </div>
+{/* 
                 <div className="secret-share-docs-container">
                     <h3>Protected Documents:  (Secret Share Security)</h3>
                     <br></br>
@@ -348,20 +407,21 @@ const filteredVCList = () =>{
                         </tr>
                         </thead>
                         <tbody>
-                        {/*  {setDuplicatesRemoved(...new Set(fileListState))} */}
                             {filteredSecretSharedDocuments().map((elem, index) =>
                             <tr className="table-row-css">
                             <td><p className="table-data-label-css">{elem.filename}</p></td>
                             <td><p className="table-data-label-css cid-label-css">{elem.cid}</p></td>
                             <td><p className="table-data-label-css">{elem.date}</p></td>
                             <td><button className="download-btn" onClick={() => showShareRequestModal(elem)}>Request for all shares</button></td>
-{/*                             <td><button className="download-btn" onClick={() => downloadSecretShared(elem)}>Download Document</button></td>
- */}                            </tr>
+                           </tr>
                         )}
                         </tbody>
                     </table>
-                </div>
-                <div className="shared-docs-container">
+                </div> */}
+
+
+
+                {/* <div className="shared-docs-container">
                         <h3>Shared Documents: </h3>
                         <div className="folder-list-flex-container">
                             {filteredSharedDocumentsList().map((elem, index)=>
@@ -373,31 +433,8 @@ const filteredVCList = () =>{
                             )}
 
                         </div>
-                </div>
-                <div className="vc-container">
-                    <h3>Version Control</h3>
-                    <p className="vc-sidebar-subtitle">Click on a file to check all of its different versions</p>
-                    <br></br>
-                    <table className="table-container-vc">
-                        <thead className="table-row-container">
-                        <tr>
-                            <th><p className="table-header-label-css">Document Name</p></th>
-                            <th><p className="table-header-label-css">Content Identifier (CID)</p></th>
-                            <th><p className="table-header-label-css">Date of Upload (Last modified)</p></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {filteredVCList().map((elem, index)=>
-                                    <tr className="table-row-css" key={index}>
-                                        <td><p className="table-data-label-css">{elem.filenameProperty}</p></td>
-                                        <td><p className="cid-label-css">{elem.CID_prop}</p></td>
-                                        <td><p className="table-data-label-css">{elem.date}</p></td>
-                                        <td><button className="download-btn" onClick={() => handleDownloadSharedFile(elem)}>Download Document</button></td>
-                                    </tr>
-                                )}
-                        </tbody>
-                    </table>
-                </div>
+                </div> */}
+
             </div>
 
 

@@ -1,0 +1,88 @@
+.shared-docs-container{
+    height: 60vh;
+    width: 100%;
+    border-radius: 0px 0px 13px 13px;
+    /* height: 240px; */
+
+    border-top: 0.5px solid rgb(111, 209, 255);
+    border-left: 0.5px solid rgb(111, 209, 255);
+    border-bottom: 0.5px solid rgb(111, 209, 255);
+    border-right: 0.5px solid rgb(111, 209, 255);
+    overflow: auto;
+}
+
+
+.folder-list-flex-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: auto;
+    align-items: flex-start;
+
+ }
+
+ .item-selected{
+    background-color: rgba(0, 67, 114, 0.999);
+    cursor: pointer;
+    padding: 3px;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    margin: 24px;
+    border-radius: 10px;
+
+}
+
+.item-selected > p{
+    text-align: center;
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+
+.document-item{
+    cursor: pointer;
+    padding: 3px;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    margin: 24px;
+    
+}
+.document-item > p{
+    text-align: center;
+    font-size: 13px;
+    margin-top: 10px;
+    
+}
+
+.document-item:hover{
+    background-color: rgba(255, 255, 255, 0.273);
+    border-radius: 10px;
+}
+
+.icon-document {
+    width: 50px;
+    height: 50px;
+    animation-name: documentIconAnimation;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+    position: relative;
+    z-index: 0;
+ }
+
+
+ @keyframes documentIconAnimation {
+    from{
+        width: 0px;
+        height: 0px;
+     }
+     to{
+        width: 50px;
+        height: 50px;
+     }
+ }

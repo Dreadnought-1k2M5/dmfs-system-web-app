@@ -1,0 +1,31 @@
+.title-component-collab-panel{
+    margin-top: 10px;
+    width: 100%;
+}
+.title-component-collab-panel > h2{
+    margin: 15px;
+}
+
+.navbar-box-switch{
+    display: flex;
+    margin-top: 20px;
+}
+
+.btn-nav-collab{
+    padding: 7px 20px 7px 20px;
+    background-color: rgb(111, 209, 255);
+    color: rgb(29, 29, 29);
+    cursor: pointer;
+}
+
+.btn-nav-collab-active{
+    background-color: rgb(29, 29, 29);
+    color: white;
+    border-top: 0.5px solid rgb(111, 209, 255);
+    border-left: 0.5px solid rgb(111, 209, 255);
+    border-right: 0.5px solid rgb(111, 209, 255);
+    border-bottom: 0.5px solid rgba(111, 209, 255, 0);
+    padding: 7px 20px 7px 20px;
+
+}
+

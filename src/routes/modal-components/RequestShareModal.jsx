@@ -21,7 +21,7 @@ const responseListStateUseReducer = (currentResponseListState, response)=>{
 }
 
 
-export default function RequestShareModalComponent({seaPairRoomProp, secretSharedDocumentObj, roomUUIDObj, gunInstance, userInstance, handleClose, show}){
+export default function RequestShareModalComponent({folderContext, seaPairRoomProp, secretSharedDocumentObj, roomUUIDObj, gunInstance, userInstance, handleClose, show}){
     
     //State for holding the secretSharedDocumentObj
     let [secretSharedDocumentState, setSecretSharedDocumentState] = useState({});
@@ -212,6 +212,17 @@ export default function RequestShareModalComponent({seaPairRoomProp, secretShare
                                 })
 
                             })
+
+                            let identifier = `logItem_${new Date().toString().replaceAll(' ', '_')}_node`;
+                            await gunInstance.get(identifier).put({
+                                dateOccured: new Date().toString(),
+                                content: `Document downloaded: ${filename} - from Secret Sharing Security. Share holders who allowed ${aliasState} access: ${shareListArg.holder1Alias}, ${shareListArg.holder2Alias}, ${shareListArg.holder3Alias}.`,
+                                user: aliasState,
+                                sampleProp: "ABBBBBB NO FOLDER LOLOLO"
+                            });
+                            let logItemRef = await gunInstance.get(identifier);
+                            gunInstance.get(`log_${folderContext.folderNameClean}_${roomUUIDObj.roomUUIDProperty}`).set(logItemRef);
+
                             dispatchResponse({reset: true});
 
                             setTimeout(()=> { window.location.reload(); }, 4800);

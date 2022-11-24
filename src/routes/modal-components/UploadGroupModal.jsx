@@ -258,8 +258,13 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                     iv: encIV, 
                     fileType: getFileType,
                     date: lastModdifiedVar,
-                    uploadedBy: myAlias
+                    dateUploaded: new Date().toString(),
+                    uploadedBy: myAlias,
+                    accessType: "shared"
+
                 })
+
+
 
 
                 //Individual UNIQUE node containing file metadata
@@ -271,12 +276,40 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                     iv: encIV, 
                     fileType: getFileType,
                     date: lastModdifiedVar,
+                    dateUploaded: new Date().toString(),
                     uploadedBy: myAlias,
                     accessType: "shared"
                 });
                 if(folderItemChosen === null){
                     alert("No Folder selected");
+                    
                     let finalInputFolderState = inputFolderState.replaceAll(' ','_');
+
+                    let identifier = `logItem_${new Date().toString().replaceAll(' ', '_')}_node`;
+                    await gunInstance.get(identifier).put({
+                        dateOccured: new Date().toString(),
+                        content: `Document uploaded: ${fileName}`,
+                        user: myAlias,
+                        sampleProp: "ABBBBBB NO FOLDER LOLOLO"
+                    });
+                    let logItemRef = await gunInstance.get(identifier);
+                    await gunInstance.get(`log_${inputFolderState}_${uuidRoomObj.roomUUIDProperty}`).set(logItemRef);
+
+                    //Individual UNIQUE node containing file metadata
+                    let fileRef = await gunInstance.get(fileName.concat(uuidRoomObj.roomUUIDProperty)).put({                    
+                        filenameProperty: fileName, 
+                        filenameWithNoWhiteSpace: fileNameNoWhiteSpace, 
+                        CID_prop: CID, 
+                        fileKey: encJSONKey, 
+                        iv: encIV, 
+                        fileType: getFileType,
+                        date: lastModdifiedVar,
+                        dateUploaded: new Date().toString(),
+                        uploadedBy: myAlias,
+                        accessType: "shared",
+                        location: `${inputFolderState}`,
+                    });
+
                     await gunInstance.get(finalInputFolderState.concat("_sep_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
                     
                     //reference of the folder node
@@ -294,9 +327,10 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                         iv: encIV, 
                         fileType: getFileType,
                         date: lastModdifiedVar,
+                        dateUploaded: new Date().toString(),
                         uploadedBy: myAlias,
                         accessType: "shared",
-                        location: `${finalInputFolderState}`
+                        location: `${inputFolderState}`
                     })
 
                     await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
@@ -305,6 +339,17 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
 
                 }else if(folderItemChosen != null && inputFolderState === null) {
                     alert("Folder selected");
+
+                    let identifier = `logItem_${new Date().toString().replaceAll(' ', '_')}_node`;
+                    await gunInstance.get(identifier).put({
+                        dateOccured: new Date().toString(),
+                        content: `Document uploaded: ${fileName}`,
+                        user: myAlias,
+                        sampleProp: "ABBBBBB NO FOLDER LOLOLO"
+                    });
+                    let logItemRef = await gunInstance.get(identifier);
+                    await gunInstance.get(`log_${inputFolderState}_${uuidRoomObj.roomUUIDProperty}`).set(logItemRef);
+
                     await gunInstance.get(folderItemChosen.folderNameNodeFull).set(fileRef);
 
                     // For the search box
@@ -316,9 +361,10 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                         iv: encIV, 
                         fileType: getFileType,
                         date: lastModdifiedVar,
+                        dateUploaded: new Date().toString(),
                         uploadedBy: myAlias,
                         accessType: "shared",
-                        location: `${folderItemChosen.folderNameClean}`
+                        location: `${folderItemChosen.folderNameClean}`,
                     })
 
                     await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
@@ -326,6 +372,17 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
 
                 } else if (folderItemChosen != null && inputFolderState.length > 0){
                     alert("Folder selected");
+                    let identifier = `logItem_${new Date().toString().replaceAll(' ', '_')}_node`;
+                    await gunInstance.get(identifier).put({
+                        dateOccured: new Date().toString(),
+                        content: `Document uploaded: ${fileName}`,
+                        user: myAlias,
+                        sampleProp: "ABBBBBB NO FOLDER LOLOLO"
+                    });
+                    let logItemRef = await gunInstance.get(identifier);
+                    await gunInstance.get(`log_${inputFolderState}_${uuidRoomObj.roomUUIDProperty}`).set(logItemRef);
+
+
                     let finalInputFolderState = inputFolderState.replaceAll(" ", "_");
                     //Inserting unique node into an actual "folder" node
                     await gunInstance.get(finalInputFolderState.concat("_sep_").concat("_subfolder_").concat(uuidRoomObj.roomUUIDProperty)).set(fileRef);
@@ -345,9 +402,10 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                         iv: encIV, 
                         fileType: getFileType,
                         date: lastModdifiedVar,
+                        dateUploaded: new Date().toString(),
                         uploadedBy: myAlias,
                         accessType: "shared",
-                        location: `${finalInputFolderState}`
+                        location: `${inputFolderState}`
                     })
 
                     await gunInstance.get(`${uuidRoomObj.roomUUIDProperty}_nodeSearchItemsSet`).set(fileItemRef);
@@ -357,7 +415,8 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
 
 
                 alert("FILE ADDED");
-                handleClose();        
+                window.location.reload();
+      
             }).catch(console.error);
 
         });
@@ -607,12 +666,14 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
     async function showFoldersHandler(){
         console.log("Test handler");
         let arrayList = [];
+        console.log(filteredFolderListHandler());
           filteredFolderListHandler().map((element, index)=>{
             console.log("-----------------------------ITERATION (OUTER) -----------------------------")
             arrayList.push(element);
   
           })
-  
+          console.log(arrayList);
+
           setFolderListToRender(arrayList);
     }
     return (
@@ -690,7 +751,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                                     </div>}
 
                             </div>
-                            <div className="radiobox-item">
+{/*                             <div className="radiobox-item">
                                 <div>
                                     <input type="radio" id="option3" name="age" value="2" onChange={(e) => setRadioBoxSelected(e.target.value)}/>
                                 </div>
@@ -698,7 +759,7 @@ export default function UploadGroupModal({uuidRoomObj, gunInstance, userInstance
                                     <label htmlFor="option3"><b>Custom Permission</b></label>
                                     <p className="ss-option-description-css">(Specify which user can decrypt the file later on)</p>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="location-node-box">
 {/*                             <div className="foldername-textbox-box">

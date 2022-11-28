@@ -142,7 +142,7 @@ export default function RequestShareModalComponent({folderContext, seaPairRoomPr
         })
 
         return; */
-        Axios.post('https://floating-fjord-99601.herokuapp.com/reconstruct', {
+        Axios.post('https://obscure-springs-05085.herokuapp.com/reconstruct', {
             shareListProperty: shareListArg
         }).then(async response =>{
             
